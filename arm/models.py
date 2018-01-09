@@ -58,3 +58,9 @@ class Location(Base):
 	id = Column(Integer, primary_key = True)
 	location_code = Column(String(64), nullable = False, unique = True)
 	location_name = Column(String(128), nullable = False)
+
+class LocationCategory(Base):
+	__tablename__ = 'location_categories'
+
+	id = Column(Integer, primary_key = True)
+	category_name = Column(String(128), nullable = False, unique = True)
