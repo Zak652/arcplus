@@ -96,3 +96,9 @@ class Supplier(Base):
 	location = Column(String(128), nullable = False)
 	website = Column(String(128), nullable = True, unique = True)
 	person = Column(String(128), nullable = True)
+
+class SupplierCategory(Base):
+	__tablename__ = 'suppliers_category'
+
+	id = Column(Integer, primary_key = True)
+	category_name = Column(String(128), nullable = False, unique = True)
