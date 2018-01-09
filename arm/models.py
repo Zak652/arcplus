@@ -64,3 +64,17 @@ class LocationCategory(Base):
 
 	id = Column(Integer, primary_key = True)
 	category_name = Column(String(128), nullable = False, unique = True)
+
+class People(Base):
+	__tablename__ = 'people'
+
+	id = Column(Integer, primary_key = True)
+	barcode = Column(String(64), nullable = False, unique = True)
+	category = Column(String(128), nullable = False)
+	first_name = Column(String(128), nullable = False)
+	second_name = Column(String(128), nullable = False)
+	designation = Column(String(128), nullable = True)
+	department = Column(String(128), nullable = False)
+	location = Column(String(128), nullable = False)
+	phone = Column(Integer, unique = True)
+	email = Column(String(128), unique = True)
