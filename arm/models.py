@@ -78,3 +78,9 @@ class People(Base):
 	location = Column(String(128), nullable = False)
 	phone = Column(Integer, unique = True)
 	email = Column(String(128), unique = True)
+
+class PeopleCategory(Base):
+	__tablename__ = 'people_category'
+
+	id = Column(Integer, primary_key = True)
+	category_name = Column(String(128), nullable = False, unique = True)
