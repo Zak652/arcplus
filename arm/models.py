@@ -38,3 +38,9 @@ class AssetType(Base):
 
 	id = Column(Integer, primary_key = True)
 	type_name = Column(String(128), nullable = False, unique = True)
+
+class AssetModel(Base):
+	__tablename__ = 'asset_models'
+
+	id = Column(Integer, primary_key = True)
+	model_name = Column(String(128), nullable = False, unique = True)
