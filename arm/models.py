@@ -26,3 +26,9 @@ class Asset(Base):
 	supplier = Column(String(128), nullable = True)
 	photo = Column()
 	comments = Column(String(256))
+
+class AssetCategory(Base):
+	__tablename__ = 'asset_categories'
+
+	id = Column(Integer, primary_key = True)
+	category_name = Column(String(128), nullable = False, unique = True)
