@@ -44,3 +44,10 @@ class AssetModel(Base):
 
 	id = Column(Integer, primary_key = True)
 	model_name = Column(String(128), nullable = False, unique = True)
+
+class AssetStatus(Base):
+	__tablename__ = 'asset_status'
+
+	id = Column(Integer, primary_key = True)
+	status_code = Column(String(64), nullable = False, unique = True)
+	status_name = Column(String(128), nullable = False, unique = True)
