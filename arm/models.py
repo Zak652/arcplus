@@ -51,3 +51,10 @@ class AssetStatus(Base):
 	id = Column(Integer, primary_key = True)
 	status_code = Column(String(64), nullable = False, unique = True)
 	status_name = Column(String(128), nullable = False, unique = True)
+
+class Location(Base):
+	__tablename__ = 'locations'
+
+	id = Column(Integer, primary_key = True)
+	location_code = Column(String(64), nullable = False, unique = True)
+	location_name = Column(String(128), nullable = False)
