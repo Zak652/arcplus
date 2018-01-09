@@ -102,3 +102,4 @@ class SupplierCategory(Base):
 
 	id = Column(Integer, primary_key = True)
 	category_name = Column(String(128), nullable = False, unique = True)
+	
