@@ -84,3 +84,15 @@ class PeopleCategory(Base):
 
 	id = Column(Integer, primary_key = True)
 	category_name = Column(String(128), nullable = False, unique = True)
+
+class Supplier(Base):
+	__tablename__ = 'suppliers'
+
+	id = Column(Integer, primary_key = True)
+	code = Column(String(64), nullable = False, unique = True)
+	category = Column(String(128), nullable = False)
+	phone = Column(Integer, nullable = False, unique = True)
+	email = Column(String(128), unique = True)
+	location = Column(String(128), nullable = False)
+	website = Column(String(128), nullable = True, unique = True)
+	person = Column(String(128), nullable = True)
