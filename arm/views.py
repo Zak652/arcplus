@@ -21,7 +21,7 @@ PAGINATE_BY = 20
 # Landing page that gives you access to the full asset register
 @app.route("/")
 @app.route("/page/<int:page>")
-def register(page = 1):
+def assets_register(page = 1):
 	# Index for page Zero
 	page_index = page - 1
 
@@ -43,7 +43,7 @@ def register(page = 1):
     assets = assets[start:end]
 
     #Render assets from query results to html
-    return render_template("register.html",
+    return render_template("assets_register.html",
         assets = assets,
         next_page = next_page,
         prev_page = prev_page,
