@@ -4,7 +4,7 @@ class AssetsReg(Table):
     id = Col('ID', show = False)
 	barcode = Col('Barcode', show = True)
 	serial_no = Col('Serial No.', show = False)
-	datetime = Col('Modified Date', show = True)
+	capture_date = Col('Modified Date', show = True)
 	name = Col('Name', show = True)
 	category = Col('Category', show = True)
 	_type = Col('Type', show = True)
@@ -17,5 +17,4 @@ class AssetsReg(Table):
 	supplier = Col('Supplier', show = False)
 	photo = Col('Photo', show = False)
 	comments = Col('Comments', show = False)
-	edit = LinkCol('Edit', 'edit', url_kwargs=dict(id = 'id'))
-	
+	edit = LinkCol('Edit', 'edit_asset', url_kwargs=dict(id = 'id'))
