@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import login_user, logout_user
 
 from . import app
-from . database import session, User
+from . database import session, User, Asset
 
 # solves most responses you need
 from flask import render_template, request, redirect, url_for, flash
@@ -11,9 +11,9 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, login_user, current_user
 from werkzeug.security import check_password_hash
 
-@app.route("/", methods=['GET'])
-def index():
-	return render_template('index.html')
+# @app.route("/", methods=['GET'])
+# def index():
+# 	return render_template('index.html')
 
 
 PAGINATE_BY = 20
@@ -22,18 +22,19 @@ PAGINATE_BY = 20
 @app.route("/")
 @app.route("/page/<int:page>")
 def assets_register(page = 1):
-	# Index for page Zero
-	page_index = page - 1
+    # Index for page Zero
+    page_index = page - 1
 
-	#Get the total number of assets in the register
-	assets_count = session.query(Asset).count()
+    #Get the total number of assets in the register
+    assets_count = session.query(Asset).count()
+    print(assets_count)
 
-	#Indicate start and end of pages
-	start = page_index * PAGINATE_BY
+    #Indicate start and end pages
+    start = page_index * PAGINATE_BY
     end = start + PAGINATE_BY
 
     #Navigation between pages
-    total_pages = (count - 1) // PAGINATE_BY + 1
+    total_pages = (assets_count - 1) // PAGINATE_BY + 1
     next_page = page_index < total_pages - 1
     prev_page = page_index > 0
 
@@ -49,12 +50,15 @@ def assets_register(page = 1):
         prev_page = prev_page,
         page = page,
         total_pages = total_pages
-    )
+        )
 
-#Route for adding new assets
+#Route for collecting new assets information
+@app.route("/add_asset", methods=["GET"])
+def get_asset_info():
+    return render_template("add_asset.html")
 
-@app.route("/add_asset", methods=["POST"])
-@login_required
+#Route for posting asset info to database
+@app.route("/add_asset", methods = ["POST"])
 def add_asset():
     asset = Asset(
         barcode = request.form['barcode'],

@@ -1,10 +1,12 @@
 import os.path
 
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-from . database import Base, engine
+from .database import Base, engine
 from . import app
+
+import datetime
 
 from flask_login import UserMixin
 
@@ -22,7 +24,7 @@ class Asset(Base):
 	id = Column(Integer, primary_key = True)
 	barcode = Column(String, nullable = False, unique = True)
 	serial_no = Column(String, nullable = True)
-	capture_date = Column(Datetime, default = datetime.datetime.now)
+	capture_date = Column(DateTime, default = datetime.datetime.now)
 	name = Column(String(128), nullable = False)
 	category = Column(String(128), nullable = False)
 	_type = Column(String(128), nullable = False)
@@ -33,7 +35,7 @@ class Asset(Base):
 	purchase_price = Column(Integer, nullable = True)
 	value = Column(Integer, nullable = True)
 	supplier = Column(String(128), nullable = True)
-	photo = Column(nullable = True)
+	photo = Column(String, nullable = True)
 	comments = Column(String(256), nullable = True)
 
 class AssetCategory(Base):

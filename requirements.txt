@@ -1,10 +1,16 @@
 Flask
+flask
+flask-login
+flask-script
+flask-migrate
 flask_table
 Jinja2
 MarkupSafe
 SQLAlchemy
+sqlalchemy
 Werkzeug
 itsdangerous
 jsonschema
 nose
 psycopg2
+mistune
