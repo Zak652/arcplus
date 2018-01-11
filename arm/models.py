@@ -38,6 +38,18 @@ class Asset(Base):
 	photo = Column(String, nullable = True)
 	comments = Column(String(256), nullable = True)
 
+	#Return asset object as dictionary
+	def as_dictionary(self):
+		asset={"id": self.id, "barcode": self.barcode, "serial_no": self.serial_no,
+				"capture_date": self.capture_date, "name": self.name, "category": self.category,
+				"_type": self._type, "_model": self._model, "status": self.status,
+				"location": self.location, "user": self.user, "purchase_price": self.purchase_price,
+				"value": self.value, "supplier": self.supplier, "photo": self.photo,
+				"comments": self.comments
+				}
+		return asset
+
+
 class AssetCategory(Base):
 	__tablename__ = 'asset_categories'
 
