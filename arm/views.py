@@ -50,3 +50,26 @@ def assets_register(page = 1):
         page = page,
         total_pages = total_pages
     )
+
+#Route for adding new assets
+
+@app.route("/add_asset", methods=["POST"])
+@login_required
+def add_asset():
+    asset = Asset(
+        barcode = request.form['barcode'],
+        serial_no = request.form['serial'],
+        name = request.form['name'],
+        category = request.form['category'],
+        _type = request.form['_type'],
+        _model = request.form['_model'],
+        status = request.form['status'],
+        location = request.form['location'],
+        user = request.form['user'],
+        purchase_price = request.form['price'],
+        supplier = request.form['supplier']
+    )
+    session.add(asset)
+    session.commit()
+    return redirect(url_for("assets_register"))
+
