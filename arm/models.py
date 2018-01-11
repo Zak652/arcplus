@@ -24,8 +24,8 @@ class Asset(Base):
 	purchase_price = Column(Integer, nullable = True)
 	value = Column(Integer, nullable = True)
 	supplier = Column(String(128), nullable = True)
-	photo = Column()
-	comments = Column(String(256))
+	photo = Column(nullable = True)
+	comments = Column(String(256), nullable = True)
 
 class AssetCategory(Base):
 	__tablename__ = 'asset_categories'
