@@ -13,7 +13,7 @@ class Asset(Base):
 	id = Column(Integer, primary_key = True)
 	barcode = Column(String, nullable = False, unique = True)
 	serial_no = Column(String, nullable = True)
-	datetime = Column(Datetime, default = datetime.datetime.now)
+	capture_date = Column(Datetime, default = datetime.datetime.now)
 	name = Column(String(128), nullable = False)
 	category = Column(String(128), nullable = False)
 	_type = Column(String(128), nullable = False)
