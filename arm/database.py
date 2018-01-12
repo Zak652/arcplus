@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from flask_login import UserMixin
 
-from . import app
+from . import app, models
 
 import datetime
 

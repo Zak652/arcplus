@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<table style="width:100%">
+  <!-- table header -->
+  <tr>
+     {% for key in data[0] %}
+     <th> {{ key }} </th>
+     {% endfor %}
+  </tr>
+
+  <!-- table rows -->
+  <!-- {% for dict_item in data %}
+  <tr>
+     {% for value in dict_item.values() %}
+     <td> {{ value }} </td>
+     {% endfor %}
+  </tr>
+  {% endfor %} -->
+
+{% endblock %}

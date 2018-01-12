@@ -1,22 +1,7 @@
-{% macro render_asset(asset) %}
-
-{{ table }}
-<!-- <div class="row">
-    <div class="col-md-2 text-right metadata">
-        <ul class="list-unstyled">
-            <li>
-                {{ asset.name }}
-            </li>
-            <li>
-                {{ entry.datetime | dateformat("%d/%m/%y") }}
-            </li>
-        </ul>
-    </div>
-    <div class="col-md-10">
-        <h1>
-            <a href="{{ url_for('single_entry_view', id = entry.id) }}">{{ entry.title }}</a>
-        </h1>
-        {{ entry.content | markdown }}
-    </div>
-</div> -->
+{% macro nav_link(endpoint, name) %}
+{% if request.endpoint.endswith(endpoint) %}
+    <a href="{{ url_for(endpoint) }}" class="active">{{name}}</a>
+{% else %}
+    <a href="{{ url_for(endpoint) }}">{{name}}</a>
+{% endif %}
 {% endmacro %}
