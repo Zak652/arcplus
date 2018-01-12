@@ -5,18 +5,18 @@
 <table style="width:100%">
   <!-- table header -->
   <tr>
-     {% for key in data[0] %}
+     {% for key in assets[0] %}
      <th> {{ key }} </th>
      {% endfor %}
   </tr>
 
   <!-- table rows -->
-  <!-- {% for dict_item in data %}
+  {% for asset in assets %}
   <tr>
-     {% for value in dict_item.values() %}
-     <td> {{ value }} </td>
+     {% for value in asset.values() %}
+     <td href=#> {{ value }} </td>
      {% endfor %}
   </tr>
-  {% endfor %} -->
+  {% endfor %}
 
 {% endblock %}

@@ -32,10 +32,10 @@ def asset_register():
 	data = json.dumps([asset.as_dictionary() for asset in assets], indent=4, sort_keys=False, default=str)
 
     #Return response and render html
-	return Response(data, 200, mimetype="application/json"), render_template("asset_register.html", data = data)
+	return Response(data, 200, mimetype="application/json")
 
 #Single asset view based on asset barcode
-@app.route("/api/register/<int:id>", methods=["GET"])
+@app.route("/api/register/<barcode>", methods=["GET"])
 @decorators.accept("application/json")
 def get_asset(barcode):
     """ Single asset view endpoint """
@@ -100,7 +100,7 @@ def add_asset():
 
 
 #Route for deleting asset from register
-@app.route("/api/register/<int:id>", methods = ["DELETE"])
+@app.route("/api/register/<barcode>", methods = ["DELETE"])
 @decorators.accept("application/json")
 def delete_asset(barcode):
     """ Delete a single asset from register """

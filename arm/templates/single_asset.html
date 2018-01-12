@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<p>Details for asset: {{ asset[0]['barcode'] }} </p>
+<table style="width:100%">
+  <!-- table header -->
+  <tr>
+     {% for key in asset[0] %}
+     <th> {{ key }} </th>
+     {% endfor %}
+  </tr>
+
+  <!-- table rows -->
+  <tr>
+     {% for value in asset[0].values() %}
+     <td> {{ value }} </td>
+     {% endfor %}
+  </tr>
+
+{% endblock %}
