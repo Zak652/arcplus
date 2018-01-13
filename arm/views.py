@@ -48,13 +48,13 @@ def view_single_asset(barcode):
 
 #Create new asset route
 @app.route("/register/add_asset", methods = ["GET"])
-def get_new_asset():
+def create_asset():
 	"""	Provides empty form to be filled with asset details	"""
 
 	return render_template("add_asset.html")
 
 @app.route("/register/add_asset", methods = ["POST"])
-def add_new_asset():
+def add_asset():
 	"""
 	Captures new asset information and 
 	creates add entry in the database
@@ -71,7 +71,8 @@ def add_new_asset():
 			location = request.form['location'],
 			user = request.form['user'],
 			purchase_price = request.form['price'],
-			supplier = request.form['supplier']
+			supplier = request.form['supplier'],
+			comments = request.form["comments"]
 			)
 	#Add entry to database
 	session.add(new_asset)
@@ -86,16 +87,16 @@ def add_new_asset():
 def edit_asset(barcode):
 	""" Provide form populated with asset information to be edited """
 
-    asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
-    asset = asset[0]
+	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
+	asset = asset[0]
 
-    return render_template("edit_asset.html",
-    		barcode = asset.barcode, serial_no = asset.serial_no,
-    		name = asset.name, category = asset.category, _type = asset._type,
-    		_model = asset._model, status = asset.status, location = asset.location,
-    		user = asset.user, purchase_price = asset.purchase_price,
-    		supplier = asset.supplier, comments = asset.comments
-    		)
+	return render_template("edit_asset.html", 
+		barcode = asset.barcode, serial_no = asset.serial_no,
+    	name = asset.name, category = asset.category, _type = asset._type,
+    	_model = asset._model, status = asset.status, location = asset.location,
+    	user = asset.user, purchase_price = asset.purchase_price,
+    	supplier = asset.supplier, comments = asset.comments
+    	)
 
 @app.route("/register/edit/<barcode>", methods=['POST'])
 def update_asset(barcode):
@@ -104,7 +105,7 @@ def update_asset(barcode):
 	posts updated information to the database
 	"""
 	#Capture updates from asset form
-    asset_update = models.Asset(
+	asset_update = models.Asset(
     		id = id,
     		barcode = request.form["barcode"],
     		serial_no = request.form["serial_no"],
@@ -119,12 +120,12 @@ def update_asset(barcode):
     		supplier = request.form["supplier"],
     		comments = request.form["comments"]
     		)
-    #Merge updates with asset entry 
-    session.merge(asset_update)
-    session.commit()
+    #Merge updates with asset entry
+	session.merge(asset_update)
+	session.commit()
 
     #Return to asset register
-    return redirect(url_for("view_register"))
+	return redirect(url_for("view_register"))
 
 #Delete asset from register
 @app.route("/register/delete/<barcode>")
@@ -133,11 +134,11 @@ def asset_to_delete(barcode):
 	Identify asset to be deleted bassed on provided barcode
 	"""
     #Query database for asset
-    asset_search = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
-    asset = [result.as_dictionary() for result in asset_search]
+	asset_search = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
+	asset = [result.as_dictionary() for result in asset_search]
 
     #Display the asset details for confirmation
-    return render_template("delete_asset.html", asset = asset)
+	return render_template("delete_asset.html", asset = asset)
 
 @app.route("/register/delete/<barcode>")
 def delete_asset(barcode):
@@ -145,11 +146,11 @@ def delete_asset(barcode):
 	Search for confirmed asset and deletes it from the database
 	"""
     #Search database for asset
-    asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
+	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
 
     #Delete asset from database
-    session.delete(asset)
-    session.commit()
+	session.delete(asset)
+	session.commit()
 
     #Return to asset register
-    return redirect(url_for("view_register"))
+	return redirect(url_for("view_register"))

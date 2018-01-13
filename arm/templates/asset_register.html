@@ -14,7 +14,7 @@
   {% for asset in assets %}
   <tr>
      {% for value in asset.values() %}
-     <td href=#> {{ value }} </td>
+     <td><a href="{{ url_for('view_single_asset', barcode = asset.barcode) }}">{{ value }}</a></td>
      {% endfor %}
   </tr>
   {% endfor %}

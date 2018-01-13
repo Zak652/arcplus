@@ -7,37 +7,41 @@
 
 <form role="form" method="POST">
     <div class="form-group">
-        <label for="title">Barcode</label><input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter Barcode" required>
+        <label for="title">Barcode</label><input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter Barcode">
     </div>
     <div class="form-group">
-        <label for="title">Serial No.</label><input type="text" class="form-control" id="serial" name="serial" placeholder="Enter Serial No." required>
+        <label for="title">Serial No.</label><input type="text" class="form-control" id="serial" name="serial" placeholder="Enter Serial No.">
     </div>
     <div class="form-group">
-        <label for="title">Name</label><input type="text" class="form-control" id="name" name="name" placeholder="Enter Asset Name" required>
+        <label for="title">Name</label><input type="text" class="form-control" id="name" name="name" placeholder="Enter Asset Name">
     </div>
     <div class="form-group">
-        <label for="title">Category</label><input type="text" class="form-control" id="category" name="category" placeholder="Enter Asset Category" required>
+        <label for="title">Category</label><input type="number" class="form-control" id="category" name="category" placeholder="Enter Asset Category">
     </div>
     <div class="form-group">
-        <label for="title">Type</label><input type="text" class="form-control" id="_type" name="_type" placeholder="Enter Asset Type" required>
+        <label for="title">Type</label><input type="number" class="form-control" id="_type" name="_type" placeholder="Enter Asset Type">
     </div>
     <div class="form-group">
-        <label for="title">Model</label><input type="text" class="form-control" id="_model" name="_model" placeholder="Enter Asset Model" required>
+        <label for="title">Model</label><input type="number" class="form-control" id="_model" name="_model" placeholder="Enter Asset Model">
     </div>
     <div class="form-group">
-        <label for="title">Status</label><input type="text" class="form-control" id="status" name="status" placeholder="Enter Asset Status" required>
+        <label for="title">Status</label><input type="number" class="form-control" id="status" name="status" placeholder="Enter Asset Status">
     </div>
     <div class="form-group">
-        <label for="title">Location</label><input type="text" class="form-control" id="location" name="location" placeholder="Enter Asset Location" required>
+        <label for="title">Location</label><input type="number" class="form-control" id="location" name="location" placeholder="Enter Asset Location">
     </div>
     <div class="form-group">
-        <label for="title">User</label><input type="text" class="form-control" id="user" name="user" placeholder="Enter Asset User" required>
+        <label for="title">User</label><input type="number" class="form-control" id="user" name="user" placeholder="Enter Asset User">
     </div>
     <div class="form-group">
-        <label for="title">Purchase Price</label><input type="text" class="form-control" id="price" name="price" placeholder="Enter Purchase Price" required>
+        <label for="title">Purchase Price</label><input type="number" class="form-control" id="price" name="price" placeholder="Enter Purchase Price">
     </div>
     <div class="form-group">
-        <label for="title">Supplier</label><input type="text" class="form-control" id="supplier" name="supplier" placeholder="Enter Supplier" required>
+        <label for="title">Supplier</label><input type="number" class="form-control" id="supplier" name="supplier" placeholder="Enter Supplier">
+    </div>
+    <div class="form-group">
+        <label for="content">Comments</label>
+        <textarea class="form-control" id="comments" name="comments" placeholder="Entry comments" rows="20">{{comments}}</textarea>
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
 </form>

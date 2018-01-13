@@ -16,5 +16,5 @@
      <td> {{ value }} </td>
      {% endfor %}
   </tr>
-
+<a href="{{ url_for('edit_asset', barcode = asset[0]['barcode']) }}">Edit</a>    <a href="{{ url_for('asset_to_delete', barcode = asset[0]['barcode']) }}">Delete</a>
 {% endblock %}

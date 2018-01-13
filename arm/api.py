@@ -56,7 +56,7 @@ def get_asset(barcode):
 #Route for collecting new assets information
 @app.route("/api/add_asset", methods=["GET"])
 @decorators.accept("application/json")
-def new_asset_data():
+def get_asset_data():
 	""" Provides form to be filled with new asset data """
 
 	return render_template("add_asset.html")
@@ -65,7 +65,7 @@ def new_asset_data():
 #Route for posting asset info to database
 @app.route("/api/add_asset", methods = ["POST"])
 @decorators.accept("application/json")
-def add_asset():
+def add_new_asset():
 	""" Create New Asset """
 
 	#Capture data from new asset form
@@ -102,7 +102,7 @@ def add_asset():
 #Route for deleting asset from register
 @app.route("/api/register/<barcode>", methods = ["DELETE"])
 @decorators.accept("application/json")
-def delete_asset(barcode):
+def asset_asset(barcode):
     """ Delete a single asset from register """
     asset = session.query(models.Asset).get(barcode)
     
