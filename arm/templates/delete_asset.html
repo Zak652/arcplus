@@ -4,21 +4,21 @@
 <p>Are you sure you want to delete the asset below?</p>
 <p>NOTE: Once asset is deleted it can't be recovered.</p>
 
-<p>Details for asset: {{ asset[0]['barcode'] }} </p>
+<p>Details for asset: {{ asset['barcode'] }} </p>
 <table style="width:100%">
   <!-- table header -->
   <tr>
-     {% for key in asset[0] %}
+     {% for key in asset %}
      <th> {{ key }} </th>
      {% endfor %}
   </tr>
 
   <!-- table rows -->
   <tr>
-     {% for value in asset[0].values() %}
+     {% for value in asset.values() %}
      <td> {{ value }} </td>
      {% endfor %}
   </tr>
 
-<a href="{{ url_for('delete_asset', barcode = asset[0]['barcode']) }}">Delete</a>    <a href="{{ url_for('view_register') }}">Cancel</a>
+<a href="{{ url_for('delete_asset', barcode = asset['barcode']) }}">Delete</a>    <a href="{{ url_for('view_register') }}">Cancel</a>
 {% endblock %}

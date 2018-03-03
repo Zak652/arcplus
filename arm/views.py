@@ -83,7 +83,7 @@ def add_asset():
 
 
 #Modify Existing Asset
-@app.route("/register/edit/<barcode>", methods=["GET"])
+@app.route("/register/edit/asset/<barcode>", methods=["GET"])
 def edit_asset(barcode):
 	""" Provide form populated with asset information to be edited """
 
@@ -98,7 +98,7 @@ def edit_asset(barcode):
     	supplier = asset.supplier, comments = asset.comments
     	)
 
-@app.route("/register/edit/<barcode>", methods=['POST'])
+@app.route("/register/edit/asset/<barcode>", methods=['POST'])
 def update_asset(barcode):
 	"""
 	Captures updated asset information and 
@@ -117,7 +117,9 @@ def update_asset(barcode):
     		location = request.form["location"],
     		user = request.form["user"],
     		purchase_price = request.form["purchase_price"],
+    		value = request.form["value"],
     		supplier = request.form["supplier"],
+    		photo = request.form["photo"],
     		comments = request.form["comments"]
     		)
     #Merge updates with asset entry
@@ -128,7 +130,7 @@ def update_asset(barcode):
 	return redirect(url_for("view_register"))
 
 #Delete asset from register
-@app.route("/register/delete/<barcode>")
+@app.route("/register/delete/asset/<barcode>")
 def asset_to_delete(barcode):
 	"""
 	Identify asset to be deleted bassed on provided barcode
@@ -136,11 +138,12 @@ def asset_to_delete(barcode):
     #Query database for asset
 	asset_search = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
 	asset = [result.as_dictionary() for result in asset_search]
+	asset = asset[0]
 
     #Display the asset details for confirmation
 	return render_template("delete_asset.html", asset = asset)
 
-@app.route("/register/delete/<barcode>")
+@app.route("/register/deleted/<barcode>")
 def delete_asset(barcode):
 	"""
 	Search for confirmed asset and deletes it from the database
