@@ -6,49 +6,37 @@
 </h1>
 
 <form role="form" method="POST">
-    <div class="form-group">
-        <label for="title">Barcode</label><input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter Barcode" value="{{barcode}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Serial No.</label><input type="text" class="form-control" id="serial" name="serial" placeholder="Enter Serial No." value="{{serial_no}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Name</label><input type="text" class="form-control" id="name" name="name" placeholder="Enter Asset Name" value="{{name}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Category</label><input type="number" class="form-control" id="category" name="category" placeholder="Enter Asset Category" value="{{category}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Type</label><input type="number" class="form-control" id="_type" name="_type" placeholder="Enter Asset Type" value="{{_type}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Model</label><input type="number" class="form-control" id="_model" name="_model" placeholder="Enter Asset Model" value="{{_model}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Status</label><input type="number" class="form-control" id="status" name="status" placeholder="Enter Asset Status" value="{{status}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Location</label><input type="number" class="form-control" id="location" name="location" placeholder="Enter Asset Location" value="{{location}}">
-    </div>
-    <div class="form-group">
-        <label for="title">User</label><input type="number" class="form-control" id="user" name="user" placeholder="Enter Asset User" value="{{user}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Purchase Price</label><input type="number" class="form-control" id="purchase_price" name="purchase_price" placeholder="Enter Purchase Price" value="{{purchase_price}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Value</label><input type="number" class="form-control" id="value" name="value" placeholder="Enter Asset Value" value="{{value}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Supplier</label><input type="number" class="form-control" id="supplier" name="supplier" placeholder="Enter Supplier" value="{{supplier}}">
-    </div>
-    <div class="form-group">
-        <label for="title">Photo</label><input type="text" class="form-control" id="photo" name="photo" placeholder="Enter Photo" value="{{photo}}">
-    </div>
-    <div class="form-group">
-        <label for="content">Comments</label>
-        <textarea class="form-control" id="comments" name="comments" placeholder="Entry comments" rows="20" required>{{comments}}</textarea>
-    </div>
-    <button type="submit" class="btn btn-default">Update Asset</button>
+    ID:<br>
+        <input type="text" id="id" name="id" value="{{id}}" readonly><br>
+    Barcode:<br>
+        <input type="text" id="barcode" name="barcode" value="{{barcode}}"><br>
+    Serial No:<br>
+        <input type="text" id="serial_no" name="serial_no" value="{{serial_no}}"><br>
+    Name:<br>
+        <input type="text" id="name" name="name" value="{{name}}"><br>
+    Category:<br>
+        <input type="text" id="category" name="category" value="{{category}}"><br>
+    Type:<br>
+        <input type="text" id="_type" name="_type" value="{{_type}}"><br>
+    Model:<br>
+        <input type="text" id="_model" name="_model" value="{{_model}}"><br>
+    Status:<br>
+        <input type="text" id="status" name="status" value="{{status}}"><br>
+    Location:<br>
+        <input type="text" id="location" name="location" value="{{location}}"><br>
+    User:<br>
+        <input type="text" id="user" name="user" value="{{user}}"><br>
+    Purchase price:<br>
+        <input type="text" id="purchase_price" name="purchase_price" value="{{purchase_price}}"><br>
+    Value:<br>
+        <input type="text" id="value" name="value" value="{{value}}"><br>
+    Supplier:<br>
+        <input type="text" id="supplier" name="supplier" value="{{supplier}}"><br>
+    Photo:<br>
+        <input type="text" id="photo" name="photo" value="{{photo}}"><br>
+    Comments:<br>
+        <textarea type="text" id="comments" name="comments" rows="10" cols="40">{{comments}}</textarea>
+    <br>
+    <input type="submit" value="Submit">
 </form>
 {% endblock %}

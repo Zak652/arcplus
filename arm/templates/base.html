@@ -1,28 +1,86 @@
 <html>
     <head>
-        <title>FARM-APP</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block page_title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, intial-scale=1.0">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block header_includes %}
+    {% endblock %}
 
+    <style type="text/css">
+
+      {% block header_styles %}
+      {% endblock %}
+
+    </style>
     </head>
     <body>
-        <nav>
-            <ul class="nav navbar-nav">
-                <a href="{{ url_for('view_register') }}">Register</a>
-                <a href="{{ url_for('create_asset') }}">Add asset</a>
-            </ul>
-        </nav>
-        <div id="main">
-            {% block content %}
+        <div class="wrapper">
 
-            {% endblock %}
+            <div class="logo">FARM</div>
+
+            <div class="welcome">Welcome {{ current_user.name }}!</div>
+
+            <div class="user_controls"><a href="{{ url_for('logout') }}">Logout</a></div>
+
+            <div class="navbar">
+
+                <span class="open_side_nav">
+                    <a href="#" onclick="openSideNav()">
+                        <svg width="30" height="30">
+                            <path d="M0,5 30,5" stroke="#ddd" stroke-width="5"/>
+                            <path d="M0,14 30,14" stroke="#ddd" stroke-width="5"/>
+                            <path d="M0,23 30,23" stroke="#ddd" stroke-width="5"/>
+                        </svg>
+                    </a>
+                </span>
+
+                <ul class="main_navbar">
+                    <a href="{{ url_for('view_register') }}">Register</a>
+                    <a href="{{ url_for('create_asset') }}">Add Asset</a>
+                </ul>
+            
+            </div>
+
+            <div id="side_nav" class="side_nav">
+                <a href="#" class="close_btn" onclick="closeSideNav()">&times;</a>
+                <a href="{{ url_for('view_register') }}">Register</a>
+                <a href="{{ url_for('create_asset') }}">Add Asset</a>
+            </div>
+
+            <div id = "content_block" class="content_block">
+                {% block before_content %}
+
+                {% endblock %}
+
+
+                {% block content %}
+
+                {% endblock %}
+
+
+                {% block after_content %}
+
+                {% endblock %}
+            </div>
+            <div class="footer_block">
+                {% block footer %}
+                    
+                {% endblock %}
+            </div>
         </div>
-        <footer>
-            {% block footer %}
-                
-            {% endblock %}
-        </footer>
+        <script>
+            function openSideNav(){
+                document.getElementById('side_nav').style.width = '15.6em';
+                document.getElementById('content_block').style.marginLeft = '15.6em';
+            }
+
+            function closeSideNav(){
+                document.getElementById('side_nav').style.width = '0';
+                document.getElementById('content_block').style.marginLeft = '0';
+            }
+        </script>
     </body>
 </html>

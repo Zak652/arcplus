@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<p>Details for asset: {{ asset[0]['barcode'] }} </p>
-<table style="width:100%">
+<p>Details for asset: {{ asset[0]['Barcode'] }} </p>
+<table class="register_table"">
   <!-- table header -->
   <tr>
      {% for key in asset[0] %}
@@ -16,5 +16,6 @@
      <td> {{ value }} </td>
      {% endfor %}
   </tr>
-<a href="{{ url_for('edit_asset', barcode = asset[0]['barcode']) }}">Edit</a>    <a href="{{ url_for('asset_to_delete', barcode = asset[0]['barcode']) }}">Delete</a>
+<span class="edit_btns"><a href="{{ url_for('edit_asset', barcode = asset[0]['Barcode']) }}">Edit</a></span>
+<span class="edit_btns"><a href="{{ url_for('asset_to_delete', barcode = asset[0]['Barcode']) }}">Delete</a></span>
 {% endblock %}
