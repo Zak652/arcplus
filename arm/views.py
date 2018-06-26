@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, login_user, current_user, LoginManager, logout_user
+from flask_bootstrap import Bootstrap
 
 from flask import flash
 from getpass import getpass

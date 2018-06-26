@@ -1,22 +1,36 @@
-{% extends "base.html" %}
+{% extends "main_base.html" %}
+
+{% block title %}
+Asset Register
+{% endblock %}
+
 {% block content %}
 
-
-<table class="register_table">
+<table class="table thead-dark table-striped">
   <!-- table header -->
-  <tr>
-     {% for key in assets[0] %}
-     <th> {{ key }} </th>
-     {% endfor %}
-  </tr>
+  <thead>
+    <tr>
+      {% for key in assets[0] %}
+      {% if key not in ['Supplier', 'Photo', 'Purchase Price', 'Comments'] %}
+        <th> {{ key }} </th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+  </thead>
 
   <!-- table rows -->
-  {% for asset in assets %}
+{% for asset in assets %}
+<tbody>
   <tr>
-     {% for value in asset.values() %}
-     <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
-     {% endfor %}
+    {% for value in asset.values() %}
+    {% if value not in [asset['Supplier'], asset['Photo'], asset['Purchase Price'], asset['Comments']] %}
+      <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
+    {% endif %}
+    {% endfor %}
   </tr>
-  {% endfor %}
+</tbody>
+{% endfor %}
+
+</table>
 
 {% endblock %}

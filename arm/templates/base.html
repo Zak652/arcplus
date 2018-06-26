@@ -1,86 +1,67 @@
 <html>
     <head>
         <title>{% block page_title %}{% endblock %}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, intial-scale=1.0">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0">
     
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+        <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main-resp.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util-resp.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.css') }}"> -->
 
-    {% block header_includes %}
-    {% endblock %}
+        {% block header_includes %}
+        {% endblock %}
 
-    <style type="text/css">
-
-      {% block header_styles %}
-      {% endblock %}
-
-    </style>
+        <style></style>
     </head>
+    
     <body>
-        <div class="wrapper">
-
-            <div class="logo">FARM</div>
-
-            <div class="welcome">Welcome {{ current_user.name }}!</div>
-
-            <div class="user_controls"><a href="{{ url_for('logout') }}">Logout</a></div>
-
-            <div class="navbar">
-
-                <span class="open_side_nav">
-                    <a href="#" onclick="openSideNav()">
-                        <svg width="30" height="30">
-                            <path d="M0,5 30,5" stroke="#ddd" stroke-width="5"/>
-                            <path d="M0,14 30,14" stroke="#ddd" stroke-width="5"/>
-                            <path d="M0,23 30,23" stroke="#ddd" stroke-width="5"/>
-                        </svg>
-                    </a>
-                </span>
-
-                <ul class="main_navbar">
-                    <a href="{{ url_for('view_register') }}">Register</a>
-                    <a href="{{ url_for('create_asset') }}">Add Asset</a>
-                </ul>
-            
-            </div>
-
-            <div id="side_nav" class="side_nav">
-                <a href="#" class="close_btn" onclick="closeSideNav()">&times;</a>
-                <a href="{{ url_for('view_register') }}">Register</a>
-                <a href="{{ url_for('create_asset') }}">Add Asset</a>
-            </div>
-
-            <div id = "content_block" class="content_block">
-                {% block before_content %}
+        <!-- Header area for logo, messages and user info -->
+        <header>
+            <span>ARC-Tool</span>
+            <span>Welcome {{ current_user.name }}!</span>
+            <span><a href="{{ url for('logout') }}">Logout</a></span>
+        </header>
+        <!-- application navigation and main actions -->
+        <side-menu>
+            <ul>
+                <a href="{{ url for('view register') }}">Register</a>
+                <a href="{{ url for('create asset') }}">Add Asset</a>
+            </ul>            
+        </side-menu>
+        <!-- content area for graphs, search, register table and related context menus -->
+        <main>
+            <content-block>
+                {% block graphs_content %}
 
                 {% endblock %}
 
-
-                {% block content %}
-
-                {% endblock %}
-
-
-                {% block after_content %}
+                {% block context_menu %}
 
                 {% endblock %}
-            </div>
-            <div class="footer_block">
-                {% block footer %}
-                    
+
+                {% block register_content %}
+
                 {% endblock %}
-            </div>
-        </div>
+            </content-block>
+        </main>
+        <!-- footer content area -->
+        <footer>
+            {% block footer_content %}
+
+            {% endblock %}
+        </footer>
+        <!-- all links to scripts -->
         <script>
-            function openSideNav(){
-                document.getElementById('side_nav').style.width = '15.6em';
-                document.getElementById('content_block').style.marginLeft = '15.6em';
-            }
-
-            function closeSideNav(){
-                document.getElementById('side_nav').style.width = '0';
-                document.getElementById('content_block').style.marginLeft = '0';
-            }
+            <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
+            <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/main.js') }}"></script>
         </script>
     </body>
 </html>

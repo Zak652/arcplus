@@ -2,6 +2,7 @@ import os.path
 import json
 
 from flask import Flask, Response, send_from_directory
+from flask_bootstrap import Bootstrap
 
 # solves most responses you need
 from flask import render_template, request, redirect, url_for, flash
