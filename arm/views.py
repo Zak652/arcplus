@@ -22,7 +22,7 @@ def index():
 	return redirect(url_for("login_get"))
 
 
-# Routes for Adding New Users, Users Login and Logout
+# Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
 @app.route("/user/registration", methods = ["GET"])
@@ -78,7 +78,7 @@ def logout():
 	return redirect(url_for("login_get"))
 
 
-# Routes for Viewing full asset register, Single asset, Creating New Asset,
+# views for Viewing full asset register, Single asset, Creating New Asset,
 # Modifying Asset details and Deleting existing Asset
 
 # Full Register view route
@@ -131,7 +131,7 @@ def create_asset():
 def add_asset():
 	"""
 	Captures new asset information and 
-	creates add entry in the database
+	creates an entry in the database
 	"""
 	#Capture new asset details
 	new_asset = models.Asset(
@@ -244,7 +244,7 @@ def delete_asset(barcode):
 	return redirect(url_for("view_register"))
 
 
-# Routes to view Full list of Asset Categories, Single Asset Category,
+# Views to view Full list of Asset Categories, Single Asset Category,
 # Create New Category, Modify Existing Category details, Delete Existing Category
 
 #Route to view full list of asset categories
@@ -262,7 +262,7 @@ def view_asset_categories():
 	category_list = [category.as_dictionary() for category in categories]
 
     #Pass dictionary list into html render function
-	return render_template("asset_register.html", category_list = category_list)
+	return render_template("asset_categories.html", category_list = category_list)
 
 #Single Asset Category view route
 @app.route("/asset_categories/view/<category_code>", methods = ["GET"])
@@ -292,11 +292,11 @@ def create_asset_category():
 def add_asset_category():
 	"""
 	Captures new asset category information and 
-	creates add entry in the database
+	creates an entry in the database
 	"""
 	#Capture new asset category details
 	new_asset_category = models.AssetCategory(
-			category_code = request.form['barcode'],
+			category_code = request.form['code'],
 			category_name = request.form['name'],
 			comments = request.form["comments"]
 			)
@@ -340,3 +340,199 @@ def update_asset_category(category_code):
 
     #Return to asset register
 	return redirect(url_for("view_asset_categories"))
+
+
+# Views to view Full list of Asset Types, Single Asset Type,
+# Create New Type, Modify Existing Type details, Delete Existing Type
+
+#Route to view full list of asset types
+@app.route("/asset_types/view", methods = ["GET"])
+def view_asset_types():
+	""" 
+	Queries the database for all assets types and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get asset types from DB
+	types_reg = session.query(models.AssetType).order_by(models.AssetType.id)
+
+	#Convert types_reg to a list of dictionary items
+	types_list = [types.as_dictionary() for types in types_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("asset_types.html", types_list = types_list)
+
+#Single Asset type view route
+@app.route("/asset_types/view/<type_code>", methods = ["GET"])
+def view_single_type(type_code):
+	""" 
+	Queries the database for all asset types and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for asset types
+	type_search = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).all()
+
+	#Convert result into a list of dictionary items
+	types_list = [result.as_dictionary() for result in type_search]
+
+	#Pass asset info into html render function
+	return render_template("single_type.html", types_list = types_list)
+
+#Create new asset type route
+@app.route("/asset_types/add_asset_type", methods = ["GET"])
+def create_asset_type():
+	"""	Provides empty form to be filled with new asset type details	"""
+
+	return render_template("add_asset_type.html")
+
+@app.route("/asset_types/add_asset_type", methods = ["POST"])
+def add_asset_type():
+	"""
+	Captures new asset type information and 
+	creates an entry in the database
+	"""
+	#Capture new asset type details
+	new_asset_type = models.AssetType(
+			type_code = request.form['code'],
+			type_name = request.form['name'],
+			comments = request.form["comments"]
+			)
+	#Add entry to database
+	session.add(new_asset_type)
+	session.commit()
+
+	#Return to asset register
+	return redirect(url_for("view_asset_types"))
+
+# Modify Existing Asset Type
+@app.route("/asset_types/edit/asset_type/<type_code>", methods=["GET"])
+@login_required
+def edit_asset_type(type_code):
+	""" Provide form populated with asset model information to be edited """
+
+	types_search = session.query(models.AssetType).filter(models.AssetType.type_code_code == type_code).all()
+	_type = types_search[0]
+
+	return render_template("edit_asset_type.html", id = _type.id,
+		type_code = _type.type_code, 
+		type_name = _type.type_name, 
+		comments = _type.comments
+    	)
+
+# POST Asset Type Modifications
+@app.route("/asset_types/edit/asset_type/<type_code>", methods=['POST'])
+@login_required
+def update_asset_type(type_code):
+	"""
+	Captures updated asset type information and 
+	posts updated information to the database
+	"""
+	_type = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).first()
+	_type.type_code = request.form["code"]
+	_type.type_name = request.form["name"]
+	_type.comments = request.form["comments"]
+
+	session.add(_type)
+	session.commit()
+
+    #Return to asset types
+	return redirect(url_for("view_asset_types"))
+
+
+# Views to view Full list of Asset Models, Single Asset Model,
+# Create New Model, Modify Existing Model details, Delete Existing Model
+
+#Route to view full list of asset models
+@app.route("/asset_models/view", methods = ["GET"])
+def view_asset_models():
+	""" 
+	Queries the database for all assets models and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get assets models from DB
+	models_reg = session.query(models.AssetModel).order_by(models.AssetModel.id)
+
+	#Convert models_reg to a list of dictionary items
+	models_list = [model.as_dictionary() for model in models_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("asset_models.html", models_list = models_list)
+
+#Single Asset model view route
+@app.route("/asset_models/view/<model_code>", methods = ["GET"])
+def view_single_model(model_code):
+	""" 
+	Queries the database for all models and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for model
+	model_search = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).all()
+
+	#Convert result into a list of dictionary items
+	model = [result.as_dictionary() for result in model_search]
+
+	#Pass asset info into html render function
+	return render_template("single_model.html", model = model)
+
+#Create new asset model route
+@app.route("/asset_models/add_asset_model", methods = ["GET"])
+def create_asset_model():
+	"""	Provides empty form to be filled with new asset model details	"""
+
+	return render_template("add_asset_model.html")
+
+@app.route("/asset_models/add_asset_model", methods = ["POST"])
+def add_asset_model():
+	"""
+	Captures new asset model information and 
+	creates an entry in the database
+	"""
+	#Capture new asset category details
+	new_asset_model = models.AssetModel(
+			model_code = request.form['code'],
+			model_name = request.form['name'],
+			comments = request.form["comments"]
+			)
+	#Add entry to database
+	session.add(new_asset_model)
+	session.commit()
+
+	#Return to asset register
+	return redirect(url_for("view_asset_models"))
+
+# Modify Existing Asset Model
+@app.route("/asset_models/edit/asset_model/<model_code>", methods=["GET"])
+@login_required
+def edit_asset_model(model_code):
+	""" Provide form populated with asset model information to be edited """
+
+	model = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).all()
+	model = model[0]
+
+	return render_template("edit_asset_model.html", id = model.id,
+		model_code = model.model_code, 
+		model_name = model.model_name, 
+		comments = model.comments
+    	)
+
+# POST Asset Model Modifications
+@app.route("/asset_models/edit/asset_model/<model_code>", methods=['POST'])
+@login_required
+def update_asset_model(model_code):
+	"""
+	Captures updated asset model information and 
+	posts updated information to the database
+	"""
+	model = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).first()
+	model.model_code = request.form["code"]
+	model.model_name = request.form["name"]
+	model.comments = request.form["comments"]
+
+	session.add(model)
+	session.commit()
+
+    #Return to asset models
+	return redirect(url_for("view_asset_models"))

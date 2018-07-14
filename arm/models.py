@@ -76,6 +76,7 @@ class AssetType(Base):
 
 	# Asset type db table fields
 	id = Column(Integer, primary_key = True)
+	type_code = Column(String(128), nullable = False, unique = True)
 	type_name = Column(String(128), nullable = False, unique = True)
 	type_assets = relationship ("Asset", backref = "asset_type")
 
@@ -90,6 +91,7 @@ class AssetModel(Base):
 
 	# Asset model db table fields
 	id = Column(Integer, primary_key = True)
+	model_code = Column(String(128), nullable = False, unique = True)
 	model_name = Column(String(128), nullable = False, unique = True)
 	model_assets = relationship ("Asset", backref = "asset_model")
 
