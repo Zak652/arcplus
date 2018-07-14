@@ -14,6 +14,4 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 #Create DB models from the models file
-from .models import *
-
 Base.metadata.create_all(engine)

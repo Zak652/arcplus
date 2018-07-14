@@ -159,8 +159,8 @@ class Department(Base):
 	department_people = relationship ("People", backref = "person_department")
 
 	def as_dictionary(self):
-		_departments = {"id": self.id, "department_code": department_code,
-								"department_name": department_name
+		_departments = {"id": self.id, "department_code": self.department_code,
+								"department_name": self.department_name
 								}
 		return _departments
 

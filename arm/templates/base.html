@@ -5,13 +5,8 @@
         <meta name="viewport" content="width=device-width, intial-scale=1.0">
     
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-        <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main-resp.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util-resp.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.css') }}"> -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/offcanvas.css') }}">
 
         {% block header_includes %}
         {% endblock %}
@@ -19,22 +14,24 @@
         <style></style>
     </head>
     
-    <body>
+    <body class="bg-light">
         <!-- Header area for logo, messages and user info -->
-        <header>
-            <span>ARC-Tool</span>
-            <span>Welcome {{ current_user.name }}!</span>
-            <span><a href="{{ url for('logout') }}">Logout</a></span>
-        </header>
+        <div class="nav-scroller bg-white box-shadow">
+            <a class="nav-link active" href="#">ARC-Tool</a>
+            <a class="nav-link" href="#">Register</a>
+            <a class="nav-link" href="#">Add Asset</a>
+            <a class="nav-link">Welcome {{ current_user.name }}!</a>
+            <a class="nav-link" href="#">Logout</a>
+        </div>
         <!-- application navigation and main actions -->
-        <side-menu>
+        <!-- <side-menu>
             <ul>
                 <a href="{{ url for('view register') }}">Register</a>
                 <a href="{{ url for('create asset') }}">Add Asset</a>
             </ul>            
-        </side-menu>
+        </side-menu> -->
         <!-- content area for graphs, search, register table and related context menus -->
-        <main>
+        <main role="main" class="container">
             <content-block>
                 {% block graphs_content %}
 
@@ -56,12 +53,6 @@
             {% endblock %}
         </footer>
         <!-- all links to scripts -->
-        <script>
-            <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
-            <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-        </script>
+        <script></script>
     </body>
 </html>
