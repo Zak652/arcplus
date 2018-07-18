@@ -30,7 +30,7 @@ class Asset(Base):
 	serial_no = Column(String, nullable = True)
 	capture_date = Column(DateTime, default = datetime.datetime.now)
 	name = Column(String(128), nullable = False)
-	ccategory = Column(Integer, ForeignKey('asset_categories.id'), nullable = True)
+	category = Column(Integer, ForeignKey('asset_categories.id'), nullable = True)
 	_type = Column(Integer, ForeignKey('asset_types.id'), nullable = True)
 	_model = Column(Integer, ForeignKey('asset_models.id'), nullable = True)
 	status = Column(Integer, ForeignKey('asset_status.id'), nullable = True)
