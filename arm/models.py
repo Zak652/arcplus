@@ -29,26 +29,40 @@ class Asset(Base):
 	barcode = Column(String, nullable = False, unique = True)
 	serial_no = Column(String, nullable = True)
 	capture_date = Column(DateTime, default = datetime.datetime.now)
+	modified_date = Column(DateTime, default = datetime.datetime.now, onupdate = datetime.datetime.utcnow)
 	name = Column(String(128), nullable = False)
-	category = Column(Integer, ForeignKey('asset_categories.id'), nullable = True)
-	_type = Column(Integer, ForeignKey('asset_types.id'), nullable = True)
-	_model = Column(Integer, ForeignKey('asset_models.id'), nullable = True)
-	status = Column(Integer, ForeignKey('asset_status.id'), nullable = True)
-	location = Column(Integer, ForeignKey('locations.id'), nullable = True)
-	user = Column(Integer, ForeignKey('people.id'), nullable = True)
 	purchase_price = Column(Integer, nullable = True)
 	value = Column(Integer, nullable = True)
-	supplier = Column(Integer, ForeignKey('suppliers.id'), nullable = True)
 	photo = Column(String, nullable = True)
 	comments = Column(String(256), nullable = True)
+	category_id = Column(Integer, ForeignKey('asset_categories.id'), nullable = True)
+	category = relationship("AssetCategory", backref = "asset_category")
+	type_id = Column(Integer, ForeignKey('asset_types.id'), nullable = True)
+	_type = relationship("AssetType", backref = "asset_type")
+	model_id = Column(Integer, ForeignKey('asset_models.id'), nullable = True)
+	_model = relationship("AssetModel", backref = "asset_model")
+	status_id = Column(Integer, ForeignKey('asset_status.id'), nullable = True)
+	status = relationship("AssetStatus", backref = "asset_status")
+	location_id = Column(Integer, ForeignKey('locations.id'), nullable = True)
+	location = relationship("Location", backref = "asset_location")
+	user_id = Column(Integer, ForeignKey('people.id'), nullable = True)
+	user = relationship("People", backref = "asset_user")
+	supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable = True)
+	supplier = relationship("Supplier", backref = "asset_supplier")
+
+	def __repr__ (self):
+		return self.name
+
 
 	#Return asset object as dictionary
 	def as_dictionary(self):
 		asset={"Id": self.id, "Barcode": self.barcode, "Serial No.": self.serial_no,
-				"Capture Date": self.capture_date, "Name": self.name, "Category": self.category,
-				"Type": self._type, "Model": self._model, "Status": self.status,
-				"Location": self.location, "User": self.user, "Purchase Price": self.purchase_price,
-				"Value": self.value, "Supplier": self.supplier, "Photo": self.photo,
+				"Capture Date": self.capture_date, "modified Date": self.modified_date, 
+				"Name": self.name, "Category": self.category.category_name,
+				"Type": self._type.type_name, "Model": self._model.model_name, 
+				"Status": self.status.status_name, "Location": self.location.location_name, 
+				"User": self.user.first_name, "Purchase Price": self.purchase_price,
+				"Value": self.value, "Supplier": self.supplier.name, "Photo": self.photo,
 				"Comments": self.comments
 				}
 		return asset
@@ -63,7 +77,10 @@ class AssetCategory(Base):
 	category_code = Column(String(128), nullable = False, unique = True)
 	category_name = Column(String(128), nullable = False, unique = True)
 	comments = Column(String(256), nullable = True)
-	# category_assets = relationship("Asset", backref = "asset_category")
+	category_assets = relationship("Asset", backref = "asset_category")
+
+	def __repr__(self):
+		return self.category_name
 
 	# Return asset category object as dictionary
 	def as_dictionary(self):
@@ -80,6 +97,9 @@ class AssetType(Base):
 	type_name = Column(String(128), nullable = False, unique = True)
 	type_assets = relationship ("Asset", backref = "asset_type")
 
+	def __repr__(self):
+		return self.type_name
+
 	# Return asset type object as dictionary
 	def as_dictionary(self):
 		_types = {"id": self.id, "type_name": self.type_name}
@@ -95,6 +115,9 @@ class AssetModel(Base):
 	model_name = Column(String(128), nullable = False, unique = True)
 	model_assets = relationship ("Asset", backref = "asset_model")
 
+	def __repr__(self):
+		return self.model_name
+
 	# Return asset model object as dictionary
 	def as_dictionary(self):
 		_models = {"id": self.id, "model_name": self.model_name}
@@ -109,6 +132,9 @@ class AssetStatus(Base):
 	status_code = Column(String(64), nullable = False, unique = True)
 	status_name = Column(String(128), nullable = False, unique = True)
 	status_assets = relationship ("Asset", backref = "asset_status")
+
+	def __repr__(self):
+		return self.status_name
 
 	# Return asset status object as dictionary
 	def as_dictionary(self):
@@ -126,8 +152,11 @@ class Location(Base):
 	location_code = Column(String(64), nullable = False, unique = True)
 	location_name = Column(String(128), nullable = False)
 	category = Column(Integer, ForeignKey("location_categories.id"), nullable = True)
-	location_assets = relationship ("Asset", backref = "asset_location")
-	location_people = relationship ("People", backref = "person_location")
+	location_assets = relationship ("Asset", backref = "location")
+	location_people = relationship ("People", backref = "location")
+
+	def __repr__(self):
+		return self.location_name
 
 	# Return asset locations object as dictionary
 	def as_dictionary(self):
@@ -145,6 +174,9 @@ class LocationCategory(Base):
 	id = Column(Integer, primary_key = True)
 	category_name = Column(String(128), nullable = False, unique = True)
 	category_locations = relationship ("Location", backref = "location_category")
+
+	def __repr__(self):
+		return self.category_name
 
 	# Return asset locations categories as dictionary
 	def as_dictionary(self):
@@ -166,6 +198,10 @@ class People(Base):
 	location = Column(Integer, ForeignKey("locations.id"), nullable = False)
 	phone = Column(Integer, unique = True)
 	email = Column(String(128), unique = True)
+	user_assets = relationship ("Asset", backref = "user")
+
+	def __repr__(self):
+		return self.first_name
 
 	# Return people as dictionary
 	def as_dictionary(self):
@@ -185,6 +221,9 @@ class PeopleCategory(Base):
 	category_name = Column(String(128), nullable = False, unique = True)
 	category_people = relationship ("People", backref = "person_category")
 
+	def __repr__(self):
+		return self.category_name
+
 	# Return People categories as dictionary
 	def as_dictionary(self):
 		people_category = {"id": self.id, "category_name": self.category_name}
@@ -200,6 +239,9 @@ class Department(Base):
 	department_name = Column(String(128), nullable = False)
 	department_people = relationship ("People", backref = "person_department")
 
+	def __repr__(self):
+		return self.department_name
+
 	# Return departments as dictionary
 	def as_dictionary(self):
 		_departments = {"id": self.id, "department_code": self.department_code,
@@ -214,12 +256,17 @@ class Supplier(Base):
 	# Supplier db table fields
 	id = Column(Integer, primary_key = True)
 	code = Column(String(64), nullable = False, unique = True)
+	name = Column(String(128), nullable = False)
 	category = Column(Integer, ForeignKey("suppliers_category.id"), nullable = False)
 	phone = Column(Integer, nullable = False, unique = True)
 	email = Column(String(128), unique = True)
 	location = Column(Integer, ForeignKey("locations.id"), nullable = False)
 	website = Column(String(128), nullable = True, unique = True)
 	person = Column(Integer, ForeignKey("people.id"), nullable = True)
+	supplier_assets = relationship ("Asset", backref = "asset_supplier")
+
+	def __repr__(self):
+		return self.name
 
 	# Return suppliers as dictionary
 	def as_dictionary(self):
@@ -237,6 +284,9 @@ class SupplierCategory(Base):
 	id = Column(Integer, primary_key = True)
 	category_name = Column(String(128), nullable = False, unique = True)
 	category_suppliers = relationship ("Supplier", backref = "supplier_category")
+
+	def __repr__(self):
+		return self.category_name
 
 	# Return supplier categories as dictionary
 	def as_dictionary(self):
