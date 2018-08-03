@@ -77,6 +77,7 @@ class AssetCategory(Base):
 	category_code = Column(String(128), nullable = False, unique = True)
 	category_name = Column(String(128), nullable = False, unique = True)
 	comments = Column(String(256), nullable = True)
+	category_type = relationship ("AssetType", backref = "category_type")
 	category_assets = relationship("Asset", backref = "asset_category")
 
 	def __repr__(self):
@@ -95,6 +96,8 @@ class AssetType(Base):
 	id = Column(Integer, primary_key = True)
 	type_code = Column(String(128), nullable = False, unique = True)
 	type_name = Column(String(128), nullable = False, unique = True)
+	type_category = Column(Integer, ForeignKey('asset_category.id'), nullable = False)
+	type_model = relationship ("AssetModel", backref = "type_model")
 	type_assets = relationship ("Asset", backref = "asset_type")
 
 	def __repr__(self):
@@ -113,6 +116,7 @@ class AssetModel(Base):
 	id = Column(Integer, primary_key = True)
 	model_code = Column(String(128), nullable = False, unique = True)
 	model_name = Column(String(128), nullable = False, unique = True)
+	model_type = Column(Integer, ForeignKey('asset_types.id'), nullable = True)
 	model_assets = relationship ("Asset", backref = "asset_model")
 
 	def __repr__(self):

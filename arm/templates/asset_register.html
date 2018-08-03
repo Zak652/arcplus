@@ -5,6 +5,7 @@ Asset Register
 {% endblock %}
 
 {% block navbar %}
+
 <span>
 <ul class="nav nav-tab">
   <li class="nav-item">
@@ -17,13 +18,8 @@ Asset Register
 </span>
 <span>
 <ul class="nav nav-tab justify-content-end">
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Welcome {{ current_user.name }}!</a>
-    <div class="dropdown-menu">
-      <a class="dropdown-item" href="#">Action</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
-    </div>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Welcome {{ current_user.name }}!</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{{ url_for('logout') }}">logout</a>
