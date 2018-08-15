@@ -1,9 +1,9 @@
-Flask
 flask
 flask-login
 flask-script
 flask-migrate
 flask_table
+Flask-Bootstrap4
 Jinja2
 MarkupSafe
 SQLAlchemy
