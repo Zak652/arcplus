@@ -1,0 +1,26 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+Edit Asset Type Details
+{% endblock %}
+
+{% block content %}
+<h3>
+    Edit Asset Type
+</h3>
+
+<form role="form" method="POST">
+    ID:<br>
+        <input type="text" id="id" name="id" value="{{id}}" readonly><br>
+    Type Code:<br>
+        <input type="text" id="code" name="code" value="{{code}}"><br>
+    Type Name:<br>
+        <input type="text" id="name" name="name" value="{{name}}"><br>
+    Type Category:<br>
+        <input type="text" id="type_category" name="type_category" value="{{type_category}}"><br>
+    Comments:<br>
+        <textarea type="text" id="comments" name="comments" rows="10" cols="40">{{comments}}</textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

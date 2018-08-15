@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+Edit Asset Category Details
+{% endblock %}
+
+{% block content %}
+<h3>
+    Edit Asset Category
+</h3>
+
+<form role="form" method="POST">
+    ID:<br>
+        <input type="text" id="id" name="id" value="{{id}}" readonly><br>
+    Category Code:<br>
+        <input type="text" id="code" name="code" value="{{code}}"><br>
+    Name:<br>
+        <input type="text" id="name" name="name" value="{{name}}"><br>
+    Comments:<br>
+        <textarea type="text" id="comments" name="comments" rows="10" cols="40">{{comments}}</textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

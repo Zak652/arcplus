@@ -35,20 +35,22 @@ def add_user():
 @app.route("/user/registration", methods = ["POST"])
 def new_user():
 
-	name = request.form['name']
-	email = request.form['email']
-	# email should be unique, check if it exists
-	if session.query(models.User).filter_by(email=email).first():
-		flash("User with that email address already exists", "danger")
-		return
-	# Password needs to be 8 characters or more
-	password = request.form['password']
-	if len(password) < 8:
-		flash("Password should be 8 or more characters long")
-		return
+	if request.method == 'POST':
+		name = request.form['name']
+		email = request.form['email']
+		#check if email is unique / doesn't exist already
+		if session.query(models.User).filter_by(email=email).first():
+			flash("User with that email address already exists", "danger")
+			return
+		password = request.form['password']
+		#Check if password is not less than 8 characters
+		if len(password) < 8:
+			flash("Password should be 8 or more characters long")
+			return
+
 	# Add users to DB
-	user = models.User(name=name, email = email, password = generate_password_hash(password))
-	session.add(user)
+	new_user = models.User(name=name, email = email, password = generate_password_hash(password))
+	session.add(new_user)
 	session.commit()
 	return redirect(url_for("login_get"))
 
@@ -143,10 +145,11 @@ def add_asset():
 			_model = request.form['_model'],
 			status = request.form['status'],
 			location = request.form['location'],
+			cost_center = request.form['cost_center'],
 			user = request.form['user'],
 			purchase_price = request.form['purchase_price'],
 			supplier = request.form['supplier'],
-			comments = request.form["comments"]
+			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset)
@@ -168,8 +171,8 @@ def edit_asset(barcode):
 		barcode = asset.barcode, serial_no = asset.serial_no,
     	name = asset.name, category = asset.category, _type = asset._type,
     	_model = asset._model, status = asset.status, location = asset.location,
-    	user = asset.user, purchase_price = asset.purchase_price,
-    	supplier = asset.supplier, comments = asset.comments
+    	cost_center = asset.cost_center, user = asset.user, supplier = asset.supplier, 
+		purchase_price = asset.purchase_price, notes = asset.notes
     	)
 
 # POST Asset Modifications
@@ -189,6 +192,7 @@ def update_asset(barcode):
 	asset._model = request.form["_model"]
 	asset.status = request.form["status"]
 	asset.location = request.form["location"]
+	asset.cost_center = request.form["cost_center"]
 	asset.user = request.form["user"]
 	asset.purchase_price = request.form["purchase_price"]
 	temp = request.form["value"]
@@ -203,7 +207,7 @@ def update_asset(barcode):
 	asset.value = sent
 	asset.supplier = request.form["supplier"]
 	asset.photo = request.form["photo"]
-	asset.comments = request.form["comments"]
+	asset.notes = request.form["notes"]
 
 	session.add(asset)
 	session.commit()
@@ -298,7 +302,7 @@ def add_asset_category():
 	new_asset_category = models.AssetCategory(
 			category_code = request.form['code'],
 			category_name = request.form['name'],
-			comments = request.form["comments"]
+			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_category)
@@ -319,7 +323,7 @@ def edit_asset_category(category_code):
 	return render_template("edit_asset_category.html", id = category.id,
 		category_code = category.category_code, 
 		category_name = category.category_name, 
-		comments = category.comments
+		notes = category.notes
     	)
 
 # POST Asset Category Modifications
@@ -333,7 +337,7 @@ def update_asset_category(category_code):
 	category = session.query(models.AssetCategory).filter(models.AssetCategory.category_code == category_code).first()
 	category.category_code = request.form["code"]
 	category.category_name = request.form["name"]
-	category.comments = request.form["comments"]
+	category.notes = request.form["notes"]
 
 	session.add(category)
 	session.commit()
@@ -396,7 +400,8 @@ def add_asset_type():
 	new_asset_type = models.AssetType(
 			type_code = request.form['code'],
 			type_name = request.form['name'],
-			comments = request.form["comments"]
+			type_category = request.form['category'],
+			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_type)
@@ -417,7 +422,7 @@ def edit_asset_type(type_code):
 	return render_template("edit_asset_type.html", id = _type.id,
 		type_code = _type.type_code, 
 		type_name = _type.type_name, 
-		comments = _type.comments
+		notes = _type.notes
     	)
 
 # POST Asset Type Modifications
@@ -431,7 +436,8 @@ def update_asset_type(type_code):
 	_type = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).first()
 	_type.type_code = request.form["code"]
 	_type.type_name = request.form["name"]
-	_type.comments = request.form["comments"]
+	_type.type_category = request.form["type_category"]
+	_type.notes = request.form["notes"]
 
 	session.add(_type)
 	session.commit()
@@ -494,7 +500,8 @@ def add_asset_model():
 	new_asset_model = models.AssetModel(
 			model_code = request.form['code'],
 			model_name = request.form['name'],
-			comments = request.form["comments"]
+			model_type = request.form['model_type'],
+			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_model)
@@ -515,7 +522,7 @@ def edit_asset_model(model_code):
 	return render_template("edit_asset_model.html", id = model.id,
 		model_code = model.model_code, 
 		model_name = model.model_name, 
-		comments = model.comments
+		notes = model.notes
     	)
 
 # POST Asset Model Modifications
@@ -529,10 +536,110 @@ def update_asset_model(model_code):
 	model = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).first()
 	model.model_code = request.form["code"]
 	model.model_name = request.form["name"]
-	model.comments = request.form["comments"]
+	model.model_type = request.form["model_type"]
+	model.notes = request.form["notes"]
 
 	session.add(model)
 	session.commit()
 
     #Return to asset models
 	return redirect(url_for("view_asset_models"))
+
+
+# Views to view Full list of Asset Status, Single Asset Status,
+# Create New Status, Modify Existing Status details, Delete Existing Status
+
+#Route to view full list of asset Status
+@app.route("/asset_Status/view", methods = ["GET"])
+def view_asset_status():
+	""" 
+	Queries the database for all assets status and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get assets status from DB
+	status_reg = session.query(models.AssetStatus).order_by(models.AssetStatus.id)
+
+	#Convert Status_reg to a list of dictionary items
+	status_list = [status.as_dictionary() for status in status_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("asset_status.html", status_list = status_list)
+
+#Single Asset status view route
+@app.route("/asset_status/view/<status_code>", methods = ["GET"])
+def view_single_status(status_code):
+	""" 
+	Queries the database for all status and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for status
+	status_search = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).all()
+
+	#Convert result into a list of dictionary items
+	status = [status.as_dictionary() for status in status_search]
+
+	#Pass status info into html render function
+	return render_template("single_status.html", staus = status)
+
+#Create new asset model route
+@app.route("/asset_status/add_asset_status", methods = ["GET"])
+def create_asset_status():
+	"""	Provides empty form to be filled with new asset status details	"""
+
+	return render_template("add_asset_status.html")
+
+@app.route("/asset_status/add_asset_status", methods = ["POST"])
+def add_asset_status():
+	"""
+	Captures new asset status information and 
+	creates an entry in the database
+	"""
+	#Capture new asset category details
+	new_asset_status = models.AssetStatus(
+			status_code = request.form['code'],
+			status_name = request.form['name'],
+			status_type = request.form['status_type'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_asset_status)
+	session.commit()
+
+	#Return to asset register
+	return redirect(url_for("view_asset_status"))
+
+# Modify Existing Asset Status
+@app.route("/asset_status/edit/asset_status/<status_code>", methods=["GET"])
+@login_required
+def edit_asset_status(status_code):
+	""" Provide form populated with asset status information to be edited """
+
+	status = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).all()
+	status = status[0]
+
+	return render_template("edit_asset_status.html", id = status.id,
+		status_code = status.status_code, 
+		status_name = status.status_name, 
+		notes = status.notes
+    	)
+
+# POST Asset Status Modifications
+@app.route("/asset_status/edit/asset_status/<status_code>", methods=['POST'])
+@login_required
+def update_asset_status(status_code):
+	"""
+	Captures updated asset status information and 
+	posts updated information to the database
+	"""
+	status = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).first()
+	status.status_code = request.form["code"]
+	status.staus_name = request.form["name"]
+	status.notes = request.form["notes"]
+
+	session.add(status)
+	session.commit()
+
+    #Return to asset status
+	return redirect(url_for("view_asset_status"))

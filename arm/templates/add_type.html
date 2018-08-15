@@ -1,0 +1,48 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<div class="my-3 p-3 bg-white rounded box-shadow">
+    <!-- Form Title -->
+    <div class="box-header with-border">
+        <h3 class="box-title">Add New Type</h3>
+    </div>
+    <!-- Form Starts here -->
+    <form class="form-horizontal" role="form" method="POST">
+        <div class="box-body">
+            <!-- Type Code -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Category Code</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="code">
+                </div>
+            </div>
+            <!-- Type Name -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="name">
+                </div>
+            </div>
+            <!-- Type Category Name -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Type Category</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="type_category">
+                </div>
+            </div>
+            <!-- Comments / Additional info -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Comments / Remarks</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-sm" name="comments" rows="5" placeholder="Enter ..."></textarea>
+                </div>
+            </div>
+            <!-- Save / Cancel -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-outline-secondary">Cancel</button>
+                <button type="submit" class="btn btn-outline-primary float-right">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
