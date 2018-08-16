@@ -26,14 +26,14 @@ def index():
 
 # New User registration. Get user information
 @app.route("/user/registration", methods = ["GET"])
-def add_user():
+def create_user():
 	""" Display user registration form """
 
 	return render_template("add_user.html")
 
 # Verify user information and register new user 
 @app.route("/user/registration", methods = ["POST"])
-def new_user():
+def add_user():
 
 	if request.method == 'POST':
 		name = request.form['name']
@@ -71,7 +71,7 @@ def login_post():
         return redirect(url_for("login_get"))
 
     login_user(user)
-    return redirect(url_for("view_register"))
+    return redirect(url_for("view_dashboard"))
 
 #Logout User
 @app.route("/user/logout")
@@ -79,6 +79,17 @@ def logout():
 	logout_user()
 	return redirect(url_for("login_get"))
 
+# Dashboard display / user landing page
+# Display a graphical summary of the app data
+
+# Dashboard
+@app.route("/dashboard/view")
+def view_dashboard():
+	"""
+	The dashboard is graphical display of data using statistical tiles,
+	graphs and data tables
+	"""
+	return render_template("dashboard.html")
 
 # views for Viewing full asset register, Single asset, Creating New Asset,
 # Modifying Asset details and Deleting existing Asset
@@ -496,7 +507,7 @@ def add_asset_model():
 	Captures new asset model information and 
 	creates an entry in the database
 	"""
-	#Capture new asset category details
+	#Capture new asset model details
 	new_asset_model = models.AssetModel(
 			model_code = request.form['code'],
 			model_name = request.form['name'],
@@ -581,9 +592,9 @@ def view_single_status(status_code):
 	status = [status.as_dictionary() for status in status_search]
 
 	#Pass status info into html render function
-	return render_template("single_status.html", staus = status)
+	return render_template("single_status.html", status = status)
 
-#Create new asset model route
+#Create new asset status route
 @app.route("/asset_status/add_asset_status", methods = ["GET"])
 def create_asset_status():
 	"""	Provides empty form to be filled with new asset status details	"""
@@ -611,7 +622,7 @@ def add_asset_status():
 	return redirect(url_for("view_asset_status"))
 
 # Modify Existing Asset Status
-@app.route("/asset_status/edit/asset_status/<status_code>", methods=["GET"])
+@app.route("/asset_status/edit_asset_status/<status_code>", methods=["GET"])
 @login_required
 def edit_asset_status(status_code):
 	""" Provide form populated with asset status information to be edited """
@@ -643,3 +654,199 @@ def update_asset_status(status_code):
 
     #Return to asset status
 	return redirect(url_for("view_asset_status"))
+
+
+# Views to view Full list of Locations, Single Location details,
+# Create New Locations, Modify Existing Location details, Delete Existing Locations
+
+#Route to view full list of Locations
+@app.route("/location/view", methods = ["GET"])
+def view_locations():
+	""" 
+	Queries the database for all locations and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get locations from DB
+	locations_reg = session.query(models.Location).order_by(models.Location.id)
+
+	#Convert locations_reg to a list of dictionary items
+	locations_list = [location.as_dictionary() for location in locations_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("locations.html", locations_list = locations_list)
+
+#Single Location view route
+@app.route("/location/view/<location_code>", methods = ["GET"])
+def view_single_location(location_code):
+	""" 
+	Queries the database for all locations and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for location
+	location_search = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+
+	#Convert result into a list of dictionary items
+	location = [location.as_dictionary() for location in location_search]
+
+	#Pass location info into html render function
+	return render_template("single_location.html", location = location)
+
+#Create new location route
+@app.route("/location/add_location", methods = ["GET"])
+def create_location():
+	"""	Provides empty form to be filled with new location details	"""
+
+	return render_template("add_location.html")
+
+@app.route("/location/add_location", methods = ["POST"])
+def add_location():
+	"""
+	Captures new location information and 
+	creates an entry in the database
+	"""
+	#Capture new location details
+	new_location = models.Location(
+			location_code = request.form['code'],
+			location_name = request.form['name'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_location)
+	session.commit()
+
+	#Return to new location
+	return redirect(url_for("create_location"))
+
+# Modify Existing Location Details
+@app.route("/location/edit_location/<location_code>", methods=["GET"])
+@login_required
+def edit_location(location_code):
+	""" Provide form populated with location information to be edited """
+
+	location = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+	location = location[0]
+
+	return render_template("edit_location.html", id = location.id,
+		location_code = location.location_code, 
+		location_name = location.location_name,
+		notes = location.notes
+    	)
+
+# POST Loction Modifications
+@app.route("/location/edit_location/<location_code>", methods=['POST'])
+@login_required
+def update_location(location_code):
+	"""
+	Captures updated location information and 
+	posts updated information to the database
+	"""
+	location = session.query(models.Location).filter(models.Location.location_code == location_code).first()
+	location.location_code = request.form["code"]
+	location.location_name = request.form["name"]
+	location.notes = request.form["notes"]
+
+	session.add(location)
+	session.commit()
+
+    #Return to Location view
+	return redirect(url_for("view_locations"))
+
+
+# Views to view Full list of Cost Centers, Single Cost Center details,
+# Create New Cost Center, Modify Existing Cost Center details, Delete Existing Cost Centers
+
+#Route to view full list of Cost Centers
+@app.route("/cost_centers/view", methods = ["GET"])
+def view_costcenters():
+	""" 
+	Queries the database for all cost centers and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get cost centers from DB
+	costcenters_reg = session.query(models.CostCenter).order_by(models.CostCenter.id)
+
+	#Convert locations_reg to a list of dictionary items
+	costcenters_list = [costcenter.as_dictionary() for costcenter in costcenters_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("cost_centers.html", costcenters_list = costcenters_list)
+
+#Single Cost Center view route
+@app.route("/cost_center/view/<costcenter_code>", methods = ["GET"])
+def view_costcenter(costcenter_code):
+	""" 
+	Queries the database for all locations and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for location
+	location_search = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+
+	#Convert result into a list of dictionary items
+	location = [location.as_dictionary() for location in location_search]
+
+	#Pass location info into html render function
+	return render_template("single_location.html", location = location)
+
+#Create new location route
+@app.route("/location/add_location", methods = ["GET"])
+def create_location():
+	"""	Provides empty form to be filled with new location details	"""
+
+	return render_template("add_location.html")
+
+@app.route("/location/add_location", methods = ["POST"])
+def add_location():
+	"""
+	Captures new location information and 
+	creates an entry in the database
+	"""
+	#Capture new location details
+	new_location = models.Location(
+			location_code = request.form['code'],
+			location_name = request.form['name'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_location)
+	session.commit()
+
+	#Return to new location
+	return redirect(url_for("create_location"))
+
+# Modify Existing Location Details
+@app.route("/location/edit_location/<location_code>", methods=["GET"])
+@login_required
+def edit_location(location_code):
+	""" Provide form populated with location information to be edited """
+
+	location = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+	location = location[0]
+
+	return render_template("edit_location.html", id = location.id,
+		location_code = location.location_code, 
+		location_name = location.location_name,
+		notes = location.notes
+    	)
+
+# POST Loction Modifications
+@app.route("/location/edit_location/<location_code>", methods=['POST'])
+@login_required
+def update_location(location_code):
+	"""
+	Captures updated location information and 
+	posts updated information to the database
+	"""
+	location = session.query(models.Location).filter(models.Location.location_code == location_code).first()
+	location.location_code = request.form["code"]
+	location.location_name = request.form["name"]
+	location.notes = request.form["notes"]
+
+	session.add(location)
+	session.commit()
+
+    #Return to Location view
+	return redirect(url_for("view_locations"))

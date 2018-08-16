@@ -184,6 +184,25 @@ class Location(Base):
                     }
         return _locations
 
+# Asset Location Category object model
+class LocationCategory(Base):
+    __tablename__ = 'location_categories'
+
+    # Asset locations categories db table fields
+    id = Column(Integer, primary_key = True)
+    category_name = Column(String(128), nullable = False, unique = True)
+    notes = Column(String(256), nullable = True)
+    category_locations = relationship ("Location", backref = "location_category")
+
+    def __repr__(self):
+        return self.category_name
+
+    # Return asset locations categories as dictionary
+    def as_dictionary(self):
+        _locations_categories = {"id": self.id, "category_name": self.category_name, 
+                                "Notes": self.notes}
+        return _locations_categories
+
 # Cost Centers Object model
 class CostCenter(Base):
     __tablename__ = 'cost_centers'

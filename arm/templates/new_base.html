@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>{% block page_title %}{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/getbootstrap.com_docs_3.3_dist_css_bootstrap.min.css') }}" />
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/getbootstrap.com_docs_3.3_assets_css_ie10-viewport-bug-workaround.css') }}" />
+
+    <!-- Custom styles for this template -->
+    <link href="navbar.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
+
+  </head>
+  <body>
+
+    <div class="container">
+      <!-- Static navbar -->
+      {% block navbar %}
+
+      {% endblock navbar %}
+
+      <!-- content area for graphs, search, register table and related context menus -->
+      {% block content %}
+
+      {% endblock content %}
+
+      <!-- footer content area -->
+      {% block footer_content %}
+
+      {% endblock %}
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/ajax.googleapis.com_ajax_libs_jquery_1.12.4_jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.com_docs_3.3_dist_ie10-viewport-bug-workaround.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/getbootstrap.com_docs_3.3_assets_js_ie-emulation-modes-warning.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/getbootstrap.com_docs_3.3_dist_js_bootstrap.min.js') }}"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
