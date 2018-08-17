@@ -42,6 +42,7 @@ class Asset(Base):
     purchase_price = Column(Integer, nullable = True)
     value = Column(Integer, nullable = True)
     photo = Column(String, nullable = True)
+    attchments = Column(String, nullable = True)
     notes = Column(String(256), nullable = True)
     category_id = Column(Integer, ForeignKey('asset_categories.id'), nullable = True)
     category = relationship("AssetCategory", backref = "asset_category")
@@ -73,7 +74,8 @@ class Asset(Base):
                 "Status": self.status.status_name, "Location": self.location.location_name, 
                 "Cost center": self.cost_center.center_name, "User": self.user.first_name, 
                 "Purchase Price": self.purchase_price, "Value": self.value, 
-                "Supplier": self.supplier.name, "Photo": self.photo, "Notes": self.notes
+                "Supplier": self.supplier.name, "Photo": self.photo, "Attachements": self.attchments, 
+                "Notes": self.notes
                 }
         return asset
 
@@ -169,7 +171,6 @@ class Location(Base):
     location_code = Column(String(64), nullable = False, unique = True)
     location_name = Column(String(128), nullable = False)
     notes = Column(String(256), nullable = True)
-    category = Column(Integer, ForeignKey("location_categories.id"), nullable = True)
     location_assets = relationship ("Asset", backref = "location_assets")
     location_people = relationship ("People", backref = "location_people")
 
@@ -190,6 +191,7 @@ class CostCenter(Base):
 
     # Cost Centers db table fields
     id = Column(Integer, primary_key = True)
+    center_code = Column(String(64), nullable = False, unique = True)
     center_name = Column(String(128), nullable = False, unique = True)
     notes = Column(String(256), nullable = True)
     center_assets = relationship ("Asset", backref = "center_assets")
@@ -199,8 +201,9 @@ class CostCenter(Base):
 
     # Return asset locations categories as dictionary
     def as_dictionary(self):
-        cost_centers = {"id": self.id, "center_name": self.center_name, 
-                        "Notes": self.notes}
+        cost_centers = {"id": self.id, "Center Code": self.center_code, 
+                        "Center Name": self.center_name, "Notes": self.notes
+                        }
         return cost_centers
 
 # People object model

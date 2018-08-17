@@ -1,11 +1,11 @@
 {% extends "new_base.html" %}
 
 {% block title %}
-Register
+Asset Register
 {% endblock %}
 
 {% block navbar %}
-<nav class="navbar navbar-default">
+  <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -33,7 +33,7 @@ Register
               <li><a href="{{ url_for('create_asset_type') }}">Add Types</a></li>
               <li class="dropdown-header">Other Entities</li>
               <li><a href="{{ url_for('create_location') }}">Add Locations</a></li>
-              <li><a href="{{ url_for('create_cost_center') }}">Add Cost Centers</a></li>
+              <li><a href="{{ url_for('create_costcenter') }}">Add Cost Centers</a></li>
             </ul>
           </li>
           <li><a href="{{ url_for('create_asset') }}">Add Assets</a></li>
@@ -50,34 +50,30 @@ Register
 {% endblock navbar %}
 
 {% block content %}
-<div class="my-3 p-3 bg-white rounded box-shadow">
-  <div class="table-responsive">
-    <table class="table table-striped table-hover">
-      <!-- table header -->
-      <thead class="thead-dark">
-        <tr>
-          {% for key in assets[0] %}
-          {% if key not in ['Capture Date','Supplier', 'Photo', 'Purchase Price', 'User', 'Value', 'Notes'] %}
-            <th> {{ key }} </th>
-          {% endif %}
-          {% endfor %}
-        </tr>
-      </thead>
+<table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+  <!-- table header -->
+  <thead>
+    <tr>
+      {% for key in assets[0] %}
+      {% if key not in ['Photo'] %}
+        <th> {{ key }} </th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+  </thead>
 
-      <!-- table rows -->
-    {% for asset in assets %}
-    <tbody>
-      <tr>
-        {% for value in asset.values() %}
-        {% if value not in [asset['Capture Date'], asset['Supplier'], asset['Photo'], asset['Purchase Price'], asset['User'], asset['Value'], asset['Notes']] %}
-          <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
-        {% endif %}
-        {% endfor %}
-      </tr>
-    </tbody>
+  <!-- table rows -->
+{% for asset in assets %}
+<tbody>
+  <tr>
+    {% for value in asset.values() %}
+    {% if value not in [asset['Photo']] %}
+      <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
+    {% endif %}
     {% endfor %}
+  </tr>
+</tbody>
+{% endfor %}
 
-    </table>
-  </div>
-</div>
+</table>
 {% endblock %}

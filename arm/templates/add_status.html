@@ -1,33 +1,75 @@
-{% extends "bootstrap/base.html" %}
+{% extends "new_base.html" %}
+
+{% block title %}
+Add New Status
+{% endblock %}
+
+{% block navbar %}
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">ARCPlus</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Dashboard</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configure<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-header">Users</li>
+              <li><a href="#">View Users</a></li>
+              <li><a href="{{ url_for('create_user') }}">Add Users</a></li>
+              <li><a href="#">Delete Users</a></li>
+              <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Asset Entities</li>
+              <li><a href="{{ url_for('create_asset_category') }}">Add Categories</a></li>
+              <li><a href="{{ url_for('create_asset_model') }}">Add Models</a></li>
+              <li><a href="{{ url_for('create_asset_type') }}">Add Types</a></li>
+              <li class="dropdown-header">Other Entities</li>
+              <li><a href="{{ url_for('create_location') }}">Add Locations</a></li>
+              <li><a href="{{ url_for('create_costcenter') }}">Add Cost Centers</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('create_asset') }}">Add Assets</a></li>
+          <li><a href="{{ url_for('view_register') }}">Register</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <!-- <li class="active"><a href="./">Settings<span class="sr-only">(current)</span></a></li> -->
+          <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.name }}!</a></li>
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+  </nav>
+{% endblock navbar %}
 
 {% block content %}
 <div class="my-3 p-3 bg-white rounded box-shadow">
     <!-- Form Title -->
     <div class="box-header with-border">
-        <h3 class="box-title">Add New Model</h3>
+        <h3 class="box-title">Add New Status</h3>
     </div>
     <!-- Form Starts here -->
     <form class="form-horizontal" role="form" method="POST">
         <div class="box-body">
-            <!-- Model Code -->
+            <!-- Status Code -->
             <div class="form-group">
-                <label class="col-sm-2 control-label">Model Code</label>
+                <label class="col-sm-2 control-label">Status Code</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="code">
                 </div>
             </div>
-            <!-- Model Name -->
+            <!-- Status Name -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Name</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="name">
-                </div>
-            </div>
-            <!-- Model Type Name -->
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Model Type</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="model_type">
                 </div>
             </div>
             <!-- Notes / Additional info -->

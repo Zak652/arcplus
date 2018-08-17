@@ -83,7 +83,7 @@ def logout():
 # Display a graphical summary of the app data
 
 # Dashboard
-@app.route("/dashboard/view")
+@app.route("/dashboard")
 def view_dashboard():
 	"""
 	The dashboard is graphical display of data using statistical tiles,
@@ -110,7 +110,7 @@ def view_register():
 	assets = [asset.as_dictionary() for asset in register]
 
     #Pass dictionary list into html render function
-	return render_template("asset_register.html", assets = assets)
+	return render_template("view_register.html", assets = assets)
 
 # Single asset view route
 @app.route("/register/view/<barcode>", methods = ["GET"])
@@ -136,7 +136,52 @@ def view_single_asset(barcode):
 def create_asset():
 	"""	Provides empty form to be filled with asset details	"""
 
-	return render_template("add_asset.html")
+	#Get asset categories from DB
+	categories = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
+	#Convert categories result into a list of dictionary items
+	categories_list = [category.as_dictionary() for category in categories]
+
+	#Get asset types from DB
+	_types = session.query(models.AssetType).order_by(models.AssetType.type_code)
+	#Convert types result into a list of dictionary items
+	types_list = [_type.as_dictionary() for _type in _types]
+
+	#Get asset models from DB
+	_models = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
+	#Convert models result into a list of dictionary items
+	models_list = [_model.as_dictionary() for _model in _models]
+
+	#Get asset statuses from DB
+	statuses = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
+	#Convert statuses result into a list of dictionary items
+	statuses_list = [status.as_dictionary() for status in statuses]
+
+	#Get locations from DB
+	locations = session.query(models.Location).order_by(models.Location.location_code)
+	#Convert locations result into a list of dictionary items
+	locations_list = [location.as_dictionary() for location in locations]
+
+	#Get cost centers from DB
+	costcenters = session.query(models.CostCenter).order_by(models.CostCenter.center_code)
+	#Convert cost centers result into a list of dictionary items
+	costcenters_list = [costcenter.as_dictionary() for costcenter in costcenters]
+
+	#Get Users from DB
+	users = session.query(models.People).order_by(models.People.barcode)
+	#Convert users result into a list of dictionary items
+	users_list = [user.as_dictionary() for user in users]
+
+	#Get suppliers from DB
+	suppliers = session.query(models.Supplier).order_by(models.Supplier.code)
+	#Convert suppliers result into a list of dictionary items
+	suppliers_list = [supplier.as_dictionary() for supplier in suppliers]
+
+	return render_template("add_asset.html", categories_list = categories_list, 
+							types_list = types_list, models_list = models_list, 
+							statuses_list = statuses_list, locations_list = locations_list, 
+							costcenters_list = costcenters_list, users_list = users_list,
+							suppliers_list = suppliers_list
+							)
 
 # Post New Asset information
 @app.route("/register/add_asset", methods = ["POST"])
@@ -353,7 +398,39 @@ def update_asset_category(category_code):
 	session.add(category)
 	session.commit()
 
-    #Return to asset register
+    #Return to asset categories
+	return redirect(url_for("view_asset_categories"))
+
+# Delete asset category
+@app.route("/asset_categories/delete_category/<category_code>")
+@login_required
+def category_to_delete(category_code):
+	"""
+	Identify category to be deleted bassed on provided category code
+	"""
+    #Query database for category
+	category_search = session.query(models.AssetCategory).filter(models.AssetCategory.category_code == category_code).all()
+	category = [result.as_dictionary() for result in category_search]
+	category = category[0]
+
+    #Display the category details for confirmation
+	return render_template("delete_category.html", category = category)
+
+# Delete asset category from database
+@app.route("/asset_categories/deleted/<category_code>")
+@login_required
+def delete_asset_category(category_code):
+	"""
+	Search for confirmed asset category and deletes it from the database
+	"""
+    #Search database for asset category
+	category = session.query(models.AssetCategory).filter(models.AssetCategory.category_code == category_code).first()
+
+    #Delete asset category from database
+	session.delete(category)
+	session.commit()
+
+    #Return to asset categories view
 	return redirect(url_for("view_asset_categories"))
 
 
@@ -456,6 +533,38 @@ def update_asset_type(type_code):
     #Return to asset types
 	return redirect(url_for("view_asset_types"))
 
+# Delete asset type
+@app.route("/asset_type/delete_type/<type_code>")
+@login_required
+def type_to_delete(type_code):
+	"""
+	Identify type to be deleted bassed on provided type code
+	"""
+    #Query database for type
+	type_search = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).all()
+	_type = [result.as_dictionary() for result in type_search]
+	_type = _type[0]
+
+    #Display the Type details for confirmation
+	return render_template("delete_type.html", _type = _type)
+
+# Delete asset type from database
+@app.route("/asset_type/deleted/<type_code>")
+@login_required
+def delete_asset_type(type_code):
+	"""
+	Search for confirmed asset type and deletes it from the database
+	"""
+    #Search database for asset type
+	_type = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).first()
+
+    #Delete asset type from database
+	session.delete(_type)
+	session.commit()
+
+    #Return to asset types view
+	return redirect(url_for("view_asset_types"))
+
 
 # Views to view Full list of Asset Models, Single Asset Model,
 # Create New Model, Modify Existing Model details, Delete Existing Model
@@ -554,6 +663,38 @@ def update_asset_model(model_code):
 	session.commit()
 
     #Return to asset models
+	return redirect(url_for("view_asset_models"))
+
+# Delete asset models
+@app.route("/asset_models/delete_model/<model_code>")
+@login_required
+def model_to_delete(model_code):
+	"""
+	Identify model to be deleted bassed on provided model code
+	"""
+    #Query database for model
+	model_search = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).all()
+	model = [result.as_dictionary() for result in model_search]
+	model = model[0]
+
+    #Display the model details for confirmation
+	return render_template("delete_model.html", model = model)
+
+# Delete asset model from database
+@app.route("/asset_model/deleted/<model_code>")
+@login_required
+def delete_asset_model(model_code):
+	"""
+	Search for confirmed asset model and deletes it from the database
+	"""
+    #Search database for asset model
+	model = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).first()
+
+    #Delete asset model from database
+	session.delete(model)
+	session.commit()
+
+    #Return to asset models view
 	return redirect(url_for("view_asset_models"))
 
 
@@ -655,6 +796,38 @@ def update_asset_status(status_code):
     #Return to asset status
 	return redirect(url_for("view_asset_status"))
 
+# Delete asset status
+@app.route("/asset_status/delete_status/<status_code>")
+@login_required
+def status_to_delete(status_code):
+	"""
+	Identify status to be deleted bassed on provided status code
+	"""
+    #Query database for status
+	status_search = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).all()
+	status = [result.as_dictionary() for result in status_search]
+	status = status[0]
+
+    #Display the status details for confirmation
+	return render_template("delete_status.html", status = status)
+
+# Delete asset status from database
+@app.route("/asset_status/deleted/<status_code>")
+@login_required
+def delete_asset_status(status_code):
+	"""
+	Search for confirmed asset status and deletes it from the database
+	"""
+    #Search database for asset status
+	status = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).first()
+
+    #Delete asset status from database
+	session.delete(status)
+	session.commit()
+
+    #Return to asset status view
+	return redirect(url_for("view_asset_status"))
+
 
 # Views to view Full list of Locations, Single Location details,
 # Create New Locations, Modify Existing Location details, Delete Existing Locations
@@ -753,6 +926,38 @@ def update_location(location_code):
     #Return to Location view
 	return redirect(url_for("view_locations"))
 
+# Delete location
+@app.route("/location/delete_location/<location_code>")
+@login_required
+def location_to_delete(location_code):
+	"""
+	Identify location to be deleted bassed on provided location code
+	"""
+    #Query database for location
+	location_search = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+	location = [result.as_dictionary() for result in location_search]
+	location = location[0]
+
+    #Display the location details for confirmation
+	return render_template("delete_location.html", location = location)
+
+# Delete location from database
+@app.route("/location/deleted/<location_code>")
+@login_required
+def delete_location(location_code):
+	"""
+	Search for confirmed location and deletes it from the database
+	"""
+    #Search database for location
+	location = session.query(models.Location).filter(models.Location.location_code == location_code).first()
+
+    #Delete location from database
+	session.delete(location)
+	session.commit()
+
+    #Return to locations view
+	return redirect(url_for("view_locations"))
+
 
 # Views to view Full list of Cost Centers, Single Cost Center details,
 # Create New Cost Center, Modify Existing Cost Center details, Delete Existing Cost Centers
@@ -775,78 +980,110 @@ def view_costcenters():
 	return render_template("cost_centers.html", costcenters_list = costcenters_list)
 
 #Single Cost Center view route
-@app.route("/cost_center/view/<costcenter_code>", methods = ["GET"])
-def view_costcenter(costcenter_code):
+@app.route("/cost_center/view/<center_code>", methods = ["GET"])
+def view_costcenter(center_code):
 	""" 
-	Queries the database for all locations and passes them into a
+	Queries the database for all cost centers and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
 	"""
-	#Search for location
-	location_search = session.query(models.Location).filter(models.Location.location_code == location_code).all()
+	#Search for cost centers
+	costcenter_search = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).all()
 
 	#Convert result into a list of dictionary items
-	location = [location.as_dictionary() for location in location_search]
+	costcenter = [costcenter.as_dictionary() for costcenter in costcenter_search]
 
-	#Pass location info into html render function
-	return render_template("single_location.html", location = location)
+	#Pass cost center info into html render function
+	return render_template("single_costcenter.html", costcenter = costcenter)
 
-#Create new location route
-@app.route("/location/add_location", methods = ["GET"])
-def create_location():
-	"""	Provides empty form to be filled with new location details	"""
+#Create new Cost Center route
+@app.route("/cost_center/add_cost_center", methods = ["GET"])
+def create_costcenter():
+	"""	Provides empty form to be filled with new cost center details	"""
 
-	return render_template("add_location.html")
+	return render_template("add_costcenter.html")
 
-@app.route("/location/add_location", methods = ["POST"])
-def add_location():
+@app.route("/cost_center/add_cost_center", methods = ["POST"])
+def add_costcenter():
 	"""
-	Captures new location information and 
+	Captures new cost center information and 
 	creates an entry in the database
 	"""
-	#Capture new location details
-	new_location = models.Location(
-			location_code = request.form['code'],
-			location_name = request.form['name'],
+	#Capture new cost center details
+	new_costcenter = models.CostCenter(
+			center_code = request.form['code'],
+			center_name = request.form['name'],
 			notes = request.form["notes"]
 			)
 	#Add entry to database
-	session.add(new_location)
+	session.add(new_costcenter)
 	session.commit()
 
-	#Return to new location
-	return redirect(url_for("create_location"))
+	#Return to new cost center
+	return redirect(url_for("create_costcenter"))
 
-# Modify Existing Location Details
-@app.route("/location/edit_location/<location_code>", methods=["GET"])
+# Modify Existing Cost Center Details
+@app.route("/cost_center/edit_cost_center/<center_code>", methods=["GET"])
 @login_required
-def edit_location(location_code):
-	""" Provide form populated with location information to be edited """
+def edit_costcenter(center_code):
+	""" Provide form populated with cost center information to be edited """
 
-	location = session.query(models.Location).filter(models.Location.location_code == location_code).all()
-	location = location[0]
+	costcenter = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).all()
+	costcenter = costcenter[0]
 
-	return render_template("edit_location.html", id = location.id,
-		location_code = location.location_code, 
-		location_name = location.location_name,
-		notes = location.notes
+	return render_template("edit_costcenter.html", id = costcenter.id,
+		center_code = costcenter.center_code, 
+		center_name = costcenter.center_name,
+		notes = costcenter.notes
     	)
 
-# POST Loction Modifications
-@app.route("/location/edit_location/<location_code>", methods=['POST'])
+# POST Cost Center Modifications
+@app.route("/cost_center/edit_cost_center/<center_code>", methods=['POST'])
 @login_required
-def update_location(location_code):
+def update_costcenter(center_code):
 	"""
-	Captures updated location information and 
+	Captures updated cost center information and 
 	posts updated information to the database
 	"""
-	location = session.query(models.Location).filter(models.Location.location_code == location_code).first()
-	location.location_code = request.form["code"]
-	location.location_name = request.form["name"]
-	location.notes = request.form["notes"]
+	costcenter = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).first()
+	costcenter.center_code = request.form["code"]
+	costcenter.center_name = request.form["name"]
+	costcenter.notes = request.form["notes"]
 
-	session.add(location)
+	session.add(costcenter)
 	session.commit()
 
-    #Return to Location view
-	return redirect(url_for("view_locations"))
+    #Return to Cost Centers view
+	return redirect(url_for("view_costcenters"))
+
+# Delete Cost Center
+@app.route("/cost_center/delete_cost_center/<center_code>")
+@login_required
+def costcenter_to_delete(center_code):
+	"""
+	Identify cost center to be deleted bassed on provided center code
+	"""
+    #Query database for cost center
+	costcenter_search = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).all()
+	costcenter = [result.as_dictionary() for result in costcenter_search]
+	costcenter = costcenter[0]
+
+    #Display the cost center details for confirmation
+	return render_template("delete_costcenter.html", costcenter = costcenter)
+
+# Delete cost center from database
+@app.route("/cost_center/deleted/<center_code>")
+@login_required
+def delete_costcenter(center_code):
+	"""
+	Search for confirmed cost center and deletes it from the database
+	"""
+    #Search database for cost center
+	costcenter = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).first()
+
+    #Delete cost center from database
+	session.delete(costcenter)
+	session.commit()
+
+    #Return to cost centers view
+	return redirect(url_for("view_costcenters"))
