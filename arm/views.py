@@ -1450,7 +1450,7 @@ def add_supplierCategory():
 	new_supplierCategory = models.SupplierCategory(
 			category_code = request.form['code'],
 			category_name = request.form['name'],
-			notes = request.form["notes"]
+			notes = request.form['notes']
 			)
 	#Add entry to database
 	session.add(new_supplierCategory)

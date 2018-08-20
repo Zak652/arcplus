@@ -178,8 +178,7 @@ class Location(Base):
     # Return asset location object as dictionary
     def as_dictionary(self):
         location = {"id": self.id, "location_code": self.location_code,
-                    "location_name": self.location_name, "Notes": self.notes,
-                    "category": self.category
+                    "location_name": self.location_name, "Notes": self.notes
                     }
         return location
 
@@ -293,7 +292,7 @@ class SupplierCategory(Base):
     category_code = Column(String(20), nullable = False, unique = True)
     category_name = Column(String(128), nullable = False, unique = True)
     notes = Column(String(256), nullable = True)
-    supplier_category = relationship ("Supplier", backref = "supplier_category")
+    supplier_category = relationship ("Supplier", backref = "supplier_category", lazy = True)
 
     def __repr__(self):
         return self.category_name
@@ -301,6 +300,6 @@ class SupplierCategory(Base):
     # Return supplier category as dictionary
     def as_dictionary(self):
         supplier_category = {"id": self.id, "category_name": self.category_name, 
-                                "Notes": self.notes
-                                }
+                            "Category_code": self.category_code, "Notes": self.notes
+                            }
         return supplier_category

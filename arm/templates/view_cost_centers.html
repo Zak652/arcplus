@@ -23,7 +23,7 @@ Asset Cost Centers
   <tr>
     {% for value in costcenter.values() %}
     {% if value not in [costcenter['Photo']] %}
-      <td><a href="{{ url_for('view_single_costcenter', center_code = costcenter.center_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_costcenter', center_code = costcenter.center_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>
