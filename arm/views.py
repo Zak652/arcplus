@@ -137,44 +137,28 @@ def create_asset():
 	"""	Provides empty form to be filled with asset details	"""
 
 	#Get asset categories from DB
-	categories = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
-	#Convert categories result into a list of dictionary items
-	categories_list = [category.as_dictionary() for category in categories]
+	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
 
 	#Get asset types from DB
-	_types = session.query(models.AssetType).order_by(models.AssetType.type_code)
-	#Convert types result into a list of dictionary items
-	types_list = [_type.as_dictionary() for _type in _types]
+	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
 
 	#Get asset models from DB
-	_models = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
-	#Convert models result into a list of dictionary items
-	models_list = [_model.as_dictionary() for _model in _models]
+	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
 
 	#Get asset statuses from DB
-	statuses = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
-	#Convert statuses result into a list of dictionary items
-	statuses_list = [status.as_dictionary() for status in statuses]
+	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
 
 	#Get locations from DB
-	locations = session.query(models.Location).order_by(models.Location.location_code)
-	#Convert locations result into a list of dictionary items
-	locations_list = [location.as_dictionary() for location in locations]
+	locations_list = session.query(models.Location).order_by(models.Location.location_code)
 
 	#Get cost centers from DB
-	costcenters = session.query(models.CostCenter).order_by(models.CostCenter.center_code)
-	#Convert cost centers result into a list of dictionary items
-	costcenters_list = [costcenter.as_dictionary() for costcenter in costcenters]
+	costcenters_list = session.query(models.CostCenter).order_by(models.CostCenter.center_code)
 
 	#Get Users from DB
-	users = session.query(models.People).order_by(models.People.barcode)
-	#Convert users result into a list of dictionary items
-	users_list = [user.as_dictionary() for user in users]
+	users_list = session.query(models.People).order_by(models.People.person_code)
 
 	#Get suppliers from DB
-	suppliers = session.query(models.Supplier).order_by(models.Supplier.code)
-	#Convert suppliers result into a list of dictionary items
-	suppliers_list = [supplier.as_dictionary() for supplier in suppliers]
+	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
 
 	return render_template("add_asset.html", categories_list = categories_list, 
 							types_list = types_list, models_list = models_list, 
@@ -194,6 +178,7 @@ def add_asset():
 	#Capture new asset details
 	new_asset = models.Asset(
 			barcode = request.form['barcode'],
+			asset_no = request.form['barcode'],
 			serial_no = request.form['serial_no'],
 			name = request.form['name'],
 			category = request.form['category'],
@@ -205,7 +190,9 @@ def add_asset():
 			user = request.form['user'],
 			purchase_price = request.form['purchase_price'],
 			supplier = request.form['supplier'],
-			notes = request.form["notes"]
+			notes = request.form["notes"],
+			captured_by = current_user,
+			modified_by = current_user
 			)
 	#Add entry to database
 	session.add(new_asset)
@@ -220,16 +207,45 @@ def add_asset():
 def edit_asset(barcode):
 	""" Provide form populated with asset information to be edited """
 
+	#Get asset categories from DB
+	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
+
+	#Get asset types from DB
+	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
+
+	#Get asset models from DB
+	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
+
+	#Get asset statuses from DB
+	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
+
+	#Get locations from DB
+	locations_list = session.query(models.Location).order_by(models.Location.location_code)
+
+	#Get cost centers from DB
+	costcenters_list = session.query(models.CostCenter).order_by(models.CostCenter.center_code)
+
+	#Get Users from DB
+	users_list = session.query(models.People).order_by(models.People.barcode)
+
+	#Get suppliers from DB
+	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
+
 	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
 	asset = asset[0]
 
-	return render_template("edit_asset.html", id = asset.id,
-		barcode = asset.barcode, serial_no = asset.serial_no,
-    	name = asset.name, category = asset.category, _type = asset._type,
-    	_model = asset._model, status = asset.status, location = asset.location,
-    	cost_center = asset.cost_center, user = asset.user, supplier = asset.supplier, 
-		purchase_price = asset.purchase_price, notes = asset.notes
-    	)
+	return render_template("edit_asset.html", id = asset.id, barcode = asset.barcode, 
+							serial_no = asset.serial_no, name = asset.name, 
+							category = asset.category, _type = asset._type, 
+							_model = asset._model, status = asset.status, 
+							location = asset.location, cost_center = asset.cost_center, 
+							user = asset.user, supplier = asset.supplier, 
+							purchase_price = asset.purchase_price, notes = asset.notes, 
+							categories_list = categories_list, types_list = types_list, 
+							models_list = models_list, statuses_list = statuses_list, 
+							locations_list = locations_list, costcenters_list = costcenters_list, 
+							users_list = users_list, suppliers_list = suppliers_list
+							)
 
 # POST Asset Modifications
 @app.route("/register/edit/asset/<barcode>", methods=['POST'])
@@ -322,7 +338,7 @@ def view_asset_categories():
 	category_list = [category.as_dictionary() for category in categories]
 
     #Pass dictionary list into html render function
-	return render_template("asset_categories.html", category_list = category_list)
+	return render_template("view_categories.html", category_list = category_list)
 
 #Single Asset Category view route
 @app.route("/asset_categories/view/<category_code>", methods = ["GET"])
@@ -346,7 +362,7 @@ def view_single_category(category_code):
 def create_asset_category():
 	"""	Provides empty form to be filled with new asset category details	"""
 
-	return render_template("add_asset_category.html")
+	return render_template("add_category.html")
 
 @app.route("/asset_categories/add_asset_category", methods = ["POST"])
 def add_asset_category():
@@ -365,7 +381,7 @@ def add_asset_category():
 	session.commit()
 
 	#Return to asset register
-	return redirect(url_for("view_asset_categories"))
+	return redirect(url_for("create_asset_category"))
 
 # Modify Existing Asset Category
 @app.route("/asset_categories/edit/asset_category/<category_code>", methods=["GET"])
@@ -376,7 +392,7 @@ def edit_asset_category(category_code):
 	category = session.query(models.AssetCategory).filter(models.AssetCategory.category_code == category_code).all()
 	category = category[0]
 
-	return render_template("edit_asset_category.html", id = category.id,
+	return render_template("edit_category.html", id = category.id,
 		category_code = category.category_code, 
 		category_name = category.category_name, 
 		notes = category.notes
@@ -452,7 +468,7 @@ def view_asset_types():
 	types_list = [types.as_dictionary() for types in types_reg]
 
     #Pass dictionary list into html render function
-	return render_template("asset_types.html", types_list = types_list)
+	return render_template("view_types.html", types_list = types_list)
 
 #Single Asset type view route
 @app.route("/asset_types/view/<type_code>", methods = ["GET"])
@@ -476,7 +492,10 @@ def view_single_type(type_code):
 def create_asset_type():
 	"""	Provides empty form to be filled with new asset type details	"""
 
-	return render_template("add_asset_type.html")
+	#Get asset categories from DB
+	categories = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
+
+	return render_template("add_type.html", categories = categories)
 
 @app.route("/asset_types/add_asset_type", methods = ["POST"])
 def add_asset_type():
@@ -488,15 +507,15 @@ def add_asset_type():
 	new_asset_type = models.AssetType(
 			type_code = request.form['code'],
 			type_name = request.form['name'],
-			type_category = request.form['category'],
+			category_id = request.form['type_category'],
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_type)
 	session.commit()
 
-	#Return to asset register
-	return redirect(url_for("view_asset_types"))
+	#Return to create type form
+	return redirect(url_for("create_asset_type"))
 
 # Modify Existing Asset Type
 @app.route("/asset_types/edit/asset_type/<type_code>", methods=["GET"])
@@ -584,7 +603,7 @@ def view_asset_models():
 	models_list = [model.as_dictionary() for model in models_reg]
 
     #Pass dictionary list into html render function
-	return render_template("asset_models.html", models_list = models_list)
+	return render_template("view_models.html", models_list = models_list)
 
 #Single Asset model view route
 @app.route("/asset_models/view/<model_code>", methods = ["GET"])
@@ -608,7 +627,10 @@ def view_single_model(model_code):
 def create_asset_model():
 	"""	Provides empty form to be filled with new asset model details	"""
 
-	return render_template("add_asset_model.html")
+	#Get asset types from DB
+	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
+
+	return render_template("add_model.html", types_list = types_list)
 
 @app.route("/asset_models/add_asset_model", methods = ["POST"])
 def add_asset_model():
@@ -628,7 +650,7 @@ def add_asset_model():
 	session.commit()
 
 	#Return to asset register
-	return redirect(url_for("view_asset_models"))
+	return redirect(url_for("create_asset_model"))
 
 # Modify Existing Asset Model
 @app.route("/asset_models/edit/asset_model/<model_code>", methods=["GET"])
@@ -702,8 +724,8 @@ def delete_asset_model(model_code):
 # Create New Status, Modify Existing Status details, Delete Existing Status
 
 #Route to view full list of asset Status
-@app.route("/asset_Status/view", methods = ["GET"])
-def view_asset_status():
+@app.route("/asset_status/view", methods = ["GET"])
+def view_asset_statuses():
 	""" 
 	Queries the database for all assets status and passes them into a
 	list of dictionaries which is passed into the hmtl render
@@ -716,7 +738,7 @@ def view_asset_status():
 	status_list = [status.as_dictionary() for status in status_reg]
 
     #Pass dictionary list into html render function
-	return render_template("asset_status.html", status_list = status_list)
+	return render_template("view_statuses.html", status_list = status_list)
 
 #Single Asset status view route
 @app.route("/asset_status/view/<status_code>", methods = ["GET"])
@@ -740,7 +762,7 @@ def view_single_status(status_code):
 def create_asset_status():
 	"""	Provides empty form to be filled with new asset status details	"""
 
-	return render_template("add_asset_status.html")
+	return render_template("add_status.html")
 
 @app.route("/asset_status/add_asset_status", methods = ["POST"])
 def add_asset_status():
@@ -752,7 +774,6 @@ def add_asset_status():
 	new_asset_status = models.AssetStatus(
 			status_code = request.form['code'],
 			status_name = request.form['name'],
-			status_type = request.form['status_type'],
 			notes = request.form["notes"]
 			)
 	#Add entry to database
@@ -760,7 +781,7 @@ def add_asset_status():
 	session.commit()
 
 	#Return to asset register
-	return redirect(url_for("view_asset_status"))
+	return redirect(url_for("create_asset_status"))
 
 # Modify Existing Asset Status
 @app.route("/asset_status/edit_asset_status/<status_code>", methods=["GET"])
@@ -847,7 +868,7 @@ def view_locations():
 	locations_list = [location.as_dictionary() for location in locations_reg]
 
     #Pass dictionary list into html render function
-	return render_template("locations.html", locations_list = locations_list)
+	return render_template("view_locations.html", locations_list = locations_list)
 
 #Single Location view route
 @app.route("/location/view/<location_code>", methods = ["GET"])
@@ -973,11 +994,11 @@ def view_costcenters():
     #Get cost centers from DB
 	costcenters_reg = session.query(models.CostCenter).order_by(models.CostCenter.id)
 
-	#Convert locations_reg to a list of dictionary items
+	#Convert costcenters_reg to a list of dictionary items
 	costcenters_list = [costcenter.as_dictionary() for costcenter in costcenters_reg]
 
     #Pass dictionary list into html render function
-	return render_template("cost_centers.html", costcenters_list = costcenters_list)
+	return render_template("view_cost_centers.html", costcenters_list = costcenters_list)
 
 #Single Cost Center view route
 @app.route("/cost_center/view/<center_code>", methods = ["GET"])
@@ -1087,3 +1108,575 @@ def delete_costcenter(center_code):
 
     #Return to cost centers view
 	return redirect(url_for("view_costcenters"))
+
+
+# Views to view Full list of Departments, Single Department details,
+# Create New Departments, Modify Existing Departments details, Delete Existing Departments
+
+#Route to view full list of Departments
+@app.route("/departments/view", methods = ["GET"])
+def view_departments():
+	""" 
+	Queries the database for all departments and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get Departments from DB
+	departments_reg = session.query(models.Department).order_by(models.Department.id)
+
+	#Convert departments_reg to a list of dictionary items
+	departments_list = [department.as_dictionary() for department in departments_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("view_departments.html", departments_list = departments_list)
+
+#Single department view route
+@app.route("/department/view/<department_code>", methods = ["GET"])
+def view_department(department_code):
+	""" 
+	Queries the database for all departments and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for departments
+	department_search = session.query(models.Department).filter(models.Department.department_code == department_code).all()
+
+	#Convert result into a list of dictionary items
+	department = [department.as_dictionary() for department in department_search]
+
+	#Pass departments info into html render function
+	return render_template("single_department.html", department = department)
+
+#Create new Department route
+@app.route("/department/add_department", methods = ["GET"])
+def create_department():
+	"""	Provides empty form to be filled with new department details	"""
+
+	return render_template("add_department.html")
+
+@app.route("/department/add_department", methods = ["POST"])
+def add_department():
+	"""
+	Captures new departments information and 
+	creates an entry in the database
+	"""
+	#Capture new departments details
+	new_department = models.Department(
+			department_code = request.form['code'],
+			department_name = request.form['name'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_department)
+	session.commit()
+
+	#Return to new departments
+	return redirect(url_for("create_department"))
+
+# Modify Existing Department Details
+@app.route("/department/edit_department/<department_code>", methods=["GET"])
+@login_required
+def edit_department(department_code):
+	""" Provide form populated with department information to be edited """
+
+	department = session.query(models.Department).filter(models.Department.department_code == department_code).all()
+	department = department[0]
+
+	return render_template("edit_departments.html", id = department.id,
+		department_code = department.department_code, 
+		department_name = department.department_name,
+		notes = department.notes
+    	)
+
+# POST Department Modifications
+@app.route("/department/edit_department/<department_code>", methods=['POST'])
+@login_required
+def update_department(department_code):
+	"""
+	Captures updated department information and 
+	posts updated information to the database
+	"""
+	department = session.query(models.Department).filter(models.Department.department_code == department_code).first()
+	department.department_code = request.form["code"]
+	department.department_name = request.form["name"]
+	department.notes = request.form["notes"]
+
+	session.add(department)
+	session.commit()
+
+    #Return to Departments view
+	return redirect(url_for("view_departments"))
+
+# Delete Department
+@app.route("/department/delete_department/<department_code>")
+@login_required
+def department_to_delete(department_code):
+	"""
+	Identify department to be deleted bassed on provided department code
+	"""
+    #Query database for department
+	department_search = session.query(models.Department).filter(models.Department.department_code == department_code).all()
+	department = [result.as_dictionary() for result in department_search]
+	department = department[0]
+
+    #Display the department details for confirmation
+	return render_template("delete_department.html", department = department)
+
+# Delete department from database
+@app.route("/department/deleted/<department_code>")
+@login_required
+def delete_department(department_code):
+	"""
+	Search for confirmed department and deletes it from the database
+	"""
+    #Search database for department
+	department = session.query(models.Department).filter(models.Department.department_code == department_code).first()
+
+    #Delete department from database
+	session.delete(department)
+	session.commit()
+
+    #Return to departments view
+	return redirect(url_for("view_departments"))
+
+
+# Views to view Full list of People, Single People details,
+# Create New People, Modify Existing Person details, Delete Existing People
+
+#Route to view full list of People
+@app.route("/people/view", methods = ["GET"])
+def view_people():
+	""" 
+	Queries the database for all people and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get People from DB
+	people_reg = session.query(models.People).order_by(models.People.id)
+
+	#Convert people_reg to a list of dictionary items
+	people_list = [person.as_dictionary() for person in people_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("view_people.html", people_list = people_list)
+
+#Single person view route
+@app.route("/person/view/<person_code>", methods = ["GET"])
+def view_person(person_code):
+	""" 
+	Queries the database for all people and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for person
+	person_search = session.query(models.People).filter(models.People.person_code == person_code).all()
+
+	#Convert result into a list of dictionary items
+	person = [person.as_dictionary() for person in person_search]
+
+	#Pass person info into html render function
+	return render_template("single_person.html", person = person)
+
+#Create new Person route
+@app.route("/people/add_person", methods = ["GET"])
+def create_person():
+	"""	Provides empty form to be filled with new person details """
+
+	#Get departments from DB
+	departments_list = session.query(models.Department).order_by(models.Department.department_code)
+	
+	#Get locations from DB
+	locations_list = session.query(models.Location).order_by(models.Location.location_code)
+
+	return render_template("add_person.html", departments_list = departments_list, 
+							locations_list = locations_list
+							)
+
+@app.route("/people/add_person", methods = ["POST"])
+def add_person():
+	"""
+	Captures new person information and 
+	creates an entry in the database
+	"""
+	#Capture new person details
+	new_person = models.People(
+			person_code = request.form['code'],
+			first_name = request.form['first_name'],
+			last_name = request.form['last_name'],
+			designation = request.form['designation'],
+			phone = request.form['phone'],
+			email = request.form['email'],
+			department = request.form['department'],
+			location = request.format['location'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_person)
+	session.commit()
+
+	#Return to new person
+	return redirect(url_for("create_person"))
+
+# Modify Existing Person Details
+@app.route("/people/edit_person/<person_code>", methods=["GET"])
+@login_required
+def edit_person(person_code):
+	""" Provide form populated with person information to be edited """
+
+	person = session.query(models.People).filter(models.People.person_code == person_code).all()
+	person = person[0]
+
+	return render_template("edit_person.html", id = person.id,
+		person_code = person.person_code, 
+		first_name = person.first_name,
+		last_name = person.last_name,
+		designation = person.designation,
+		phone = person.phone,
+		email = person.email,
+		department = person.department,
+		location = person.location,
+		notes = person.notes
+    	)
+
+# POST Person Modifications
+@app.route("/people/edit_person/<person_code>", methods=['POST'])
+@login_required
+def update_person(person_code):
+	"""
+	Captures updated person information and 
+	posts updated information to the database
+	"""
+	person = session.query(models.People).filter(models.People.person_code == person_code).first()
+	person.person_code = request.form["code"]
+	person.first_name = request.form["first_name"]
+	person.last_name = request.form["last_name"]
+	person.designation = request.form["designation"]
+	person.phone = request.form["phone"]
+	person.email = request.form["email"]
+	person.department = request.form["department"]
+	person.location = request.form["location"]
+	person.notes = request.form["notes"]
+
+	session.add(person)
+	session.commit()
+
+    #Return to People view
+	return redirect(url_for("view_people"))
+
+# Delete Person
+@app.route("/people/delete_person/<person_code>")
+@login_required
+def person_to_delete(person_code):
+	"""
+	Identify person to be deleted bassed on provided person's code
+	"""
+    #Query database for person
+	person_search = session.query(models.People).filter(models.People.person_code == person_code).all()
+	person = [result.as_dictionary() for result in person_search]
+	person = person[0]
+
+    #Display the person details for confirmation
+	return render_template("delete_person.html", person = person)
+
+# Delete person from database
+@app.route("/people/deleted/<person_code>")
+@login_required
+def delete_person(person_code):
+	"""
+	Search for confirmed person and deletes it from the database
+	"""
+    #Search database for person
+	person = session.query(models.People).filter(models.People.person_code == person_code).first()
+
+    #Delete person from database
+	session.delete(person)
+	session.commit()
+
+    #Return to people view
+	return redirect(url_for("view_people"))
+
+
+# Views to view Full list of Supplier Categories, Single Supplier Category details,
+# Create New Supplier Category, Modify Existing Supplier Category details, 
+# Delete Existing Supplier Category
+
+#Route to view full list of Supplier Category
+@app.route("/supplier_categories/view", methods = ["GET"])
+def view_supplierCategories():
+	""" 
+	Queries the database for all supplier categories and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get Supplier Categories from DB
+	supplierCategories_reg = session.query(models.SupplierCategory).order_by(models.SupplierCategory.id)
+
+	#Convert supplierCategories_reg to a list of dictionary items
+	supplierCategories_list = [supplierCategory.as_dictionary() for supplierCategory in supplierCategories_reg]
+
+    #Pass Supplier Categories list into html render function
+	return render_template("view_supplier_categories.html", supplierCategories_list = supplierCategories_list)
+
+#Single supplier category view route
+@app.route("/supplier_category/view/<category_code>", methods = ["GET"])
+def view_supplierCategory(category_code):
+	""" 
+	Queries the database for all supplier category and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for supplier category
+	supplierCategory_search = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).all()
+
+	#Convert result into a list of dictionary items
+	supplierCategory = [supplierCategory.as_dictionary() for supplierCategory in supplierCategory_search]
+
+	#Pass supplier category info into html render function
+	return render_template("single_supplier_category.html", supplierCategory = supplierCategory)
+
+#Create new Supplier Category route
+@app.route("/supplier_categories/add_category", methods = ["GET"])
+def create_supplierCategory():
+	"""	Provides empty form to be filled with new supplier category details	"""
+
+	return render_template("add_supplier_category.html")
+
+@app.route("/supplier_category/add_supplier_category", methods = ["POST"])
+def add_supplierCategory():
+	"""
+	Captures new supplier category information and creates an entry in the database
+	"""
+	#Capture new supplier category details
+	new_supplierCategory = models.SupplierCategory(
+			category_code = request.form['code'],
+			category_name = request.form['name'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_supplierCategory)
+	session.commit()
+
+	#Return to new supplier category
+	return redirect(url_for("create_supplierCategory"))
+
+# Modify Existing Supplier Category Details
+@app.route("/supplier_category/edit_category/<category_code>", methods=["GET"])
+@login_required
+def edit_supplierCategory(category_code):
+	""" Provide form populated with supplier categories information to be edited """
+
+	supplierCategory = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).all()
+	supplierCategory = supplierCategory[0]
+
+	return render_template("edit_supplier_category.html", id = supplierCategory.id,
+		category_code = supplierCategory.category_code, 
+		category_name = supplierCategory.category_name,
+		notes = supplierCategory.notes
+    	)
+
+# POST Supplier Category Modifications
+@app.route("/supplier_category/edit_category/<category_code>", methods=['POST'])
+@login_required
+def update_supplierCategory(category_code):
+	"""
+	Captures updated supplier category information and 
+	posts updated information to the database
+	"""
+	supplierCategory = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).first()
+	supplierCategory.category_code = request.form["code"]
+	supplierCategory.category_name = request.form["name"]
+	supplierCategory.notes = request.form["notes"]
+
+	session.add(supplierCategory)
+	session.commit()
+
+    #Return to Supplier Categories view
+	return redirect(url_for("view_supplierCategories"))
+
+# Delete Supplier Category
+@app.route("/supplier_category/delete_category/<category_code>")
+@login_required
+def supplierCategory_to_delete(category_code):
+	"""
+	Identify supplier category to be deleted bassed on provided supplier category code
+	"""
+    #Query database for supplier category
+	supplierCategory_search = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).all()
+	supplierCategory = [result.as_dictionary() for result in supplierCategory_search]
+	supplierCategory = supplierCategory[0]
+
+    #Display the supplier category details for confirmation
+	return render_template("delete_supplier_category.html", supplierCategory = supplierCategory)
+
+# Delete supplier from database
+@app.route("/supplier_category/deleted/<category_code>")
+@login_required
+def delete_supplierCategory(category_code):
+	"""
+	Search for confirmed supplier category and deletes it from the database
+	"""
+    #Search database for supplier category
+	supplierCategory = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).first()
+
+    #Delete supplier category from database
+	session.delete(supplierCategory)
+	session.commit()
+
+    #Return to supplier categories view
+	return redirect(url_for("view_supplierCategories"))
+
+
+# Views to view Full list of Supplier, Single Supplier details,
+# Create New Supplier, Modify Existing Supplier details, Delete Existing Supplier
+
+#Route to view full list of Supplier
+@app.route("/suppliers/view", methods = ["GET"])
+def view_suppliers():
+	""" 
+	Queries the database for all suppliers and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get Suppliers from DB
+	suppliers_reg = session.query(models.Supplier).order_by(models.Supplier.id)
+
+	#Convert suppliers_reg to a list of dictionary items
+	suppliers_list = [supplier.as_dictionary() for supplier in suppliers_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("view_suppliers.html", suppliers_list = suppliers_list)
+
+#Single Supplier view route
+@app.route("/supplier/view/<supplier_code>", methods = ["GET"])
+def view_supplier(supplier_code):
+	""" 
+	Queries the database for all supplier and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for supplier
+	supplier_search = session.query(models.Supplier).filter(models.Supplier.supplier_code == supplier_code).all()
+
+	#Convert result into a list of dictionary items
+	supplier = [supplier.as_dictionary() for supplier in supplier_search]
+
+	#Pass supplier info into html render function
+	return render_template("single_supplier.html", supplier = supplier)
+
+#Create new Supplier route
+@app.route("/suppliers/add_supplier", methods = ["GET"])
+def create_supplier():
+	"""	Provides empty form to be filled with new supplier details	"""
+
+	#Get supplier category from DB
+	categories_list = session.query(models.SupplierCategory).order_by(models.SupplierCategory.category_code)
+	
+	#Get locations from DB
+	locations_list = session.query(models.Location).order_by(models.Location.location_code)
+
+	#Get contact person from DB
+	contacts_list = session.query(models.People).order_by(models.People.person_code)
+
+	return render_template("add_supplier.html", categories_list = categories_list,
+							locations_list = locations_list, contacts_list = contacts_list
+							)
+
+@app.route("/supplier/add_supplier", methods = ["POST"])
+def add_supplier():
+	"""
+	Captures new supplier information and creates an entry in the database
+	"""
+	#Capture new supplier details
+	new_supplier = models.Supplier(
+			supplier_code = request.form['code'],
+			supplier_name = request.form['name'],
+			phone = request.form['phone'],
+			email = request.form['email'],
+			website = request.form['website'],
+			category = request.form['category'],
+			location = request.format['location'],
+			contact_person = request.format['contact_person'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_supplier)
+	session.commit()
+
+	#Return to new supplier
+	return redirect(url_for("create_supplier"))
+
+# Modify Existing Supplier Details
+@app.route("/supplier/edit_supplier/<supplier_code>", methods=["GET"])
+@login_required
+def edit_supplier(supplier_code):
+	""" Provide form populated with supplier information to be edited """
+
+	supplier = session.query(models.Supplier).filter(models.Supplier.supplier_code == supplier_code).all()
+	supplier = supplier[0]
+
+	return render_template("edit_supplier.html", id = supplier.id,
+		supplier_code = supplier.supplier_code, 
+		supplier_name = supplier.supplier_name,
+		phone = supplier.phone,
+		email = supplier.email,
+		website = supplier.website,
+		category = supplier.category,
+		location = supplier.location,
+		contact_person = supplier.contact_person,
+		notes = supplier.notes
+    	)
+
+# POST Person Modifications
+@app.route("/supplier/edit_supplier/<supplier_code>", methods=['POST'])
+@login_required
+def update_supplier(supplier_code):
+	"""
+	Captures updated supplier information and posts updated information to the database
+	"""
+	supplier = session.query(models.Supplier).filter(models.Supplier.supplier_code == supplier_code).first()
+	supplier.supplier_code = request.form["code"]
+	supplier.supplier_name = request.form["name"]
+	supplier.phone = request.form["phone"]
+	supplier.email = request.form["email"]
+	supplier.website = request.form["website"]
+	supplier.location = request.form["location"]
+	supplier.contact_person = request.form["contact_person"]
+	supplier.notes = request.form["notes"]
+
+	session.add(supplier)
+	session.commit()
+
+    #Return to Supplier view
+	return redirect(url_for("view_suppliers"))
+
+# Delete Supplier
+@app.route("/supplier/delete_supplier/<supplier_code>")
+@login_required
+def supplier_to_delete(supplier_code):
+	"""
+	Identify supplier to be deleted bassed on provided supplier's code
+	"""
+    #Query database for supplier
+	supplier_search = session.query(models.Supplier).filter(models.Supplier.supplier_code == supplier_code).all()
+	supplier = [result.as_dictionary() for result in supplier_search]
+	supplier = supplier[0]
+
+    #Display the supplier details for confirmation
+	return render_template("delete_supplier.html", supplier = supplier)
+
+# Delete supplier from database
+@app.route("/supplier/deleted/<supplier_code>")
+@login_required
+def delete_supplier(supplier_code):
+	"""
+	Search for confirmed supplier and deletes it from the database
+	"""
+    #Search database for supplier
+	supplier = session.query(models.Supplier).filter(models.Supplier.supplier_code == supplier_code).first()
+
+    #Delete supplier from database
+	session.delete(supplier)
+	session.commit()
+
+    #Return to suppliers view
+	return redirect(url_for("view_suppliers"))

@@ -4,85 +4,90 @@
 Edit Asset - {{barcode}}
 {% endblock %}
 
-{% block navbar %}
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">ARCPlus</a>
-      </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Dashboard</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configure<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-header">Users</li>
-              <li><a href="#">View Users</a></li>
-              <li><a href="{{ url_for('create_user') }}">Add Users</a></li>
-              <li><a href="#">Delete Users</a></li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Asset Entities</li>
-              <li><a href="{{ url_for('create_asset_category') }}">Add Categories</a></li>
-              <li><a href="{{ url_for('create_asset_model') }}">Add Models</a></li>
-              <li><a href="{{ url_for('create_asset_type') }}">Add Types</a></li>
-              <li class="dropdown-header">Other Entities</li>
-              <li><a href="{{ url_for('create_location') }}">Add Locations</a></li>
-              <li><a href="{{ url_for('create_costcenter') }}">Add Cost Centers</a></li>
-            </ul>
-          </li>
-          <li><a href="{{ url_for('create_asset') }}">Add Assets</a></li>
-          <li><a href="{{ url_for('view_register') }}">Register</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <!-- <li class="active"><a href="./">Settings<span class="sr-only">(current)</span></a></li> -->
-          <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.name }}!</a></li>
-          <li><a href="{{ url_for('logout') }}">Logout</a></li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div><!--/.container-fluid -->
-  </nav>
-{% endblock navbar %}
-
 {% block content %}
 <h3>
     Edit Asset - {{barcode}}
 </h3>
 
 <form role="form" method="POST">
-    ID:<br>
-        <input type="text" id="id" name="id" value="{{id}}" readonly><br>
+    ID: <br>
+        <input type="text" id="id" name="id" value="{{id}}" readonly>
+        <br>
     Barcode:<br>
-        <input type="text" id="barcode" name="barcode" value="{{barcode}}"><br>
+            <input type="text" id="barcode" name="barcode" value="{{barcode}}">
+            <br>
     Serial No:<br>
         <input type="text" id="serial_no" name="serial_no" value="{{serial_no}}"><br>
     Name:<br>
         <input type="text" id="name" name="name" value="{{name}}"><br>
     Category:<br>
-        <input type="text" id="category" name="category" value="{{category}}"><br>
+        <select name="category">
+            <option selected>{{category}}</option>
+            {% for update in categories_list %}
+            <option value="{{ update.id }}">{{ update }}</option>
+            {% endfor %}
+        </select>
+        <br>
     Type:<br>
-        <input type="text" id="_type" name="_type" value="{{_type}}"><br>
+        <select name="_type">
+            <option selected>{{_type}}.</option>
+            {% for update in types_list %}
+            <option value="{{ update.id }}">{{ update }}</option>
+            {% endfor %}
+        </select>
+        <br>
     Model:<br>
-        <input type="text" id="_model" name="_model" value="{{_model}}"><br>
+        <select name="_model">
+            <option selected>{{_model}}</option>
+            {% for update in models_list %}
+            <option value="{{ update.id }}">{{ update }}</option>
+            {% endfor %}
+        </select>
+        <br>
     Status:<br>
-        <input type="text" id="status" name="status" value="{{status}}"><br>
+        <select name="status">
+            <option selected>{{status}}</option>
+            {% for update in statuses_list %}
+            <option value="{{ update.id }}">{{ update }}</option>
+            {% endfor %}
+        </select>
+        <br>
     Location:<br>
-        <input type="text" id="location" name="location" value="{{location}}"><br>
+            <select name="location">
+                <option selected>{{location}}</option>
+                {% for update in locations_list %}
+                <option value="{{update.id}}">{{ update }}</option>
+                {% endfor %}
+            </select>
+            <br>
     Cost Center:<br>
-        <input type="text" id="cost_center" name="cost_center" value="{{cost_center}}"><br>
-        User:<br>
-        <input type="text" id="user" name="user" value="{{user}}"><br>
+            <select name="cost_center">
+                <option selected>{{cost_center}}</option>
+                {% for update in costcenters_list %}
+                <option value="{{update.id}}">{{ update }}</option>
+                {% endfor %}
+            </select>
+            <br>
+    User:<br>
+        <select name="user">
+            <option selected>{{user}}</option>
+            {% for update in users_list %}
+            <option value="{{update.id}}">{{ update }}</option>
+            {% endfor %}
+        </select>
+        <br>
     Purchase price:<br>
         <input type="text" id="purchase_price" name="purchase_price" value="{{purchase_price}}"><br>
     Value:<br>
         <input type="text" id="value" name="value" value="{{value}}"><br>
     Supplier:<br>
-        <input type="text" id="supplier" name="supplier" value="{{supplier}}"><br>
+            <select name="supplier">
+                <option selected>{{supplier}}</option>
+                {% for update in suppliers_list %}
+                <option value="update.id">{{ update }}</option>
+                {% endfor %}
+            </select>
+            <br>
     Photo:<br>
         <input type="text" id="photo" name="photo" value="{{photo}}"><br>
     Notes:<br>

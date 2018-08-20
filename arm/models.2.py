@@ -34,8 +34,7 @@ class Asset(Base):
 
     # Asset db table fields
     id = Column(Integer, primary_key = True)
-    barcode = Column(String(20), nullable = False, unique = True)
-    asset_no = Column(String(20), nullable = False, unique = True)
+    barcode = Column(String, nullable = False, unique = True)
     serial_no = Column(String, nullable = True)
     capture_date = Column(DateTime, default = datetime.datetime.now)
     modified_date = Column(DateTime, default = datetime.datetime.now, onupdate = datetime.datetime.utcnow)
@@ -45,8 +44,6 @@ class Asset(Base):
     photo = Column(String, nullable = True)
     attchments = Column(String, nullable = True)
     notes = Column(String(256), nullable = True)
-    captured_by = Column(String(128), nullable = False)
-    modified_by = Column(String(128), nullable = False)
     category_id = Column(Integer, ForeignKey('asset_categories.id'), nullable = False)
     type_id = Column(Integer, ForeignKey('asset_types.id'), nullable = False)
     model_id = Column(Integer, ForeignKey('asset_models.id'), nullable = False)
@@ -69,8 +66,7 @@ class Asset(Base):
                 "Location": self.asset_location, "Cost center": self.asset_center, 
                 "User": self.asset_user, "Purchase Price": self.purchase_price, 
                 "Value": self.value, "Supplier": self.asset_supplier, "Photo": self.photo, 
-                "Attachements": self.attchments, "Notes": self.notes,
-                "Captured By": self.captured_by, "Modified By": self.modified_by
+                "Attachements": self.attchments, "Notes": self.notes
                 }
         return asset
 
@@ -210,13 +206,14 @@ class People(Base):
 
     # People db table fields
     id = Column(Integer, primary_key = True)
-    person_code = Column(String(64), nullable = False, unique = True)
+    barcode = Column(String(64), nullable = False, unique = True)
     first_name = Column(String(128), nullable = False)
     last_name = Column(String(128), nullable = False)
     designation = Column(String(128), nullable = True)
     phone = Column(Integer, unique = True)
     email = Column(String(128), unique = True)
     notes = Column(String(256), nullable = True)
+    category_id = Column(Integer, ForeignKey("people_categories.id"), nullable = False)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable = False)
     location_id = Column(Integer, ForeignKey("locations.id"), nullable = False)
     asset_user = relationship ("Asset", backref = "asset_user")
@@ -234,6 +231,24 @@ class People(Base):
                     "Notes": self.notes
                     }
         return people
+
+# People Category object model
+class PeopleCategory(Base):
+    __tablename__ = 'people_categories'
+
+    # People category db table fields
+    id = Column(Integer, primary_key = True)
+    category_name = Column(String(128), nullable = False, unique = True)
+    notes = Column(String(256), nullable = True)
+    user_category = relationship ("People", backref = "user_category")
+
+    def __repr__(self):
+        return self.category_name
+
+    # Return People category as dictionary
+    def as_dictionary(self):
+        people_category = {"id": self.id, "category_name": self.category_name, "Notes": self.notes}
+        return people_category
 
 # Department object model
 class Department(Base):
@@ -270,7 +285,7 @@ class Supplier(Base):
     notes = Column(String(256), nullable = True)
     category_id = Column(Integer, ForeignKey("supplier_categories.id"), nullable = False)
     location_id = Column(Integer, ForeignKey("locations.id"), nullable = False)
-    contact_person = Column(Integer, ForeignKey("people.id"), nullable = True)
+    person_id = Column(Integer, ForeignKey("people.id"), nullable = True)
     asset_supplier = relationship ("Asset", backref = "asset_supplier")
 
     def __repr__(self):
@@ -290,7 +305,6 @@ class SupplierCategory(Base):
 
     # Supplier category db table fields
     id = Column(Integer, primary_key = True)
-    category_code = Column(String(20), nullable = False, unique = True)
     category_name = Column(String(128), nullable = False, unique = True)
     notes = Column(String(256), nullable = True)
     supplier_category = relationship ("Supplier", backref = "supplier_category")

@@ -1,41 +1,31 @@
 {% extends "new_base.html" %}
 
 {% block title %}
-Add New Asset
+Add New Department
 {% endblock %}
 
 {% block content %}
 <div class="my-3 p-3 bg-white rounded box-shadow">
     <!-- Form Title -->
     <div class="box-header with-border">
-        <h3 class="box-title">Add New Asset Type</h3>
+        <h3 class="box-title">Add Department</h3>
     </div>
     <!-- Form Starts here -->
     <form class="form-horizontal" role="form" method="POST">
         <div class="box-body">
-            <!-- Type Code -->
+            <!-- Department Code -->
             <div class="form-group">
-                <label class="col-sm-2 control-label">Type Code</label>
+                <label class="col-sm-2 control-label">Department Code</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="code">
                 </div>
             </div>
-            <!-- Type Name -->
+            <!-- Department Name -->
             <div class="form-group">
-                <label class="col-sm-2 control-label">Name</label>
+                <label class="col-sm-2 control-label">Department Name</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="name">
                 </div>
-            </div>
-            <!-- Type Category Name -->
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Type Category</label>
-                <select class="browser-default custom-select mb-4" name="type_category">
-                    <option selected>Choose...</option>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category }}</option>
-                    {% endfor %}
-                </select>
             </div>
             <!-- Notes / Additional info -->
             <div class="form-group">

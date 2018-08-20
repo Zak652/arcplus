@@ -12,7 +12,7 @@
     <title>{% block page_title %}{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="../../dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/getbootstrap.com_docs_3.3_dist_css_bootstrap.min.css') }}" />
 
     <!-- For responsive data tables styling -->
@@ -21,11 +21,11 @@
     <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap4.min.css">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!-- <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/getbootstrap.com_docs_3.3_assets_css_ie10-viewport-bug-workaround.css') }}" />
 
     <!-- Custom styles for this template -->
-    <link href="navbar.css" rel="stylesheet">
+    <!-- <link href="navbar.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
 
   </head>
@@ -34,7 +34,110 @@
     <div class="container">
       <!-- Static navbar -->
       {% block navbar %}
-
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('view_dashboard') }}">ARCPlus</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <!-- <li class="active"><a href="{{ url_for('view_dashboard') }}">Dashboard</a></li> -->
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Register<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_asset') }}">Add Asset</a></li>
+                    <li><a href="{{ url_for('view_register') }}">View Register</a></li>
+                    <li class="dropdown-header">Status</li>
+                    <li><a href="{{ url_for('create_asset_status') }}">Add Status</a></li>
+                    <li><a href="{{ url_for('view_asset_statuses') }}">View Statuses</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_asset_category') }}">Add Category</a></li>
+                    <li><a href="{{ url_for('view_asset_categories') }}">View Categories</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Types<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_asset_type') }}">Add Type</a></li>
+                    <li><a href="{{ url_for('view_asset_types') }}">View Types</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Models<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_asset_model') }}">Add Model</a></li>
+                    <li><a href="{{ url_for('view_asset_models') }}">View Models</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">People<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_person') }}">Add Person</a></li>
+                    <li><a href="{{ url_for('view_people') }}">View People</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Locations<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_location') }}">Add Location</a></li>
+                    <li><a href="{{ url_for('view_locations') }}">View Locations</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cost Centers<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_costcenter') }}">Add Cost Center</a></li>
+                    <li><a href="{{ url_for('view_costcenters') }}">View Cost Centers</a></li>
+                    <li class="dropdown-header">Departments</li>
+                    <li><a href="{{ url_for('create_department') }}">Add Department</a></li>
+                    <li><a href="{{ url_for('view_departments') }}">View Departments</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Suppliers<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="{{ url_for('create_supplier') }}">Add Supplier</a></li>
+                    <li><a href="{{ url_for('view_suppliers') }}">View Suppliers</a></li>
+                    <li class="dropdown-header">Supplier Categories</li>
+                    <li><a href="{{ url_for('create_supplierCategory') }}">Add Category</a></li>
+                    <li><a href="{{ url_for('view_supplierCategories') }}">View Categories</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="active"><a href="./">Settings<span class="sr-only">(current)</span></a></li> -->
+                <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.name }}!</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <!-- <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome {{ current_user.name }}!<span class="caret"></span></a>
+                  <ul class="dropdown-menu"> -->
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <!-- <li><a href="../navbar-static-top/">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+                </li> -->
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div><!--/.container-fluid -->
+        </nav>
       {% endblock navbar %}
 
       <!-- content area for graphs, search, register table and related context menus -->
@@ -53,13 +156,13 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
     <script src="{{ url_for('static', filename='js/ajax.googleapis.com_ajax_libs_jquery_1.12.4_jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.com_docs_3.3_dist_ie10-viewport-bug-workaround.js') }}"></script>
     <script src="{{ url_for('static', filename='js/getbootstrap.com_docs_3.3_assets_js_ie-emulation-modes-warning.js') }}"></script>
     <script src="{{ url_for('static', filename='js/getbootstrap.com_docs_3.3_dist_js_bootstrap.min.js') }}"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- <script src="../../dist/js/bootstrap.min.js"></script> -->
     <!-- For resposinve data tables -->
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -67,6 +170,6 @@
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
   </body>
 </html>

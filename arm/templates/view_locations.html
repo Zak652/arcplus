@@ -1,7 +1,7 @@
 {% extends "new_base.html" %}
 
 {% block title %}
-Asset Register
+Locations
 {% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@ Asset Register
   <!-- table header -->
   <thead>
     <tr>
-      {% for key in assets[0] %}
+      {% for key in locations_list[0] %}
       {% if key not in ['Photo'] %}
         <th> {{ key }} </th>
       {% endif %}
@@ -18,12 +18,12 @@ Asset Register
   </thead>
 
   <!-- table rows -->
-{% for asset in assets %}
+{% for location in  locations_list %}
 <tbody>
   <tr>
-    {% for value in asset.values() %}
-    {% if value not in [asset['Photo']] %}
-      <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
+    {% for value in location.values() %}
+    {% if value not in [location['Photo']] %}
+      <td><a href="{{ url_for('view_single_location', location_code = location.location_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

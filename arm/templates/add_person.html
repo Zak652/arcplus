@@ -1,0 +1,93 @@
+{% extends "new_base.html" %}
+
+{% block title %}
+Add New Person
+{% endblock %}
+
+{% block content %}
+<div class="my-3 p-3 bg-white rounded box-shadow">
+    <!-- Form Title -->
+    <div class="box-header with-border">
+        <h3 class="box-title">Add New Person</h3>
+    </div>
+    <!-- Form Starts here -->
+    <form class="form-horizontal" role="form" method="POST">
+        <div class="box-body">
+            <!-- Person Code -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Person's Code</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="code">
+                </div>
+            </div>
+            <!-- First Name -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">First Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="first_name">
+                </div>
+            </div>
+            <!-- Last Name -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Last Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="last_name">
+                </div>
+            </div>
+            <!-- Designation -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Designation</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="designation">
+                </div>
+            </div>
+            <!-- Phone -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Phone</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="phone">
+                </div>
+            </div>
+            <!-- Email -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" name="email">
+                </div>
+            </div>
+            <!-- Department -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Department</label>
+                <select class="browser-default custom-select mb-4" name="department">
+                    <option selected>Choose...</option>
+                    {% for department in departments_list %}
+                    <option value="{{ department.id }}">{{ department }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Location -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Location</label>
+                <select class="browser-default custom-select mb-4" name="location">
+                    <option selected>Choose...</option>
+                    {% for location in locations_list %}
+                    <option value="{{ location.id }}">{{ location }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Notes / Additional info -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Notes / Remarks</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-sm" name="notes" rows="5" placeholder="Enter ..."></textarea>
+                </div>
+            </div>
+            <!-- Save / Cancel -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-outline-secondary">Cancel</button>
+                <button type="submit" class="btn btn-outline-primary float-right">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
