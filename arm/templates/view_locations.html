@@ -23,7 +23,7 @@ Locations
   <tr>
     {% for value in location.values() %}
     {% if value not in [location['Photo']] %}
-      <td><a href="{{ url_for('view_single_location', location_code = location.location_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_location', location_code = location.location_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

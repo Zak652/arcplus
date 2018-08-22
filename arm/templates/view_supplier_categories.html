@@ -18,12 +18,12 @@ Asset Suppliers Categories
   </thead>
 
   <!-- table rows -->
-{% for supplier in  supplierCategories_list %}
+{% for category in  supplierCategories_list %}
 <tbody>
   <tr>
-    {% for value in supplier.values() %}
-    {% if value not in [supplier['Photo']] %}
-      <td><a href="{{ url_for('view_single_supplier', supplier_code = supplier.supplier_code) }}">{{ value }}</a></td>
+    {% for value in category.values() %}
+    {% if value not in [category['Photo']] %}
+      <td><a href="{{ url_for('view_supplierCategory', category_code = category.category_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

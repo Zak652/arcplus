@@ -23,7 +23,7 @@ Asset Categories
   <tr>
     {% for value in category.values() %}
     {% if value not in [category['Photo']] %}
-      <td><a href="{{ url_for('view_single_category', category_code = category.category_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_asset_category', category_code = category.category_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

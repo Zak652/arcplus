@@ -23,7 +23,7 @@ Asset Types
   <tr>
     {% for value in type.values() %}
     {% if value not in [type['Photo']] %}
-      <td><a href="{{ url_for('view_single_type', type_code = type.type_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_asset_type', type_code = type.type_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

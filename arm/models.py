@@ -226,11 +226,11 @@ class People(Base):
 
     # Return people as dictionary
     def as_dictionary(self):
-        people = {"id": self.id, "Barcode": self.barcode, "Category": self.user_category, 
+        people = {"id": self.id, "Personal Code": self.person_code, 
                     "First Name": self.first_name, "Last Name": self.last_name, 
-                    "Designation": self.designation, "Department": self.user_department, 
-                    "Location": self.user_location, "Phone": self.phone, "Email": self.email,
-                    "Notes": self.notes
+                    "Designation": self.designation, "Department": self.department_id, 
+                    "Location": self.location_id, "Phone": self.phone, "Email": self.email,
+                    "User Assets": self.asset_user, "Notes": self.notes
                     }
         return people
 

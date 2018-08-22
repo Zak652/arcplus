@@ -23,7 +23,7 @@ Asset Models
   <tr>
     {% for value in model.values() %}
     {% if value not in [model['Photo']] %}
-      <td><a href="{{ url_for('view_single_model', model_code = model.model_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_asset_model', model_code = model.model_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

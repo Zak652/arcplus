@@ -181,18 +181,18 @@ def add_asset():
 			asset_no = request.form['barcode'],
 			serial_no = request.form['serial_no'],
 			name = request.form['name'],
-			category = request.form['category'],
-			_type = request.form['_type'],
-			_model = request.form['_model'],
-			status = request.form['status'],
-			location = request.form['location'],
-			cost_center = request.form['cost_center'],
-			user = request.form['user'],
+			category_id = request.form['category'],
+			type_id = request.form['_type'],
+			model_id = request.form['_model'],
+			status_id = request.form['status'],
+			location_id = request.form['location'],
+			costcenter_id = request.form['cost_center'],
+			user_id = request.form['user'],
 			purchase_price = request.form['purchase_price'],
-			supplier = request.form['supplier'],
+			supplier_id = request.form['supplier'],
 			notes = request.form["notes"],
-			captured_by = current_user,
-			modified_by = current_user
+			captured_by = current_user.name,
+			modified_by = current_user.name
 			)
 	#Add entry to database
 	session.add(new_asset)
@@ -342,7 +342,7 @@ def view_asset_categories():
 
 #Single Asset Category view route
 @app.route("/asset_categories/view/<category_code>", methods = ["GET"])
-def view_single_category(category_code):
+def view_asset_category(category_code):
 	""" 
 	Queries the database for all categories and passes them into a
 	list of dictionaries which is passed into the hmtl render
@@ -472,7 +472,7 @@ def view_asset_types():
 
 #Single Asset type view route
 @app.route("/asset_types/view/<type_code>", methods = ["GET"])
-def view_single_type(type_code):
+def view_asset_type(type_code):
 	""" 
 	Queries the database for all asset types and passes them into a
 	list of dictionaries which is passed into the hmtl render
@@ -607,7 +607,7 @@ def view_asset_models():
 
 #Single Asset model view route
 @app.route("/asset_models/view/<model_code>", methods = ["GET"])
-def view_single_model(model_code):
+def view_asset_model(model_code):
 	""" 
 	Queries the database for all models and passes them into a
 	list of dictionaries which is passed into the hmtl render
@@ -872,7 +872,7 @@ def view_locations():
 
 #Single Location view route
 @app.route("/location/view/<location_code>", methods = ["GET"])
-def view_single_location(location_code):
+def view_location(location_code):
 	""" 
 	Queries the database for all locations and passes them into a
 	list of dictionaries which is passed into the hmtl render
@@ -1306,8 +1306,8 @@ def add_person():
 			designation = request.form['designation'],
 			phone = request.form['phone'],
 			email = request.form['email'],
-			department = request.form['department'],
-			location = request.format['location'],
+			department_id = request.form['department'],
+			location_id = request.form['location'],
 			notes = request.form["notes"]
 			)
 	#Add entry to database
@@ -1435,28 +1435,29 @@ def view_supplierCategory(category_code):
 	return render_template("single_supplier_category.html", supplierCategory = supplierCategory)
 
 #Create new Supplier Category route
-@app.route("/supplier_categories/add_category", methods = ["GET"])
+@app.route("/supplier_categories/add_supplier_category", methods = ["GET"])
 def create_supplierCategory():
 	"""	Provides empty form to be filled with new supplier category details	"""
 
-	return render_template("add_supplier_category.html")
+	return render_template("add_suppliercategory.html")
 
-@app.route("/supplier_category/add_supplier_category", methods = ["POST"])
+@app.route("/supplier_categories/add_supplier_category", methods = ["POST"])
 def add_supplierCategory():
 	"""
-	Captures new supplier category information and creates an entry in the database
+	Captures new supplier category information and 
+	creates an entry in the database
 	"""
 	#Capture new supplier category details
 	new_supplierCategory = models.SupplierCategory(
 			category_code = request.form['code'],
 			category_name = request.form['name'],
-			notes = request.form['notes']
+			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_supplierCategory)
 	session.commit()
 
-	#Return to new supplier category
+	#Return to create new supplier
 	return redirect(url_for("create_supplierCategory"))
 
 # Modify Existing Supplier Category Details
@@ -1581,21 +1582,21 @@ def create_supplier():
 							locations_list = locations_list, contacts_list = contacts_list
 							)
 
-@app.route("/supplier/add_supplier", methods = ["POST"])
+@app.route("/suppliers/add_supplier", methods = ["POST"])
 def add_supplier():
 	"""
 	Captures new supplier information and creates an entry in the database
 	"""
 	#Capture new supplier details
 	new_supplier = models.Supplier(
-			supplier_code = request.form['code'],
-			supplier_name = request.form['name'],
+			code = request.form['code'],
+			name = request.form['name'],
 			phone = request.form['phone'],
 			email = request.form['email'],
 			website = request.form['website'],
-			category = request.form['category'],
-			location = request.format['location'],
-			contact_person = request.format['contact_person'],
+			category_id = request.form['category'],
+			location_id = request.form['location'],
+			contact_person = request.form['contact_person'],
 			notes = request.form["notes"]
 			)
 	#Add entry to database

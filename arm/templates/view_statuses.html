@@ -23,7 +23,7 @@ Asset Statuses
   <tr>
     {% for value in status.values() %}
     {% if value not in [status['Photo']] %}
-      <td><a href="{{ url_for('view_single_status', status_code = status.status_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_status', status_code = status.status_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>

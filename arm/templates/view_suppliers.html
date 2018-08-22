@@ -18,12 +18,12 @@ Asset Suppliers
   </thead>
 
   <!-- table rows -->
-{% for supplier in  suppliers_list %}
+{% for supplier in suppliers_list %}
 <tbody>
   <tr>
     {% for value in supplier.values() %}
     {% if value not in [supplier['Photo']] %}
-      <td><a href="{{ url_for('view_single_supplier', supplier_code = supplier.supplier_code) }}">{{ value }}</a></td>
+      <td><a href="{{ url_for('view_supplier', supplier_code = supplier.supplier_code) }}">{{ value }}</a></td>
     {% endif %}
     {% endfor %}
   </tr>
