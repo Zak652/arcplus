@@ -199,7 +199,7 @@ def add_asset():
 	session.commit()
 
 	#Return to asset register
-	return redirect(url_for("view_register"))
+	return redirect(url_for("create_asset"))
 
 # Modify Existing Asset
 @app.route("/register/edit/asset/<barcode>", methods=["GET"])
@@ -742,7 +742,7 @@ def view_asset_statuses():
 
 #Single Asset status view route
 @app.route("/asset_status/view/<status_code>", methods = ["GET"])
-def view_single_status(status_code):
+def view_status(status_code):
 	""" 
 	Queries the database for all status and passes them into a
 	list of dictionaries which is passed into the hmtl render
