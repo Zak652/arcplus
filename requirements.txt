@@ -1,6 +1,9 @@
 Flask
 flask
+flask-admin
+Flask-User==0.6.21
 flask-login
+Flask-BabelEx
 flask-script
 flask-migrate
 flask_table
@@ -9,6 +12,9 @@ Jinja2
 MarkupSafe
 SQLAlchemy
 sqlalchemy
+Flask-SQLAlchemy
+Flask-MongoEngine
+Flask-Flywheel
 Werkzeug
 itsdangerous
 jsonschema

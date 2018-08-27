@@ -1,14 +1,20 @@
 import os.path
 
+from flask_admin.contrib.sqla import ModelView
+from flask_admin import Admin, BaseView, expose
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-from .database import Base, engine
+from . database import Base, engine, session
 from . import app
 
 import datetime
 
 from flask_login import UserMixin
+from flask_user import UserManager, UserMixin, SQLAlchemyAdapter
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy(app)
 
 # User object model
 class User(Base, UserMixin):
@@ -16,17 +22,38 @@ class User(Base, UserMixin):
 
     # User db table fields
     id = Column(Integer, primary_key=True)
-    name = Column(String(128))
-    email = Column(String(128), unique=True)
-    password = Column(String(128))
+    name = Column(String(128), nullable = False)
+    email = Column(String(128), nullable = False, unique=True)
+    role_id = Column(Integer, ForeignKey('roles.id'), nullable = False)
+    password = Column(String(128), nullable = False)
     
     def __repr__(self):
         return self.name
 
     # Return user object as dictionary
     def as_dictionary(self):
-        users = {"id": self.id, "Name": self.name, "Email": self.email}
+        users = {"id": self.id, "Name": self.name, "Email": self.email, "Role": self.user_role}
         return users
+
+
+# User Roles object model
+class Role(Base):
+    __tablename__ = 'roles'
+
+    # User Roles table fields
+    id = Column(Integer, primary_key=True)
+    name = Column(String(128), nullable = False, unique = True)
+    role_desc = Column(String(256), nullable = False)
+    user = relationship("User", backref = "user_role")
+
+    def __repr__(self):
+        return self.name
+
+    # Return roles object as dictionary
+    def as_dictionary(self):
+        roles = {"id": self.id, "Name": self.name, "Description": self.role_desc}
+        return roles
+
 
 # Asset object model
 class Asset(Base):
@@ -59,7 +86,6 @@ class Asset(Base):
     def __repr__ (self):
         return self.name
 
-
     #Return asset object as dictionary
     def as_dictionary(self):
         asset={"Id": self.id, "Barcode": self.barcode, "Serial No.": self.serial_no,
@@ -73,6 +99,52 @@ class Asset(Base):
                 "Captured By": self.captured_by, "Modified By": self.modified_by
                 }
         return asset
+
+
+# Asset Verification
+class AssetVerification(Base):
+    __tablename__ = 'asset_verifications'
+
+    # Asset verification db table fields
+    id = Column(Integer, primary_key = True)
+    barcode = Column(String(20), nullable = False)
+    asset_name = Column(String(128), nullable = False)
+    verification_date = Column(DateTime, default = datetime.datetime.now)
+    verified_by = Column(String(128), nullable = True)
+
+    def __repr__(self):
+        return self.name
+    
+    # Return asset verification object as a dictionary
+    def as_dictionary(self):
+        verification = {"Id": self.id, "Barcode": self.barcode, "Asset Name": self.asset_name,
+                        "Verification Date": self.verification_date
+                        }
+        return verification
+
+
+# Asset Movement
+class AssetMovement(Base):
+    __tablename__ = 'asset_movements'
+
+    # Asset verification db table fields
+    id = Column(Integer, primary_key = True)
+    barcode = Column(String(20), nullable = False)
+    asset_name = Column(String(128), nullable = False)
+    movement_date = Column(DateTime, default = datetime.datetime.now)
+    moved_from = Column(String(128), nullable = False)
+    moved_to = Column(String(128), nullable = False)
+    moved_by = Column(String(128), nullable = False)
+
+    def __repr__(self):
+        return self.name
+    
+    # Return asset verification object as a dictionary
+    def as_dictionary(self):
+        asset_movement = {"Id": self.id, "Barcode": self.barcode, "Asset Name": self.asset_name,
+                        "Moved on" : self.movement_date, "Moved From" : self.moved_from,
+                        "Moved To" : self.moved_to}
+        return asset_movement
 
 
 # Asset Category object model
@@ -115,7 +187,7 @@ class AssetType(Base):
 
     # Return asset type object as dictionary
     def as_dictionary(self):
-        _type = {"id": self.id, "type_name": self.type_name, "Notes": self.notes}
+        _type = {"id": self.id, "Type_name": self.type_name, "Notes": self.notes}
         return _type
 
 # Asset Model object model
@@ -303,3 +375,13 @@ class SupplierCategory(Base):
                             "Category_code": self.category_code, "Notes": self.notes
                             }
         return supplier_category
+
+
+db_adapter = SQLAlchemyAdapter(db, User)
+# Setup Flask-User and specify the User data-model
+user_manager = UserManager(db_adapter, app)
+
+admin = Admin(app)
+admin.add_view(ModelView(User, session))
+admin.add_view(ModelView(Role, session))
+admin.add_view(ModelView(Asset, session))

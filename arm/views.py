@@ -1,5 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, login_user, current_user, LoginManager, logout_user
+from flask_user import current_user, login_required, roles_required, UserManager, UserMixin
+from flask_babelex import Babel
+
 from flask_bootstrap import Bootstrap
 
 from flask import flash
@@ -22,6 +25,16 @@ def index():
 	return redirect(url_for("login_get"))
 
 
+# Admin panel access requires user with admin role
+@app.route("/admin")
+@roles_required('Admin')
+def admin_panel():
+	""" Provides access to the application admin panel
+		User must have the admin role to have access
+	"""
+	# Redirect user
+
+
 # Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
@@ -42,6 +55,7 @@ def add_user():
 		if session.query(models.User).filter_by(email=email).first():
 			flash("User with that email address already exists", "danger")
 			return
+		role_id = request.form['role']
 		password = request.form['password']
 		#Check if password is not less than 8 characters
 		if len(password) < 8:
@@ -49,7 +63,7 @@ def add_user():
 			return
 
 	# Add users to DB
-	new_user = models.User(name=name, email = email, password = generate_password_hash(password))
+	new_user = models.User(name=name, email = email, role_id = role_id, password = generate_password_hash(password))
 	session.add(new_user)
 	session.commit()
 	return redirect(url_for("login_get"))
@@ -196,7 +210,11 @@ def add_asset():
 			)
 	#Add entry to database
 	session.add(new_asset)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to asset register
 	return redirect(url_for("create_asset"))
@@ -282,7 +300,11 @@ def update_asset(barcode):
 	asset.notes = request.form["notes"]
 
 	session.add(asset)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset register
 	return redirect(url_for("view_register"))
@@ -314,7 +336,11 @@ def delete_asset(barcode):
 
     #Delete asset from database
 	session.delete(asset)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset register
 	return redirect(url_for("view_register"))
@@ -378,7 +404,11 @@ def add_asset_category():
 			)
 	#Add entry to database
 	session.add(new_asset_category)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to asset register
 	return redirect(url_for("create_asset_category"))
@@ -412,7 +442,11 @@ def update_asset_category(category_code):
 	category.notes = request.form["notes"]
 
 	session.add(category)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset categories
 	return redirect(url_for("view_asset_categories"))
@@ -444,7 +478,11 @@ def delete_asset_category(category_code):
 
     #Delete asset category from database
 	session.delete(category)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset categories view
 	return redirect(url_for("view_asset_categories"))
@@ -512,7 +550,11 @@ def add_asset_type():
 			)
 	#Add entry to database
 	session.add(new_asset_type)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to create type form
 	return redirect(url_for("create_asset_type"))
@@ -547,7 +589,11 @@ def update_asset_type(type_code):
 	_type.notes = request.form["notes"]
 
 	session.add(_type)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset types
 	return redirect(url_for("view_asset_types"))
@@ -579,7 +625,11 @@ def delete_asset_type(type_code):
 
     #Delete asset type from database
 	session.delete(_type)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset types view
 	return redirect(url_for("view_asset_types"))
@@ -647,7 +697,11 @@ def add_asset_model():
 			)
 	#Add entry to database
 	session.add(new_asset_model)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to asset register
 	return redirect(url_for("create_asset_model"))
@@ -682,7 +736,11 @@ def update_asset_model(model_code):
 	model.notes = request.form["notes"]
 
 	session.add(model)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset models
 	return redirect(url_for("view_asset_models"))
@@ -714,7 +772,11 @@ def delete_asset_model(model_code):
 
     #Delete asset model from database
 	session.delete(model)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset models view
 	return redirect(url_for("view_asset_models"))
@@ -778,7 +840,11 @@ def add_asset_status():
 			)
 	#Add entry to database
 	session.add(new_asset_status)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to asset register
 	return redirect(url_for("create_asset_status"))
@@ -812,7 +878,11 @@ def update_asset_status(status_code):
 	status.notes = request.form["notes"]
 
 	session.add(status)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset status
 	return redirect(url_for("view_asset_status"))
@@ -844,7 +914,11 @@ def delete_asset_status(status_code):
 
     #Delete asset status from database
 	session.delete(status)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to asset status view
 	return redirect(url_for("view_asset_status"))
@@ -908,7 +982,11 @@ def add_location():
 			)
 	#Add entry to database
 	session.add(new_location)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to new location
 	return redirect(url_for("create_location"))
@@ -942,7 +1020,11 @@ def update_location(location_code):
 	location.notes = request.form["notes"]
 
 	session.add(location)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to Location view
 	return redirect(url_for("view_locations"))
@@ -974,7 +1056,11 @@ def delete_location(location_code):
 
     #Delete location from database
 	session.delete(location)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to locations view
 	return redirect(url_for("view_locations"))
@@ -1038,7 +1124,11 @@ def add_costcenter():
 			)
 	#Add entry to database
 	session.add(new_costcenter)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to new cost center
 	return redirect(url_for("create_costcenter"))
@@ -1072,7 +1162,11 @@ def update_costcenter(center_code):
 	costcenter.notes = request.form["notes"]
 
 	session.add(costcenter)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to Cost Centers view
 	return redirect(url_for("view_costcenters"))
@@ -1104,7 +1198,11 @@ def delete_costcenter(center_code):
 
     #Delete cost center from database
 	session.delete(costcenter)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to cost centers view
 	return redirect(url_for("view_costcenters"))
@@ -1168,7 +1266,11 @@ def add_department():
 			)
 	#Add entry to database
 	session.add(new_department)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to new departments
 	return redirect(url_for("create_department"))
@@ -1202,7 +1304,11 @@ def update_department(department_code):
 	department.notes = request.form["notes"]
 
 	session.add(department)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to Departments view
 	return redirect(url_for("view_departments"))
@@ -1234,7 +1340,11 @@ def delete_department(department_code):
 
     #Delete department from database
 	session.delete(department)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to departments view
 	return redirect(url_for("view_departments"))
@@ -1312,7 +1422,11 @@ def add_person():
 			)
 	#Add entry to database
 	session.add(new_person)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to new person
 	return redirect(url_for("create_person"))
@@ -1358,7 +1472,11 @@ def update_person(person_code):
 	person.notes = request.form["notes"]
 
 	session.add(person)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to People view
 	return redirect(url_for("view_people"))
@@ -1390,7 +1508,11 @@ def delete_person(person_code):
 
     #Delete person from database
 	session.delete(person)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to people view
 	return redirect(url_for("view_people"))
@@ -1455,7 +1577,11 @@ def add_supplierCategory():
 			)
 	#Add entry to database
 	session.add(new_supplierCategory)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to create new supplier
 	return redirect(url_for("create_supplierCategory"))
@@ -1489,7 +1615,11 @@ def update_supplierCategory(category_code):
 	supplierCategory.notes = request.form["notes"]
 
 	session.add(supplierCategory)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to Supplier Categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -1521,7 +1651,11 @@ def delete_supplierCategory(category_code):
 
     #Delete supplier category from database
 	session.delete(supplierCategory)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to supplier categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -1601,7 +1735,11 @@ def add_supplier():
 			)
 	#Add entry to database
 	session.add(new_supplier)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
 	#Return to new supplier
 	return redirect(url_for("create_supplier"))
@@ -1645,7 +1783,11 @@ def update_supplier(supplier_code):
 	supplier.notes = request.form["notes"]
 
 	session.add(supplier)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to Supplier view
 	return redirect(url_for("view_suppliers"))
@@ -1677,7 +1819,11 @@ def delete_supplier(supplier_code):
 
     #Delete supplier from database
 	session.delete(supplier)
-	session.commit()
+	try:
+		session.commit()
+	except:
+		session.rollback()
+		raise
 
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))

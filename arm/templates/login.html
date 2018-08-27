@@ -11,16 +11,11 @@
 			<img src="{{ url_for('static', filename='images/user.png') }}" class="user">
 			<h2>Login Here</h2>
 			<form method="POST">
-
 				<p>User Email</p>
 				<input type="text" id="email" name="email" placeholder="Enter email" required>
 				<p>Password</p>
 				<input type="password" id="password" name="password" placeholder="******" required>
 				<input type="submit" name="sign_in" value="Sign In">
-				<h5><a href="#">Forgot Password?</a></h5>
-				<br>
-				<h5>Have no account? <a href="{{ url_for('add_user') }}">Register</a></h5>
-
 			</form>
 		</div>
 	</body>
