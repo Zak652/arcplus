@@ -1,9 +1,12 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, login_user, current_user, LoginManager, logout_user
-from flask_user import current_user, login_required, roles_required, UserManager, UserMixin
-from flask_babelex import Babel
+from flask_user import current_user, login_required, roles_required, UserManager, SQLAlchemyAdapter
 
 from flask_bootstrap import Bootstrap
+
+from flask_admin import Admin, BaseView, expose
+from flask_admin.contrib.sqla import ModelView
+from .admin import AdminView
 
 from flask import flash
 from getpass import getpass
@@ -12,11 +15,28 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import app, decorators, models
 from .database import session
 
+# def with_session(fn):
+#    def go(*args, **kw):
+#        session.begin(subtransactions=True)
+#        try:
+#            ret = fn(*args, **kw)
+#            session.commit()
+#            return ret
+#        except:
+#            session.rollback()
+#            raise
+#    return go
+
+
+# Setup Flask-User and specify the User data-model
+db_adapter = SQLAlchemyAdapter(models.db, models.User)
+user_manager = UserManager(db_adapter, app)
 
 # Start route and Authentication
 
 #Appliction requires login from the start
 @app.route("/")
+
 def index():
 	""" Application requires users to login first.
 		All initial access is redirected to login page.
@@ -24,21 +44,28 @@ def index():
     # Redirect user to login page
 	return redirect(url_for("login_get"))
 
-
+# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
 # Admin panel access requires user with admin role
-@app.route("/admin")
+@app.route("/admin/")
 @roles_required('Admin')
+
 def admin_panel():
 	""" Provides access to the application admin panel
 		User must have the admin role to have access
 	"""
-	# Redirect user
-
+	admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+	# # Admin panel views
+	# admin.add_view(ModelView(models.User, session))
+	# Redirect user to Admin page after authentication confirmation
+	# render_template("admin/index.html")
+	return admin
 
 # Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
 @app.route("/user/registration", methods = ["GET"])
+@roles_required('Admin')
+
 def create_user():
 	""" Display user registration form """
 
@@ -46,6 +73,8 @@ def create_user():
 
 # Verify user information and register new user 
 @app.route("/user/registration", methods = ["POST"])
+@roles_required('Admin')
+
 def add_user():
 
 	if request.method == 'POST':
@@ -63,19 +92,22 @@ def add_user():
 			return
 
 	# Add users to DB
-	new_user = models.User(name=name, email = email, role_id = role_id, password = generate_password_hash(password))
+	new_user = models.User(name=name, email = email, role_id = role_id, 
+							password = generate_password_hash(password))
 	session.add(new_user)
 	session.commit()
 	return redirect(url_for("login_get"))
 
 # User Login Access
 @app.route("/user/login", methods=["GET"])
+
 def login_get():
 	""" Provide login form and collect login credentials """
 	return render_template("login.html")
 
 # Verify user credentials provided on login form
 @app.route("/user/login", methods=["POST"])
+
 def login_post():
     email = request.form["email"]
     password = request.form["password"]
@@ -85,10 +117,12 @@ def login_post():
         return redirect(url_for("login_get"))
 
     login_user(user)
-    return redirect(url_for("view_dashboard"))
+    return redirect(url_for("dashboard"))
 
 #Logout User
 @app.route("/user/logout")
+
+# @login_required
 def logout():
 	logout_user()
 	return redirect(url_for("login_get"))
@@ -98,7 +132,9 @@ def logout():
 
 # Dashboard
 @app.route("/dashboard")
-def view_dashboard():
+@login_required
+
+def dashboard():
 	"""
 	The dashboard is graphical display of data using statistical tiles,
 	graphs and data tables
@@ -111,6 +147,7 @@ def view_dashboard():
 # Full Register view route
 @app.route("/register/view", methods = ["GET"])
 @login_required
+
 def view_register():
 	""" 
 	Queries the database for all assets and passes them into a
@@ -129,6 +166,7 @@ def view_register():
 # Single asset view route
 @app.route("/register/view/<barcode>", methods = ["GET"])
 @login_required
+
 def view_single_asset(barcode):
 	""" 
 	Queries the database for all assets and passes them into a
@@ -147,6 +185,7 @@ def view_single_asset(barcode):
 # Create new asset route
 @app.route("/register/add_asset", methods = ["GET"])
 @login_required
+
 def create_asset():
 	"""	Provides empty form to be filled with asset details	"""
 
@@ -184,6 +223,7 @@ def create_asset():
 # Post New Asset information
 @app.route("/register/add_asset", methods = ["POST"])
 @login_required
+
 def add_asset():
 	"""
 	Captures new asset information and 
@@ -222,6 +262,7 @@ def add_asset():
 # Modify Existing Asset
 @app.route("/register/edit/asset/<barcode>", methods=["GET"])
 @login_required
+
 def edit_asset(barcode):
 	""" Provide form populated with asset information to be edited """
 
@@ -268,6 +309,7 @@ def edit_asset(barcode):
 # POST Asset Modifications
 @app.route("/register/edit/asset/<barcode>", methods=['POST'])
 @login_required
+
 def update_asset(barcode):
 	"""
 	Captures updated asset information and 
@@ -312,6 +354,7 @@ def update_asset(barcode):
 # Delete asset from register
 @app.route("/register/delete/asset/<barcode>")
 @login_required
+
 def asset_to_delete(barcode):
 	"""
 	Identify asset to be deleted bassed on provided barcode
@@ -327,6 +370,7 @@ def asset_to_delete(barcode):
 # Delete asset from database
 @app.route("/register/deleted/<barcode>")
 @login_required
+
 def delete_asset(barcode):
 	"""
 	Search for confirmed asset and deletes it from the database
@@ -351,6 +395,8 @@ def delete_asset(barcode):
 
 #Route to view full list of asset categories
 @app.route("/asset_categories/view", methods = ["GET"])
+@login_required
+
 def view_asset_categories():
 	""" 
 	Queries the database for all assets categories and passes them into a
@@ -368,6 +414,8 @@ def view_asset_categories():
 
 #Single Asset Category view route
 @app.route("/asset_categories/view/<category_code>", methods = ["GET"])
+@login_required
+
 def view_asset_category(category_code):
 	""" 
 	Queries the database for all categories and passes them into a
@@ -385,12 +433,16 @@ def view_asset_category(category_code):
 
 #Create new asset category route
 @app.route("/asset_categories/add_asset_category", methods = ["GET"])
+@login_required
+
 def create_asset_category():
 	"""	Provides empty form to be filled with new asset category details	"""
 
 	return render_template("add_category.html")
 
 @app.route("/asset_categories/add_asset_category", methods = ["POST"])
+@login_required
+
 def add_asset_category():
 	"""
 	Captures new asset category information and 
@@ -416,6 +468,7 @@ def add_asset_category():
 # Modify Existing Asset Category
 @app.route("/asset_categories/edit/asset_category/<category_code>", methods=["GET"])
 @login_required
+
 def edit_asset_category(category_code):
 	""" Provide form populated with asset category information to be edited """
 
@@ -431,6 +484,7 @@ def edit_asset_category(category_code):
 # POST Asset Category Modifications
 @app.route("/asset_categories/edit/asset_category/<category_code>", methods=['POST'])
 @login_required
+
 def update_asset_category(category_code):
 	"""
 	Captures updated asset category information and 
@@ -454,6 +508,7 @@ def update_asset_category(category_code):
 # Delete asset category
 @app.route("/asset_categories/delete_category/<category_code>")
 @login_required
+
 def category_to_delete(category_code):
 	"""
 	Identify category to be deleted bassed on provided category code
@@ -469,6 +524,7 @@ def category_to_delete(category_code):
 # Delete asset category from database
 @app.route("/asset_categories/deleted/<category_code>")
 @login_required
+
 def delete_asset_category(category_code):
 	"""
 	Search for confirmed asset category and deletes it from the database
@@ -493,6 +549,8 @@ def delete_asset_category(category_code):
 
 #Route to view full list of asset types
 @app.route("/asset_types/view", methods = ["GET"])
+@login_required
+
 def view_asset_types():
 	""" 
 	Queries the database for all assets types and passes them into a
@@ -510,6 +568,7 @@ def view_asset_types():
 
 #Single Asset type view route
 @app.route("/asset_types/view/<type_code>", methods = ["GET"])
+@login_required
 def view_asset_type(type_code):
 	""" 
 	Queries the database for all asset types and passes them into a
@@ -527,6 +586,8 @@ def view_asset_type(type_code):
 
 #Create new asset type route
 @app.route("/asset_types/add_asset_type", methods = ["GET"])
+@login_required
+
 def create_asset_type():
 	"""	Provides empty form to be filled with new asset type details	"""
 
@@ -536,6 +597,8 @@ def create_asset_type():
 	return render_template("add_type.html", categories = categories)
 
 @app.route("/asset_types/add_asset_type", methods = ["POST"])
+@login_required
+
 def add_asset_type():
 	"""
 	Captures new asset type information and 
@@ -577,6 +640,7 @@ def edit_asset_type(type_code):
 # POST Asset Type Modifications
 @app.route("/asset_types/edit/asset_type/<type_code>", methods=['POST'])
 @login_required
+
 def update_asset_type(type_code):
 	"""
 	Captures updated asset type information and 
@@ -601,6 +665,7 @@ def update_asset_type(type_code):
 # Delete asset type
 @app.route("/asset_type/delete_type/<type_code>")
 @login_required
+
 def type_to_delete(type_code):
 	"""
 	Identify type to be deleted bassed on provided type code
@@ -616,6 +681,7 @@ def type_to_delete(type_code):
 # Delete asset type from database
 @app.route("/asset_type/deleted/<type_code>")
 @login_required
+
 def delete_asset_type(type_code):
 	"""
 	Search for confirmed asset type and deletes it from the database
@@ -640,6 +706,8 @@ def delete_asset_type(type_code):
 
 #Route to view full list of asset models
 @app.route("/asset_models/view", methods = ["GET"])
+@login_required
+
 def view_asset_models():
 	""" 
 	Queries the database for all assets models and passes them into a
@@ -657,6 +725,8 @@ def view_asset_models():
 
 #Single Asset model view route
 @app.route("/asset_models/view/<model_code>", methods = ["GET"])
+@login_required
+
 def view_asset_model(model_code):
 	""" 
 	Queries the database for all models and passes them into a
@@ -674,6 +744,8 @@ def view_asset_model(model_code):
 
 #Create new asset model route
 @app.route("/asset_models/add_asset_model", methods = ["GET"])
+@login_required
+
 def create_asset_model():
 	"""	Provides empty form to be filled with new asset model details	"""
 
@@ -683,6 +755,8 @@ def create_asset_model():
 	return render_template("add_model.html", types_list = types_list)
 
 @app.route("/asset_models/add_asset_model", methods = ["POST"])
+@login_required
+
 def add_asset_model():
 	"""
 	Captures new asset model information and 
@@ -709,6 +783,7 @@ def add_asset_model():
 # Modify Existing Asset Model
 @app.route("/asset_models/edit/asset_model/<model_code>", methods=["GET"])
 @login_required
+
 def edit_asset_model(model_code):
 	""" Provide form populated with asset model information to be edited """
 
@@ -724,6 +799,7 @@ def edit_asset_model(model_code):
 # POST Asset Model Modifications
 @app.route("/asset_models/edit/asset_model/<model_code>", methods=['POST'])
 @login_required
+
 def update_asset_model(model_code):
 	"""
 	Captures updated asset model information and 
@@ -748,6 +824,7 @@ def update_asset_model(model_code):
 # Delete asset models
 @app.route("/asset_models/delete_model/<model_code>")
 @login_required
+
 def model_to_delete(model_code):
 	"""
 	Identify model to be deleted bassed on provided model code
@@ -763,6 +840,7 @@ def model_to_delete(model_code):
 # Delete asset model from database
 @app.route("/asset_model/deleted/<model_code>")
 @login_required
+
 def delete_asset_model(model_code):
 	"""
 	Search for confirmed asset model and deletes it from the database
@@ -787,6 +865,8 @@ def delete_asset_model(model_code):
 
 #Route to view full list of asset Status
 @app.route("/asset_status/view", methods = ["GET"])
+@login_required
+
 def view_asset_statuses():
 	""" 
 	Queries the database for all assets status and passes them into a
@@ -804,6 +884,8 @@ def view_asset_statuses():
 
 #Single Asset status view route
 @app.route("/asset_status/view/<status_code>", methods = ["GET"])
+@login_required
+
 def view_status(status_code):
 	""" 
 	Queries the database for all status and passes them into a
@@ -821,12 +903,16 @@ def view_status(status_code):
 
 #Create new asset status route
 @app.route("/asset_status/add_asset_status", methods = ["GET"])
+@login_required
+
 def create_asset_status():
 	"""	Provides empty form to be filled with new asset status details	"""
 
 	return render_template("add_status.html")
 
 @app.route("/asset_status/add_asset_status", methods = ["POST"])
+@login_required
+
 def add_asset_status():
 	"""
 	Captures new asset status information and 
@@ -852,6 +938,7 @@ def add_asset_status():
 # Modify Existing Asset Status
 @app.route("/asset_status/edit_asset_status/<status_code>", methods=["GET"])
 @login_required
+
 def edit_asset_status(status_code):
 	""" Provide form populated with asset status information to be edited """
 
@@ -867,6 +954,7 @@ def edit_asset_status(status_code):
 # POST Asset Status Modifications
 @app.route("/asset_status/edit/asset_status/<status_code>", methods=['POST'])
 @login_required
+
 def update_asset_status(status_code):
 	"""
 	Captures updated asset status information and 
@@ -890,6 +978,7 @@ def update_asset_status(status_code):
 # Delete asset status
 @app.route("/asset_status/delete_status/<status_code>")
 @login_required
+
 def status_to_delete(status_code):
 	"""
 	Identify status to be deleted bassed on provided status code
@@ -905,6 +994,7 @@ def status_to_delete(status_code):
 # Delete asset status from database
 @app.route("/asset_status/deleted/<status_code>")
 @login_required
+
 def delete_asset_status(status_code):
 	"""
 	Search for confirmed asset status and deletes it from the database
@@ -927,8 +1017,10 @@ def delete_asset_status(status_code):
 # Views to view Full list of Locations, Single Location details,
 # Create New Locations, Modify Existing Location details, Delete Existing Locations
 
-#Route to view full list of Locations
+#Route to view full list of LocationsDashboard
 @app.route("/location/view", methods = ["GET"])
+@login_required
+
 def view_locations():
 	""" 
 	Queries the database for all locations and passes them into a
@@ -946,6 +1038,8 @@ def view_locations():
 
 #Single Location view route
 @app.route("/location/view/<location_code>", methods = ["GET"])
+@login_required
+
 def view_location(location_code):
 	""" 
 	Queries the database for all locations and passes them into a
@@ -963,12 +1057,16 @@ def view_location(location_code):
 
 #Create new location route
 @app.route("/location/add_location", methods = ["GET"])
+@login_required
+
 def create_location():
 	"""	Provides empty form to be filled with new location details	"""
 
 	return render_template("add_location.html")
 
 @app.route("/location/add_location", methods = ["POST"])
+@login_required
+
 def add_location():
 	"""
 	Captures new location information and 
@@ -994,6 +1092,7 @@ def add_location():
 # Modify Existing Location Details
 @app.route("/location/edit_location/<location_code>", methods=["GET"])
 @login_required
+
 def edit_location(location_code):
 	""" Provide form populated with location information to be edited """
 
@@ -1009,6 +1108,7 @@ def edit_location(location_code):
 # POST Loction Modifications
 @app.route("/location/edit_location/<location_code>", methods=['POST'])
 @login_required
+
 def update_location(location_code):
 	"""
 	Captures updated location information and 
@@ -1032,6 +1132,7 @@ def update_location(location_code):
 # Delete location
 @app.route("/location/delete_location/<location_code>")
 @login_required
+
 def location_to_delete(location_code):
 	"""
 	Identify location to be deleted bassed on provided location code
@@ -1047,6 +1148,7 @@ def location_to_delete(location_code):
 # Delete location from database
 @app.route("/location/deleted/<location_code>")
 @login_required
+
 def delete_location(location_code):
 	"""
 	Search for confirmed location and deletes it from the database
@@ -1071,6 +1173,8 @@ def delete_location(location_code):
 
 #Route to view full list of Cost Centers
 @app.route("/cost_centers/view", methods = ["GET"])
+@login_required
+
 def view_costcenters():
 	""" 
 	Queries the database for all cost centers and passes them into a
@@ -1088,6 +1192,8 @@ def view_costcenters():
 
 #Single Cost Center view route
 @app.route("/cost_center/view/<center_code>", methods = ["GET"])
+@login_required
+
 def view_costcenter(center_code):
 	""" 
 	Queries the database for all cost centers and passes them into a
@@ -1105,12 +1211,16 @@ def view_costcenter(center_code):
 
 #Create new Cost Center route
 @app.route("/cost_center/add_cost_center", methods = ["GET"])
+@login_required
+
 def create_costcenter():
 	"""	Provides empty form to be filled with new cost center details	"""
 
 	return render_template("add_costcenter.html")
 
 @app.route("/cost_center/add_cost_center", methods = ["POST"])
+@login_required
+
 def add_costcenter():
 	"""
 	Captures new cost center information and 
@@ -1136,6 +1246,7 @@ def add_costcenter():
 # Modify Existing Cost Center Details
 @app.route("/cost_center/edit_cost_center/<center_code>", methods=["GET"])
 @login_required
+
 def edit_costcenter(center_code):
 	""" Provide form populated with cost center information to be edited """
 
@@ -1151,6 +1262,7 @@ def edit_costcenter(center_code):
 # POST Cost Center Modifications
 @app.route("/cost_center/edit_cost_center/<center_code>", methods=['POST'])
 @login_required
+
 def update_costcenter(center_code):
 	"""
 	Captures updated cost center information and 
@@ -1174,6 +1286,7 @@ def update_costcenter(center_code):
 # Delete Cost Center
 @app.route("/cost_center/delete_cost_center/<center_code>")
 @login_required
+
 def costcenter_to_delete(center_code):
 	"""
 	Identify cost center to be deleted bassed on provided center code
@@ -1189,6 +1302,7 @@ def costcenter_to_delete(center_code):
 # Delete cost center from database
 @app.route("/cost_center/deleted/<center_code>")
 @login_required
+
 def delete_costcenter(center_code):
 	"""
 	Search for confirmed cost center and deletes it from the database
@@ -1213,6 +1327,8 @@ def delete_costcenter(center_code):
 
 #Route to view full list of Departments
 @app.route("/departments/view", methods = ["GET"])
+@login_required
+
 def view_departments():
 	""" 
 	Queries the database for all departments and passes them into a
@@ -1230,6 +1346,8 @@ def view_departments():
 
 #Single department view route
 @app.route("/department/view/<department_code>", methods = ["GET"])
+@login_required
+
 def view_department(department_code):
 	""" 
 	Queries the database for all departments and passes them into a
@@ -1247,12 +1365,16 @@ def view_department(department_code):
 
 #Create new Department route
 @app.route("/department/add_department", methods = ["GET"])
+@login_required
+
 def create_department():
 	"""	Provides empty form to be filled with new department details	"""
 
 	return render_template("add_department.html")
 
 @app.route("/department/add_department", methods = ["POST"])
+@login_required
+
 def add_department():
 	"""
 	Captures new departments information and 
@@ -1278,6 +1400,7 @@ def add_department():
 # Modify Existing Department Details
 @app.route("/department/edit_department/<department_code>", methods=["GET"])
 @login_required
+
 def edit_department(department_code):
 	""" Provide form populated with department information to be edited """
 
@@ -1293,6 +1416,7 @@ def edit_department(department_code):
 # POST Department Modifications
 @app.route("/department/edit_department/<department_code>", methods=['POST'])
 @login_required
+
 def update_department(department_code):
 	"""
 	Captures updated department information and 
@@ -1316,6 +1440,7 @@ def update_department(department_code):
 # Delete Department
 @app.route("/department/delete_department/<department_code>")
 @login_required
+
 def department_to_delete(department_code):
 	"""
 	Identify department to be deleted bassed on provided department code
@@ -1331,6 +1456,7 @@ def department_to_delete(department_code):
 # Delete department from database
 @app.route("/department/deleted/<department_code>")
 @login_required
+
 def delete_department(department_code):
 	"""
 	Search for confirmed department and deletes it from the database
@@ -1355,6 +1481,8 @@ def delete_department(department_code):
 
 #Route to view full list of People
 @app.route("/people/view", methods = ["GET"])
+@login_required
+
 def view_people():
 	""" 
 	Queries the database for all people and passes them into a
@@ -1372,6 +1500,8 @@ def view_people():
 
 #Single person view route
 @app.route("/person/view/<person_code>", methods = ["GET"])
+@login_required
+
 def view_person(person_code):
 	""" 
 	Queries the database for all people and passes them into a
@@ -1389,6 +1519,8 @@ def view_person(person_code):
 
 #Create new Person route
 @app.route("/people/add_person", methods = ["GET"])
+@login_required
+
 def create_person():
 	"""	Provides empty form to be filled with new person details """
 
@@ -1403,6 +1535,8 @@ def create_person():
 							)
 
 @app.route("/people/add_person", methods = ["POST"])
+@login_required
+
 def add_person():
 	"""
 	Captures new person information and 
@@ -1434,6 +1568,7 @@ def add_person():
 # Modify Existing Person Details
 @app.route("/people/edit_person/<person_code>", methods=["GET"])
 @login_required
+
 def edit_person(person_code):
 	""" Provide form populated with person information to be edited """
 
@@ -1455,6 +1590,7 @@ def edit_person(person_code):
 # POST Person Modifications
 @app.route("/people/edit_person/<person_code>", methods=['POST'])
 @login_required
+
 def update_person(person_code):
 	"""
 	Captures updated person information and 
@@ -1484,6 +1620,7 @@ def update_person(person_code):
 # Delete Person
 @app.route("/people/delete_person/<person_code>")
 @login_required
+
 def person_to_delete(person_code):
 	"""
 	Identify person to be deleted bassed on provided person's code
@@ -1499,6 +1636,7 @@ def person_to_delete(person_code):
 # Delete person from database
 @app.route("/people/deleted/<person_code>")
 @login_required
+
 def delete_person(person_code):
 	"""
 	Search for confirmed person and deletes it from the database
@@ -1524,6 +1662,8 @@ def delete_person(person_code):
 
 #Route to view full list of Supplier Category
 @app.route("/supplier_categories/view", methods = ["GET"])
+@login_required
+
 def view_supplierCategories():
 	""" 
 	Queries the database for all supplier categories and passes them into a
@@ -1541,6 +1681,8 @@ def view_supplierCategories():
 
 #Single supplier category view route
 @app.route("/supplier_category/view/<category_code>", methods = ["GET"])
+@login_required
+
 def view_supplierCategory(category_code):
 	""" 
 	Queries the database for all supplier category and passes them into a
@@ -1558,12 +1700,16 @@ def view_supplierCategory(category_code):
 
 #Create new Supplier Category route
 @app.route("/supplier_categories/add_supplier_category", methods = ["GET"])
+@login_required
+
 def create_supplierCategory():
 	"""	Provides empty form to be filled with new supplier category details	"""
 
 	return render_template("add_suppliercategory.html")
 
 @app.route("/supplier_categories/add_supplier_category", methods = ["POST"])
+@login_required
+
 def add_supplierCategory():
 	"""
 	Captures new supplier category information and 
@@ -1589,6 +1735,7 @@ def add_supplierCategory():
 # Modify Existing Supplier Category Details
 @app.route("/supplier_category/edit_category/<category_code>", methods=["GET"])
 @login_required
+
 def edit_supplierCategory(category_code):
 	""" Provide form populated with supplier categories information to be edited """
 
@@ -1604,6 +1751,7 @@ def edit_supplierCategory(category_code):
 # POST Supplier Category Modifications
 @app.route("/supplier_category/edit_category/<category_code>", methods=['POST'])
 @login_required
+
 def update_supplierCategory(category_code):
 	"""
 	Captures updated supplier category information and 
@@ -1627,6 +1775,7 @@ def update_supplierCategory(category_code):
 # Delete Supplier Category
 @app.route("/supplier_category/delete_category/<category_code>")
 @login_required
+
 def supplierCategory_to_delete(category_code):
 	"""
 	Identify supplier category to be deleted bassed on provided supplier category code
@@ -1642,6 +1791,7 @@ def supplierCategory_to_delete(category_code):
 # Delete supplier from database
 @app.route("/supplier_category/deleted/<category_code>")
 @login_required
+
 def delete_supplierCategory(category_code):
 	"""
 	Search for confirmed supplier category and deletes it from the database
@@ -1666,6 +1816,8 @@ def delete_supplierCategory(category_code):
 
 #Route to view full list of Supplier
 @app.route("/suppliers/view", methods = ["GET"])
+@login_required
+
 def view_suppliers():
 	""" 
 	Queries the database for all suppliers and passes them into a
@@ -1683,6 +1835,8 @@ def view_suppliers():
 
 #Single Supplier view route
 @app.route("/supplier/view/<supplier_code>", methods = ["GET"])
+@login_required
+
 def view_supplier(supplier_code):
 	""" 
 	Queries the database for all supplier and passes them into a
@@ -1700,6 +1854,8 @@ def view_supplier(supplier_code):
 
 #Create new Supplier route
 @app.route("/suppliers/add_supplier", methods = ["GET"])
+@login_required
+
 def create_supplier():
 	"""	Provides empty form to be filled with new supplier details	"""
 
@@ -1717,6 +1873,8 @@ def create_supplier():
 							)
 
 @app.route("/suppliers/add_supplier", methods = ["POST"])
+@login_required
+
 def add_supplier():
 	"""
 	Captures new supplier information and creates an entry in the database
@@ -1747,6 +1905,7 @@ def add_supplier():
 # Modify Existing Supplier Details
 @app.route("/supplier/edit_supplier/<supplier_code>", methods=["GET"])
 @login_required
+
 def edit_supplier(supplier_code):
 	""" Provide form populated with supplier information to be edited """
 
@@ -1768,6 +1927,7 @@ def edit_supplier(supplier_code):
 # POST Person Modifications
 @app.route("/supplier/edit_supplier/<supplier_code>", methods=['POST'])
 @login_required
+
 def update_supplier(supplier_code):
 	"""
 	Captures updated supplier information and posts updated information to the database
@@ -1795,6 +1955,7 @@ def update_supplier(supplier_code):
 # Delete Supplier
 @app.route("/supplier/delete_supplier/<supplier_code>")
 @login_required
+
 def supplier_to_delete(supplier_code):
 	"""
 	Identify supplier to be deleted bassed on provided supplier's code
@@ -1810,6 +1971,7 @@ def supplier_to_delete(supplier_code):
 # Delete supplier from database
 @app.route("/supplier/deleted/<supplier_code>")
 @login_required
+
 def delete_supplier(supplier_code):
 	"""
 	Search for confirmed supplier and deletes it from the database
@@ -1827,3 +1989,4 @@ def delete_supplier(supplier_code):
 
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))
+

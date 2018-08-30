@@ -45,11 +45,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('view_dashboard') }}">ARCPlus</a>
+              <a class="navbar-brand" href="{{ url_for('dashboard') }}">ARCPlus</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <!-- <li class="active"><a href="{{ url_for('view_dashboard') }}">Dashboard</a></li> -->
+                <!-- <li class="active"><a href="{{ url_for('dashboard') }}">Dashboard</a></li> -->
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Register<span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -126,7 +126,7 @@
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <!-- <li class="active"><a href="./">Settings<span class="sr-only">(current)</span></a></li> -->
-                <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.name }}!</a></li>
+                <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.username }}!</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 <!-- <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome {{ current_user.name }}!<span class="caret"></span></a>

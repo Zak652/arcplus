@@ -1,6 +1,5 @@
 import os.path
 
-from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, BaseView, expose
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, relationship
@@ -11,49 +10,57 @@ from . import app
 import datetime
 
 from flask_login import UserMixin
-from flask_user import UserManager, UserMixin, SQLAlchemyAdapter
+from flask_user import UserManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy(app)
 
 # User object model
-class User(Base, UserMixin):
+class User(Base, db.Model, UserMixin):
     __tablename__ = 'users'
 
     # User db table fields
     id = Column(Integer, primary_key=True)
-    name = Column(String(128), nullable = False)
+    username = Column(String(128), nullable = False)
     email = Column(String(128), nullable = False, unique=True)
-    role_id = Column(Integer, ForeignKey('roles.id'), nullable = False)
     password = Column(String(128), nullable = False)
+    # crucial user role
+    roles = relationship('Role', secondary = 'user_roles')
     
     def __repr__(self):
         return self.name
 
     # Return user object as dictionary
     def as_dictionary(self):
-        users = {"id": self.id, "Name": self.name, "Email": self.email, "Role": self.user_role}
+        users = {"id": self.id, "User Name": self.username, "Email": self.email, "Role": self.roles}
         return users
 
 
 # User Roles object model
-class Role(Base):
+class Role(Base, db.Model):
     __tablename__ = 'roles'
 
     # User Roles table fields
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable = False, unique = True)
     role_desc = Column(String(256), nullable = False)
-    user = relationship("User", backref = "user_role")
+    # link back to user
+    user = relationship("User", secondary = 'user_roles')
 
     def __repr__(self):
         return self.name
 
     # Return roles object as dictionary
     def as_dictionary(self):
-        roles = {"id": self.id, "Name": self.name, "Description": self.role_desc}
+        roles = {"id": self.id, "Name": self.name, "Description": self.role_desc, 'Role Users': self.user}
         return roles
 
+# User Role relationship model
+class UserRoles(Base, db.Model):
+    __tablename__ = 'user_roles'
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete = 'CASCADE'))
+    role_id = Column(Integer, ForeignKey('roles.id', ondelete = 'CASCADE'))
 
 # Asset object model
 class Asset(Base):
@@ -377,11 +384,12 @@ class SupplierCategory(Base):
         return supplier_category
 
 
-db_adapter = SQLAlchemyAdapter(db, User)
-# Setup Flask-User and specify the User data-model
-user_manager = UserManager(db_adapter, app)
+# db_adapter = SQLAlchemyAdapter(db, User)
+# # Setup Flask-User and specify the User data-model
+# user_manager = UserManager(db_adapter, app)
 
-admin = Admin(app)
-admin.add_view(ModelView(User, session))
-admin.add_view(ModelView(Role, session))
-admin.add_view(ModelView(Asset, session))
+# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+# admin.add_view(ModelView(Role, session))
+# admin.add_view(ModelView(Asset, session))
+# admin.add_view(ModelView(CostCenter, session))
+# admin.add_view(ModelView(People, session))
