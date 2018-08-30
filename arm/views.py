@@ -15,18 +15,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import app, decorators, models
 from .database import session
 
-# def with_session(fn):
-#    def go(*args, **kw):
-#        session.begin(subtransactions=True)
-#        try:
-#            ret = fn(*args, **kw)
-#            session.commit()
-#            return ret
-#        except:
-#            session.rollback()
-#            raise
-#    return go
-
 
 # Setup Flask-User and specify the User data-model
 db_adapter = SQLAlchemyAdapter(models.db, models.User)
