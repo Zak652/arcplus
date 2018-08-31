@@ -14,10 +14,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import app, decorators, models
 from .database import session
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy(app)
 
+db_adapter = SQLAlchemyAdapter(db, models.User)
 # Setup Flask-User and specify the User data-model
-db_adapter = SQLAlchemyAdapter(models.db, models.User)
 user_manager = UserManager(db_adapter, app)
 
 # Start route and Authentication
@@ -32,21 +34,23 @@ def index():
     # Redirect user to login page
 	return redirect(url_for("login_get"))
 
-# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+
 # Admin panel access requires user with admin role
 @app.route("/admin/")
 @roles_required('Admin')
-
 def admin_panel():
 	""" Provides access to the application admin panel
 		User must have the admin role to have access
 	"""
-	admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-	# # Admin panel views
-	# admin.add_view(ModelView(models.User, session))
-	# Redirect user to Admin page after authentication confirmation
-	# render_template("admin/index.html")
-	return admin
+	if True:
+		admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+		admin.add_view(ModelView(models.Role, session))
+		admin.add_view(ModelView(models.Asset, session))
+		admin.add_view(ModelView(models.CostCenter, session))
+		admin.add_view(ModelView(models.People, session))
+	else:
+		flash ('Administrative rights required')
+		return redirect(url_for("dashboard"))
 
 # Views for Adding New Users, Users Login and Logout
 
@@ -66,7 +70,7 @@ def create_user():
 def add_user():
 
 	if request.method == 'POST':
-		name = request.form['name']
+		username = request.form['name']
 		email = request.form['email']
 		#check if email is unique / doesn't exist already
 		if session.query(models.User).filter_by(email=email).first():
@@ -80,11 +84,11 @@ def add_user():
 			return
 
 	# Add users to DB
-	new_user = models.User(name=name, email = email, role_id = role_id, 
+	new_user = models.User(username=username, email = email, role_id = role_id, 
 							password = generate_password_hash(password))
 	session.add(new_user)
 	session.commit()
-	return redirect(url_for("login_get"))
+	return redirect(url_for("create_user"))
 
 # User Login Access
 @app.route("/user/login", methods=["GET"])
@@ -231,10 +235,11 @@ def add_asset():
 			costcenter_id = request.form['cost_center'],
 			user_id = request.form['user'],
 			purchase_price = request.form['purchase_price'],
+			purchase_date = request.form['purchase_date'],
 			supplier_id = request.form['supplier'],
 			notes = request.form["notes"],
-			captured_by = current_user.name,
-			modified_by = current_user.name
+			captured_by = current_user.username,
+			modified_by = current_user.username
 			)
 	#Add entry to database
 	session.add(new_asset)
@@ -1978,3 +1983,13 @@ def delete_supplier(supplier_code):
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))
 
+
+# db_adapter = SQLAlchemyAdapter(db, models.User)
+# # Setup Flask-User and specify the User data-model
+# user_manager = UserManager(db_adapter, app)
+
+# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+# admin.add_view(ModelView(models.Role, session))
+# admin.add_view(ModelView(models.Asset, session))
+# admin.add_view(ModelView(models.CostCenter, session))
+# admin.add_view(ModelView(models.People, session))

@@ -75,6 +75,7 @@ class Asset(Base):
     modified_date = Column(DateTime, default = datetime.datetime.now, onupdate = datetime.datetime.utcnow)
     name = Column(String(128), nullable = False)
     purchase_price = Column(Integer, nullable = True)
+    purchase_date = Column(DateTime)
     value = Column(Integer, nullable = True)
     photo = Column(String, nullable = True)
     attchments = Column(String, nullable = True)
@@ -96,13 +97,11 @@ class Asset(Base):
     #Return asset object as dictionary
     def as_dictionary(self):
         asset={"Id": self.id, "Barcode": self.barcode, "Serial No.": self.serial_no,
-                "Capture Date": self.capture_date, "modified Date": self.modified_date, 
-                "Name": self.name, "Category": self.asset_category, "Type": self.asset_type, 
-                "Model": self.asset_model, "Status": self.asset_status, 
-                "Location": self.asset_location, "Cost center": self.asset_center, 
-                "User": self.asset_user, "Purchase Price": self.purchase_price, 
-                "Value": self.value, "Supplier": self.asset_supplier, "Photo": self.photo, 
-                "Attachements": self.attchments, "Notes": self.notes,
+                "Capture Date": self.capture_date, "modified Date": self.modified_date, "Name": self.name, 
+                "Category": self.asset_category, "Type": self.asset_type, "Model": self.asset_model, 
+                "Status": self.asset_status, "Location": self.asset_location, "Cost center": self.asset_center, 
+                "User": self.asset_user, "Purchase Price": self.purchase_price, "Purchase Date": self.purchase_date, 
+                "Value": self.value, "Supplier": self.asset_supplier, "Photo": self.photo, "Attachements": self.attchments, "Notes": self.notes,
                 "Captured By": self.captured_by, "Modified By": self.modified_by
                 }
         return asset
@@ -150,7 +149,8 @@ class AssetMovement(Base):
     def as_dictionary(self):
         asset_movement = {"Id": self.id, "Barcode": self.barcode, "Asset Name": self.asset_name,
                         "Moved on" : self.movement_date, "Moved From" : self.moved_from,
-                        "Moved To" : self.moved_to}
+                        "Moved To" : self.moved_to
+                        }
         return asset_movement
 
 
