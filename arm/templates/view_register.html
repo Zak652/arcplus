@@ -18,8 +18,8 @@ Asset Register
   </thead>
 
   <!-- table rows -->
-{% for asset in assets %}
 <tbody>
+  {% for asset in assets %}
   <tr>
     {% for value in asset.values() %}
     {% if value not in [asset['Id'], asset['Photo'], asset['Captured Date'], asset['modified Date'], asset['Value'], asset['Supplier'], asset['Attachements'], asset['Notes'], asset['Modified By'], asset['Captured By'], asset['Purchase Price']] %}
@@ -27,8 +27,8 @@ Asset Register
     {% endif %}
     {% endfor %}
   </tr>
+  {% endfor %}
 </tbody>
-{% endfor %}
 <tfoot>
   <tr>
     {% for key in assets[0] %}

@@ -37,21 +37,13 @@ def index():
 
 
 # Admin panel access requires user with admin role
-# @app.route("/admin/")
-# @roles_required('Admin')
-# def admin_panel():
-# 	""" Provides access to the application admin panel
-# 		User must have the admin role to have access
-# 	"""
-# 	if True:
-# 		admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-# 		admin.add_view(ModelView(models.Role, session))
-# 		admin.add_view(ModelView(models.Asset, session))
-# 		admin.add_view(ModelView(models.CostCenter, session))
-# 		admin.add_view(ModelView(models.People, session))
-# 	else:
-# 		flash ('Administrative rights required')
-# 		return redirect(url_for("dashboard"))
+@app.route("/admin")
+@roles_required('Admin')
+def admin_panel():
+	""" Provides access to the application admin panel
+		User must have the admin role to have access
+	"""
+	return redirect("/admin/")
 
 # Views for Adding New Users, Users Login and Logout
 
@@ -81,6 +73,7 @@ def add_user():
 			flash("User with that email address already exists", "danger")
 			return
 		roles = request.form['role']
+		role = session.query(models.Role).filter_by(name=roles).first()
 		password = request.form['password']
 		#Check if password is not less than 8 characters
 		if len(password) < 8:
@@ -88,11 +81,11 @@ def add_user():
 			return
 
 	# Add users to DB
-	new_user = models.User(username=username, email = email, 
+	new_user = models.User(username=username, email = email,
 							password = generate_password_hash(password))
 	
 	session.add(new_user)
-	models.User.append(new_user)
+	new_user.roles = [role]
 	try:
 		session.commit()
 		flash('New user added successfully.', category='message')
@@ -444,32 +437,6 @@ def verify_asset():
 		flash('Asset with barcode: ' + barcode + ' is not on registered, capture asset.', category='message')
 		return redirect(url_for("create_asset"))
 
-# # Asset verified
-# @app.route("/register/verified/<barcode>")
-# @login_required
-# def asset_verified(barcode):
-# 	# Get asset details to populate the verification table
-# 	verified_asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
-
-# 	# Update verification table
-# 	verified = models.AssetVerification(
-# 		barcode = verified_asset.barcode,
-# 		asset_name = verified_asset.name,
-# 		verified_by = current_user.username
-# 	)
-
-# 	#Add entry to database
-# 	session.add(verified)
-# 	try:
-# 		session.commit()
-# 		flash('Asset Verified successfully.', category='message')
-# 	except SQLAlchemyError as error:
-# 		flash('Something went wrong, please make sure your information is correct.', category='error')
-# 		session.rollback
-# 		raise error
-
-# 	#Return to asset register
-# 	return redirect(url_for("asset_verification"))
 
 # Views to view Full list of Asset Categories, Single Asset Category,
 # Create New Category, Modify Existing Category details, Delete Existing Category
@@ -2137,7 +2104,7 @@ def delete_supplier(supplier_code):
 # user_manager = UserManager(db_adapter, app)
 
 admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-admin.add_view(ModelView(models.User, session))
+# admin.add_view(ModelView(models.User, session))
 admin.add_view(ModelView(models.Role, session))
 admin.add_view(ModelView(models.Asset, session))
 admin.add_view(ModelView(models.AssetType, session))
