@@ -56,6 +56,7 @@
                   <ul class="dropdown-menu">
                     <!-- <li class="dropdown-header">.....</li> -->
                     <li><a href="{{ url_for('create_asset') }}">Add Asset</a></li>
+                    <li><a href="{{ url_for('asset_verification') }}">Verification</a></li>
                     <li><a href="{{ url_for('view_register') }}">View Register</a></li>
                     <li class="dropdown-header">Status</li>
                     <li><a href="{{ url_for('create_asset_status') }}">Add Status</a></li>
@@ -143,6 +144,17 @@
         </nav>
       {% endblock navbar %}
 
+      <!-- Area for flashed messages -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=alert alert-secondary>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
       <!-- content area for graphs, search, register table and related context menus -->
       {% block content %}
 
@@ -176,8 +188,19 @@
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script>
-      $(document).ready( function () {
-        $('#example').DataTable();
+      $(document).ready(function() {
+          $('#example').DataTable( {
+            "pagingType": "full_numbers",
+            "processing": true,
+            "url": "/register/view",
+            "dataSrc": "assets"
+            } );
+      } );
+    </script>
+    <script>
+        $(document).ready(function() {
+          $('#example1').DataTable( {
+              } );
         } );
     </script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

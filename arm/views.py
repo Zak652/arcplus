@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, login_user, current_user, LoginManager, logout_user
 from flask_user import current_user, login_required, roles_required, UserManager, SQLAlchemyAdapter
+from sqlalchemy.exc import SQLAlchemyError, DataError
 
 from flask_bootstrap import Bootstrap
 
@@ -36,35 +37,38 @@ def index():
 
 
 # Admin panel access requires user with admin role
-@app.route("/admin/")
-@roles_required('Admin')
-def admin_panel():
-	""" Provides access to the application admin panel
-		User must have the admin role to have access
-	"""
-	if True:
-		admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-		admin.add_view(ModelView(models.Role, session))
-		admin.add_view(ModelView(models.Asset, session))
-		admin.add_view(ModelView(models.CostCenter, session))
-		admin.add_view(ModelView(models.People, session))
-	else:
-		flash ('Administrative rights required')
-		return redirect(url_for("dashboard"))
+# @app.route("/admin/")
+# @roles_required('Admin')
+# def admin_panel():
+# 	""" Provides access to the application admin panel
+# 		User must have the admin role to have access
+# 	"""
+# 	if True:
+# 		admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+# 		admin.add_view(ModelView(models.Role, session))
+# 		admin.add_view(ModelView(models.Asset, session))
+# 		admin.add_view(ModelView(models.CostCenter, session))
+# 		admin.add_view(ModelView(models.People, session))
+# 	else:
+# 		flash ('Administrative rights required')
+# 		return redirect(url_for("dashboard"))
 
 # Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
-@app.route("/user/registration", methods = ["GET"])
+@app.route("/user/add", methods = ["GET"])
 @roles_required('Admin')
 
 def create_user():
 	""" Display user registration form """
 
-	return render_template("add_user.html")
+	#Get asset categories from DB
+	roles_list = session.query(models.Role).order_by(models.Role.id)
+
+	return render_template("add_user.html", roles_list = roles_list)
 
 # Verify user information and register new user 
-@app.route("/user/registration", methods = ["POST"])
+@app.route("/user/add", methods = ["POST"])
 @roles_required('Admin')
 
 def add_user():
@@ -76,7 +80,7 @@ def add_user():
 		if session.query(models.User).filter_by(email=email).first():
 			flash("User with that email address already exists", "danger")
 			return
-		role_id = request.form['role']
+		roles = request.form['role']
 		password = request.form['password']
 		#Check if password is not less than 8 characters
 		if len(password) < 8:
@@ -84,10 +88,19 @@ def add_user():
 			return
 
 	# Add users to DB
-	new_user = models.User(username=username, email = email, role_id = role_id, 
+	new_user = models.User(username=username, email = email, 
 							password = generate_password_hash(password))
+	
 	session.add(new_user)
-	session.commit()
+	models.User.append(new_user)
+	try:
+		session.commit()
+		flash('New user added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
+	
 	return redirect(url_for("create_user"))
 
 # User Login Access
@@ -109,7 +122,7 @@ def login_post():
         return redirect(url_for("login_get"))
 
     login_user(user)
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("view_register"))
 
 #Logout User
 @app.route("/user/logout")
@@ -245,9 +258,11 @@ def add_asset():
 	session.add(new_asset)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New asset added to the register successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to asset register
 	return redirect(url_for("create_asset"))
@@ -326,7 +341,7 @@ def update_asset(barcode):
 	else:
 		try:
 			sent = int(temp)
-		except(ValueError):
+		except (ValueError):
 			sent = 0
 
 	asset.value = sent
@@ -337,9 +352,11 @@ def update_asset(barcode):
 	session.add(asset)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Asset details updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset register
 	return redirect(url_for("view_register"))
@@ -375,13 +392,84 @@ def delete_asset(barcode):
 	session.delete(asset)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Asset with barcode ' + asset.barcode + ' deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset register
 	return redirect(url_for("view_register"))
 
+
+# Views for Asset verification
+@app.route("/register/verification", methods = ['GET'])
+@login_required
+def asset_verification():
+
+	return render_template("verify_asset.html")
+
+# Get asset to be verified
+@app.route("/register/verification", methods = ['POST'])
+@login_required
+def verify_asset():
+	# Get barcode to verify
+	barcode = request.form['barcode']
+
+	# Check if barcode exists
+	barcode_search = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
+
+	if barcode_search:
+		#Convert result into a list of dictionary items
+		asset = [result.as_dictionary() for result in barcode_search]
+
+		# Update verification table
+		verified = models.AssetVerification(barcode = asset[0]['Barcode'],
+		asset_name = asset[0]['Name'], verified_by = current_user.username)
+
+		#Add entry to database
+		session.add(verified)
+		try:
+			session.commit()
+			flash('Barcode: '+ asset[0]['Barcode'] +' verified.', category='message')
+		except SQLAlchemyError as error:
+			flash('Something went wrong, please make sure your information is correct.', category='error')
+			session.rollback
+			raise error
+
+		#Pass asset info into html render function
+		return render_template("verified_asset.html", asset = asset)
+
+	else:
+		flash('Asset with barcode: ' + barcode + ' is not on registered, capture asset.', category='message')
+		return redirect(url_for("create_asset"))
+
+# # Asset verified
+# @app.route("/register/verified/<barcode>")
+# @login_required
+# def asset_verified(barcode):
+# 	# Get asset details to populate the verification table
+# 	verified_asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
+
+# 	# Update verification table
+# 	verified = models.AssetVerification(
+# 		barcode = verified_asset.barcode,
+# 		asset_name = verified_asset.name,
+# 		verified_by = current_user.username
+# 	)
+
+# 	#Add entry to database
+# 	session.add(verified)
+# 	try:
+# 		session.commit()
+# 		flash('Asset Verified successfully.', category='message')
+# 	except SQLAlchemyError as error:
+# 		flash('Something went wrong, please make sure your information is correct.', category='error')
+# 		session.rollback
+# 		raise error
+
+# 	#Return to asset register
+# 	return redirect(url_for("asset_verification"))
 
 # Views to view Full list of Asset Categories, Single Asset Category,
 # Create New Category, Modify Existing Category details, Delete Existing Category
@@ -451,9 +539,11 @@ def add_asset_category():
 	session.add(new_asset_category)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New asset category added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to asset register
 	return redirect(url_for("create_asset_category"))
@@ -491,9 +581,11 @@ def update_asset_category(category_code):
 	session.add(category)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(category.name + ' Category updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset categories
 	return redirect(url_for("view_asset_categories"))
@@ -529,9 +621,11 @@ def delete_asset_category(category_code):
 	session.delete(category)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(category.name + ' Category deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset categories view
 	return redirect(url_for("view_asset_categories"))
@@ -608,9 +702,11 @@ def add_asset_type():
 	session.add(new_asset_type)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New asset type added successfully', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to create type form
 	return redirect(url_for("create_asset_type"))
@@ -648,9 +744,11 @@ def update_asset_type(type_code):
 	session.add(_type)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(_type.name + ' asset type updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset types
 	return redirect(url_for("view_asset_types"))
@@ -686,9 +784,11 @@ def delete_asset_type(type_code):
 	session.delete(_type)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(_type.name + ' asset type deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset types view
 	return redirect(url_for("view_asset_types"))
@@ -766,9 +866,11 @@ def add_asset_model():
 	session.add(new_asset_model)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New asset model added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to asset register
 	return redirect(url_for("create_asset_model"))
@@ -807,9 +909,11 @@ def update_asset_model(model_code):
 	session.add(model)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(model.name + ' Model updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset models
 	return redirect(url_for("view_asset_models"))
@@ -845,9 +949,11 @@ def delete_asset_model(model_code):
 	session.delete(model)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(model.name + ' Model deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset models view
 	return redirect(url_for("view_asset_models"))
@@ -921,9 +1027,11 @@ def add_asset_status():
 	session.add(new_asset_status)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New asset status added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to asset register
 	return redirect(url_for("create_asset_status"))
@@ -961,9 +1069,11 @@ def update_asset_status(status_code):
 	session.add(status)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(status.name + ' Satus updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset status
 	return redirect(url_for("view_asset_status"))
@@ -999,9 +1109,11 @@ def delete_asset_status(status_code):
 	session.delete(status)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(status.name + ' Status deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to asset status view
 	return redirect(url_for("view_asset_status"))
@@ -1075,9 +1187,11 @@ def add_location():
 	session.add(new_location)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Location added successfully', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to new location
 	return redirect(url_for("create_location"))
@@ -1115,9 +1229,11 @@ def update_location(location_code):
 	session.add(location)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(location.name + ' Location updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to Location view
 	return redirect(url_for("view_locations"))
@@ -1153,9 +1269,11 @@ def delete_location(location_code):
 	session.delete(location)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(location.name + ' Location deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to locations view
 	return redirect(url_for("view_locations"))
@@ -1229,9 +1347,11 @@ def add_costcenter():
 	session.add(new_costcenter)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Cost Center added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to new cost center
 	return redirect(url_for("create_costcenter"))
@@ -1269,9 +1389,11 @@ def update_costcenter(center_code):
 	session.add(costcenter)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(costcenter.name + ' Cost Center updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to Cost Centers view
 	return redirect(url_for("view_costcenters"))
@@ -1307,9 +1429,11 @@ def delete_costcenter(center_code):
 	session.delete(costcenter)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(costcenter.name + ' Cost Center deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to cost centers view
 	return redirect(url_for("view_costcenters"))
@@ -1383,9 +1507,11 @@ def add_department():
 	session.add(new_department)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Department added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to new departments
 	return redirect(url_for("create_department"))
@@ -1423,9 +1549,11 @@ def update_department(department_code):
 	session.add(department)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(department.name + ' department updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to Departments view
 	return redirect(url_for("view_departments"))
@@ -1461,9 +1589,11 @@ def delete_department(department_code):
 	session.delete(department)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(department.name + ' department deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to departments view
 	return redirect(url_for("view_departments"))
@@ -1551,9 +1681,11 @@ def add_person():
 	session.add(new_person)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('New person added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to new person
 	return redirect(url_for("create_person"))
@@ -1603,9 +1735,11 @@ def update_person(person_code):
 	session.add(person)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(person.first_name + ' ' + person.last_name + " record updated successfully.", category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to People view
 	return redirect(url_for("view_people"))
@@ -1641,9 +1775,11 @@ def delete_person(person_code):
 	session.delete(person)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(person.first_name + ' '  + person.last_name + ' deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to people view
 	return redirect(url_for("view_people"))
@@ -1718,9 +1854,11 @@ def add_supplierCategory():
 	session.add(new_supplierCategory)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Supplier Category added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to create new supplier
 	return redirect(url_for("create_supplierCategory"))
@@ -1758,9 +1896,11 @@ def update_supplierCategory(category_code):
 	session.add(supplierCategory)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Supplier Category updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to Supplier Categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -1796,9 +1936,11 @@ def delete_supplierCategory(category_code):
 	session.delete(supplierCategory)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Supplier Category successfully deleted.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to supplier categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -1888,9 +2030,11 @@ def add_supplier():
 	session.add(new_supplier)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Supplier added successfully', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
 	#Return to new supplier
 	return redirect(url_for("create_supplier"))
@@ -1938,9 +2082,11 @@ def update_supplier(supplier_code):
 	session.add(supplier)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash('Supplier details have been updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to Supplier view
 	return redirect(url_for("view_suppliers"))
@@ -1976,9 +2122,11 @@ def delete_supplier(supplier_code):
 	session.delete(supplier)
 	try:
 		session.commit()
-	except:
-		session.rollback()
-		raise
+		flash(supplier.name + ' Supplier deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
 
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))
@@ -1988,8 +2136,12 @@ def delete_supplier(supplier_code):
 # # Setup Flask-User and specify the User data-model
 # user_manager = UserManager(db_adapter, app)
 
-# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-# admin.add_view(ModelView(models.Role, session))
-# admin.add_view(ModelView(models.Asset, session))
-# admin.add_view(ModelView(models.CostCenter, session))
-# admin.add_view(ModelView(models.People, session))
+admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
+admin.add_view(ModelView(models.User, session))
+admin.add_view(ModelView(models.Role, session))
+admin.add_view(ModelView(models.Asset, session))
+admin.add_view(ModelView(models.AssetType, session))
+admin.add_view(ModelView(models.AssetModel, session))
+admin.add_view(ModelView(models.People, session))
+admin.add_view(ModelView(models.Location, session))
+admin.add_view(ModelView(models.Supplier, session))

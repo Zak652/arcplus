@@ -29,6 +29,14 @@ Asset Register
   </tr>
 </tbody>
 {% endfor %}
-
+<tfoot>
+  <tr>
+    {% for key in assets[0] %}
+    {% if key not in ['Id', 'Photo', 'Captured Date', 'modified Date', 'Value', 'Supplier', 'Attachements', 'Notes', 'Modified By', 'Captured By', 'Purchase Price'] %}
+      <th> {{ key }} </th>
+    {% endif %}
+    {% endfor %}
+  </tr>
+</tfoot>
 </table>
 {% endblock %}

@@ -61,6 +61,7 @@ h6
 	width: 100%;
 	margin-bottom: 20px;
 }
+.loginBox input[type="email"],
 .loginBox input[type="text"],
 .loginBox input[type="password"]
 {

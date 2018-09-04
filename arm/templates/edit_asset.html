@@ -1,4 +1,4 @@
-% extends "new_base.html" %}
+{% extends "new_base.html" %}
 
 {% block title %}
 Edit Asset - {{barcode}}
@@ -77,9 +77,11 @@ Edit Asset - {{barcode}}
         </select>
         <br>
     Purchase price:<br>
-        <input type="text" id="purchase_price" name="purchase_price" value="{{purchase_price}}"><br>
+        <input type="number" id="purchase_price" name="purchase_price" value="{{purchase_price}}"><br>
+    Purchase Date:<br>
+        <input type="date" id="purchase_date" name="purchase_price" value="{{purchase_price}}"><br>
     Value:<br>
-        <input type="text" id="value" name="value" value="{{value}}"><br>
+        <input type="number" id="value" name="value" value="{{value}}"><br>
     Supplier:<br>
             <select name="supplier">
                 <option selected>{{supplier}}</option>
