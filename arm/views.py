@@ -71,14 +71,14 @@ def add_user():
 		#check if email is unique / doesn't exist already
 		if session.query(models.User).filter_by(email=email).first():
 			flash("User with that email address already exists", "danger")
-			return
+			return redirect(url_for("create_user"))
 		roles = request.form['role']
 		role = session.query(models.Role).filter_by(name=roles).first()
 		password = request.form['password']
 		#Check if password is not less than 8 characters
 		if len(password) < 8:
 			flash("Password should be 8 or more characters long")
-			return
+			return redirect(url_for("create_user"))
 
 	# Add users to DB
 	new_user = models.User(username=username, email = email,
@@ -230,25 +230,35 @@ def add_asset():
 	creates an entry in the database
 	"""
 	#Capture new asset details
-	new_asset = models.Asset(
-			barcode = request.form['barcode'],
-			asset_no = request.form['barcode'],
-			serial_no = request.form['serial_no'],
-			name = request.form['name'],
-			category_id = request.form['category'],
-			type_id = request.form['_type'],
-			model_id = request.form['_model'],
-			status_id = request.form['status'],
-			location_id = request.form['location'],
-			costcenter_id = request.form['cost_center'],
-			user_id = request.form['user'],
-			purchase_price = request.form['purchase_price'],
-			purchase_date = request.form['purchase_date'],
-			supplier_id = request.form['supplier'],
-			notes = request.form["notes"],
-			captured_by = current_user.username,
-			modified_by = current_user.username
-			)
+	if request.method == 'POST':
+		barcode = request.form['barcode'],
+		#Check if Barcode is unique
+		if session.query(models.Asset).filter_by(barcode=barcode).first():
+			flash("Barcode already exists", "danger")
+			return redirect(url_for("create_asset"))
+		asset_no = request.form['barcode'],
+		serial_no = request.form['serial_no'],
+		name = request.form['name'],
+		category_id = request.form['category'],
+		type_id = request.form['_type'],
+		model_id = request.form['_model'],
+		status_id = request.form['status'],
+		location_id = request.form['location'],
+		costcenter_id = request.form['cost_center'],
+		user_id = request.form['user'],
+		purchase_price = request.form['purchase_price'],
+		purchase_date = request.form['purchase_date'],
+		supplier_id = request.form['supplier'],
+		notes = request.form["notes"],
+		captured_by = current_user.username,
+		modified_by = current_user.username
+
+	new_asset = models.Asset(barcode=barcode, asset_no=asset_no, serial_no=serial_no, name=name,
+							category_id=category_id, type_id=type_id, model_id=model_id, status_id=status_id,
+							location_id=location_id, costcenter_id=costcenter_id, user_id=user_id,
+							purchase_price=purchase_price, purchase_date=purchase_date, supplier_id=supplier_id,
+							notes=notes, captured_by=captured_by, modified_by=modified_by)
+
 	#Add entry to database
 	session.add(new_asset)
 	try:
