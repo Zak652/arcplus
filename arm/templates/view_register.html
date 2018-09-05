@@ -10,33 +10,27 @@ Asset Register
   <thead>
     <tr>
       {% for key in assets[0] %}
-      {% if key not in ['Id', 'Photo', 'Captured Date', 'modified Date', 'Value', 'Supplier', 'Attachements', 'Notes', 'Modified By', 'Captured By', 'Purchase Price'] %}
         <th> {{ key }} </th>
-      {% endif %}
       {% endfor %}
     </tr>
   </thead>
 
   <!-- table rows -->
-<tbody>
-  {% for asset in assets %}
-  <tr>
-    {% for value in asset.values() %}
-    {% if value not in [asset['Id'], asset['Photo'], asset['Captured Date'], asset['modified Date'], asset['Value'], asset['Supplier'], asset['Attachements'], asset['Notes'], asset['Modified By'], asset['Captured By'], asset['Purchase Price']] %}
-      <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
-    {% endif %}
+  <tbody>
+    {% for asset in assets %}
+    <tr>
+      {% for value in asset.values() %}
+        <td><a href="{{ url_for('view_single_asset', barcode = asset.Barcode) }}">{{ value }}</a></td>
+      {% endfor %}
+    </tr>
     {% endfor %}
-  </tr>
-  {% endfor %}
-</tbody>
-<tfoot>
-  <tr>
-    {% for key in assets[0] %}
-    {% if key not in ['Id', 'Photo', 'Captured Date', 'modified Date', 'Value', 'Supplier', 'Attachements', 'Notes', 'Modified By', 'Captured By', 'Purchase Price'] %}
-      <th> {{ key }} </th>
-    {% endif %}
-    {% endfor %}
-  </tr>
-</tfoot>
+  </tbody>
+  <tfoot>
+    <tr>
+      {% for key in assets[0] %}
+        <th> {{ key }} </th>
+      {% endfor %}
+    </tr>
+  </tfoot>
 </table>
 {% endblock %}

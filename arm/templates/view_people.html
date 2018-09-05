@@ -18,17 +18,17 @@ People
   </thead>
 
   <!-- table rows -->
-{% for person in  people_list %}
 <tbody>
+{% for person in  people_list %}
   <tr>
     {% for value in person.values() %}
     {% if value not in [person['Photo']] %}
-      <td><a href="{{ url_for('view_person', person_code = person.person_code) }}">{{ value }}</a></td>
+      <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
-</tbody>
 {% endfor %}
+</tbody>
 
 </table>
 {% endblock %}

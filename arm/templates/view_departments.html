@@ -18,17 +18,17 @@ Asset Departments
   </thead>
 
   <!-- table rows -->
-{% for department in  departments_list %}
 <tbody>
+{% for department in  departments_list %}
   <tr>
     {% for value in department.values() %}
     {% if value not in [department['Photo']] %}
-      <td><a href="{{ url_for('view_department', department_code = department.department_code) }}">{{ value }}</a></td>
+      <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
-</tbody>
 {% endfor %}
+</tbody>
 
 </table>
 {% endblock %}

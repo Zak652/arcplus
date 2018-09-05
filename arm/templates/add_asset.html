@@ -17,27 +17,27 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Barcode</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="barcode">
+                    <input type="text" class="form-control form-control-sm" name="barcode" required>
                 </div>
             </div>
             <!-- Serial No. entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Serial No:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="serial_no">
+                    <input type="text" class="form-control form-control-sm" name="serial_no" required>
                 </div>
             </div>
             <!--Asset Name entry  -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Name</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="name">
+                    <input type="text" class="form-control form-control-sm" name="name" required>
                 </div>
             </div>
             <!-- Asset Category entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Category</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="category">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="category" required>
                     <option selected>Choose...</option>
                     {% for category in categories_list %}
                     <option value="{{ category.id }}">{{ category }}</option>
@@ -47,7 +47,7 @@ Add New Asset
             <!-- Asset Type entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Type</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_type">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_type" required>
                     <option selected>Choose...</option>
                     {% for _type in types_list %}
                     <option value="{{ _type.id }}">{{ _type }}</option>
@@ -57,7 +57,7 @@ Add New Asset
              <!-- Asset Model entry -->
              <div class="form-group">
                 <label class="col-sm-2 control-label">Model</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_model">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_model" required>
                     <option selected>Choose...</option>
                     {% for model in models_list %}
                     <option value="{{ model.id }}">{{ model }}</option>
@@ -67,7 +67,7 @@ Add New Asset
             <!-- Asset Status entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Status</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="status">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="status" required>
                     <option selected>Choose...</option>
                     {% for status in statuses_list %}
                     <option value="{{ status.id }}">{{ status }}</option>
@@ -77,7 +77,7 @@ Add New Asset
             <!-- Asset Location entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Location</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="location">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="location" required>
                     <option selected>Choose...</option>
                     {% for location in locations_list %}
                     <option value="{{ location.id }}">{{ location }}</option>
@@ -87,7 +87,7 @@ Add New Asset
             <!-- Asset Cost Center -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Cost Center</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="cost_center">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="cost_center" required>
                     <option selected>Choose...</option>
                     {% for costcenter in costcenters_list %}
                     <option value="{{ costcenter.id }}">{{ costcenter }}</option>
@@ -97,7 +97,7 @@ Add New Asset
             <!-- Asset User entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Asset User</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="user">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="user" required>
                     <option selected>Choose...</option>
                     {% for user in users_list %}
                     <option value="{{ user.id }}">{{ user }}</option>
@@ -107,7 +107,7 @@ Add New Asset
             <!-- Asset Supplier entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Asset Supplier</label>
-                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="supplier">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="supplier" required>
                     <option selected>Choose...</option>
                     {% for supplier in suppliers_list %}
                     <option value="{{ supplier.id }}">{{ supplier }}</option>
@@ -118,14 +118,14 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Purchase Price</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control form-control-sm" name="purchase_price">
+                    <input type="number" class="form-control form-control-sm" name="purchase_price" required>
                 </div>
             </div>
             <!-- Purchase Date entry -->
             <div class="form-group">
                     <label class="col-sm-2 control-label">Date of Purchase</label>
                     <div class="col-sm-10">
-                        <input type="date" class="form-control form-control-sm" name="purchase_date">
+                        <input type="date" class="form-control form-control-sm" name="purchase_date" required>
                     </div>
                 </div>
             <!-- Notes / Additional info -->
@@ -137,7 +137,7 @@ Add New Asset
             </div>
             <!-- Save / Cancel -->
             <div class="box-footer">
-                <button type="submit" class="btn btn-outline-secondary">Cancel</button>
+                <button type="reset" class="btn btn-outline-secondary">Cancel</button>
                 <button type="submit" class="btn btn-outline-primary float-right">Save</button>
             </div>
         </div>

@@ -18,17 +18,17 @@ Asset Statuses
   </thead>
 
   <!-- table rows -->
-{% for status in  status_list %}
 <tbody>
+{% for status in  status_list %}
   <tr>
     {% for value in status.values() %}
     {% if value not in [status['Photo']] %}
-      <td><a href="{{ url_for('view_status', status_code = status.status_code) }}">{{ value }}</a></td>
+      <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
-</tbody>
 {% endfor %}
+</tbody>
 
 </table>
 {% endblock %}

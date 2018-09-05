@@ -1,7 +1,7 @@
 import os
 
 class DevelopmentConfig(object):
-	SQLALCHEMY_DATABASE_URI = "postgresql:///arcplus"
+	SQLALCHEMY_DATABASE_URI = "postgresql://zak:thinkful@localhost:5432/armapp"
 	DEBUG = True
 	SECRET_KEY = os.environ.get("FARMAPP_SECRET_KEY", os.urandom(12))
 
@@ -23,6 +23,6 @@ class DevelopmentConfig(object):
 
 
 class TestingConfig(object):
-	SQLALCHEMY_DATABASE_URI = "postgresql:///arcplustest"
+	SQLALCHEMY_DATABASE_URI = "postgresql://zak:thinkful@localhost:5432/armappstest"
 	DEBUG = True
 	SECRET_KEY = os.environ.get("FARMAPP_SECRET_KEY", os.urandom(12))

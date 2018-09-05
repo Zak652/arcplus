@@ -18,17 +18,17 @@ Locations
   </thead>
 
   <!-- table rows -->
-{% for location in  locations_list %}
 <tbody>
+{% for location in  locations_list %}
   <tr>
     {% for value in location.values() %}
     {% if value not in [location['Photo']] %}
-      <td><a href="{{ url_for('view_location', location_code = location.location_code) }}">{{ value }}</a></td>
+      <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
-</tbody>
 {% endfor %}
+</tbody>
 
 </table>
 {% endblock %}

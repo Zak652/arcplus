@@ -17,48 +17,48 @@ Add New Person
             <div class="form-group">
                 <label class="col-sm-2 control-label">Person's Code</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="code">
+                    <input type="text" class="form-control form-control-sm" name="code" required>
                 </div>
             </div>
             <!-- First Name -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">First Name</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="first_name">
+                    <input type="text" class="form-control form-control-sm" name="first_name" required>
                 </div>
             </div>
             <!-- Last Name -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Last Name</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="last_name">
+                    <input type="text" class="form-control form-control-sm" name="last_name" required>
                 </div>
             </div>
             <!-- Designation -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Designation</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control form-control-sm" name="designation">
+                    <input type="text" class="form-control form-control-sm" name="designation" required>
                 </div>
             </div>
             <!-- Phone -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Phone</label>
                 <div class="col-sm-10">
-                    <input type="tel" class="form-control form-control-sm" name="phone">
+                    <input type="number" class="form-control form-control-sm" name="phone" required>
                 </div>
             </div>
             <!-- Email -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Email</label>
                 <div class="col-sm-10">
-                    <input type="email" class="form-control form-control-sm" name="email">
+                    <input type="email" class="form-control form-control-sm" name="email" required>
                 </div>
             </div>
             <!-- Department -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Department</label>
-                <select class="browser-default custom-select mb-4" name="department">
+                <select class="browser-default custom-select mb-4" name="department" required>
                     <option selected>Choose...</option>
                     {% for department in departments_list %}
                     <option value="{{ department.id }}">{{ department }}</option>
@@ -68,7 +68,7 @@ Add New Person
             <!-- Location -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Location</label>
-                <select class="browser-default custom-select mb-4" name="location">
+                <select class="browser-default custom-select mb-4" name="location" required>
                     <option selected>Choose...</option>
                     {% for location in locations_list %}
                     <option value="{{ location.id }}">{{ location }}</option>

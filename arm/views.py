@@ -93,7 +93,9 @@ def add_user():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
-	
+	finally:
+		session.close()
+
 	return redirect(url_for("create_user"))
 
 # User Login Access
@@ -256,6 +258,8 @@ def add_asset():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to asset register
 	return redirect(url_for("create_asset"))
@@ -350,6 +354,8 @@ def update_asset(barcode):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset register
 	return redirect(url_for("view_register"))
@@ -390,6 +396,8 @@ def delete_asset(barcode):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset register
 	return redirect(url_for("view_register"))
@@ -511,6 +519,8 @@ def add_asset_category():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to asset register
 	return redirect(url_for("create_asset_category"))
@@ -553,6 +563,8 @@ def update_asset_category(category_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset categories
 	return redirect(url_for("view_asset_categories"))
@@ -593,6 +605,8 @@ def delete_asset_category(category_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset categories view
 	return redirect(url_for("view_asset_categories"))
@@ -674,6 +688,8 @@ def add_asset_type():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to create type form
 	return redirect(url_for("create_asset_type"))
@@ -716,6 +732,8 @@ def update_asset_type(type_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset types
 	return redirect(url_for("view_asset_types"))
@@ -756,6 +774,8 @@ def delete_asset_type(type_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset types view
 	return redirect(url_for("view_asset_types"))
@@ -838,6 +858,8 @@ def add_asset_model():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to asset register
 	return redirect(url_for("create_asset_model"))
@@ -881,6 +903,8 @@ def update_asset_model(model_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset models
 	return redirect(url_for("view_asset_models"))
@@ -921,6 +945,8 @@ def delete_asset_model(model_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset models view
 	return redirect(url_for("view_asset_models"))
@@ -999,6 +1025,8 @@ def add_asset_status():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to asset register
 	return redirect(url_for("create_asset_status"))
@@ -1041,6 +1069,8 @@ def update_asset_status(status_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset status
 	return redirect(url_for("view_asset_status"))
@@ -1081,6 +1111,8 @@ def delete_asset_status(status_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to asset status view
 	return redirect(url_for("view_asset_status"))
@@ -1159,6 +1191,8 @@ def add_location():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to new location
 	return redirect(url_for("create_location"))
@@ -1201,6 +1235,8 @@ def update_location(location_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to Location view
 	return redirect(url_for("view_locations"))
@@ -1241,6 +1277,8 @@ def delete_location(location_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to locations view
 	return redirect(url_for("view_locations"))
@@ -1319,6 +1357,8 @@ def add_costcenter():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to new cost center
 	return redirect(url_for("create_costcenter"))
@@ -1361,6 +1401,8 @@ def update_costcenter(center_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to Cost Centers view
 	return redirect(url_for("view_costcenters"))
@@ -1401,6 +1443,8 @@ def delete_costcenter(center_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to cost centers view
 	return redirect(url_for("view_costcenters"))
@@ -1479,6 +1523,8 @@ def add_department():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to new departments
 	return redirect(url_for("create_department"))
@@ -1521,6 +1567,8 @@ def update_department(department_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to Departments view
 	return redirect(url_for("view_departments"))
@@ -1561,7 +1609,9 @@ def delete_department(department_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
-
+	finally:
+		session.close()
+		
     #Return to departments view
 	return redirect(url_for("view_departments"))
 
@@ -1653,6 +1703,8 @@ def add_person():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to new person
 	return redirect(url_for("create_person"))
@@ -1707,6 +1759,8 @@ def update_person(person_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to People view
 	return redirect(url_for("view_people"))
@@ -1747,6 +1801,8 @@ def delete_person(person_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to people view
 	return redirect(url_for("view_people"))
@@ -1826,6 +1882,8 @@ def add_supplierCategory():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to create new supplier
 	return redirect(url_for("create_supplierCategory"))
@@ -1868,6 +1926,8 @@ def update_supplierCategory(category_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to Supplier Categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -1908,6 +1968,8 @@ def delete_supplierCategory(category_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to supplier categories view
 	return redirect(url_for("view_supplierCategories"))
@@ -2002,6 +2064,8 @@ def add_supplier():
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
 	#Return to new supplier
 	return redirect(url_for("create_supplier"))
@@ -2054,6 +2118,8 @@ def update_supplier(supplier_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to Supplier view
 	return redirect(url_for("view_suppliers"))
@@ -2094,6 +2160,8 @@ def delete_supplier(supplier_code):
 		flash('Something went wrong, please make sure your information is correct.', category='error')
 		session.rollback
 		raise error
+	finally:
+		session.close()
 
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))
@@ -2107,6 +2175,7 @@ admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
 # admin.add_view(ModelView(models.User, session))
 admin.add_view(ModelView(models.Role, session))
 admin.add_view(ModelView(models.Asset, session))
+admin.add_view(ModelView(models.AssetCategory, session))
 admin.add_view(ModelView(models.AssetType, session))
 admin.add_view(ModelView(models.AssetModel, session))
 admin.add_view(ModelView(models.People, session))

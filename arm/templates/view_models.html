@@ -18,17 +18,17 @@ Asset Models
   </thead>
 
   <!-- table rows -->
-{% for model in  models_list %}
 <tbody>
+{% for model in  models_list %}
   <tr>
     {% for value in model.values() %}
     {% if value not in [model['Photo']] %}
-      <td><a href="{{ url_for('view_asset_model', model_code = model.model_code) }}">{{ value }}</a></td>
+      <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
-</tbody>
 {% endfor %}
+</tbody>
 
 </table>
 {% endblock %}
