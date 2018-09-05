@@ -31,7 +31,7 @@ Add User
             <div class="form-group">
                 <label class="col-sm-2 control-label">User Role</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="role" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for role in roles_list %}
                     <option value="{{ role }}">{{ role }}</option>
                     {% endfor %}

@@ -38,7 +38,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Category</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="category" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for category in categories_list %}
                     <option value="{{ category.id }}">{{ category }}</option>
                     {% endfor %}
@@ -48,7 +48,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Type</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_type" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for _type in types_list %}
                     <option value="{{ _type.id }}">{{ _type }}</option>
                     {% endfor %}
@@ -58,7 +58,7 @@ Add New Asset
              <div class="form-group">
                 <label class="col-sm-2 control-label">Model</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="_model" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for model in models_list %}
                     <option value="{{ model.id }}">{{ model }}</option>
                     {% endfor %}
@@ -68,7 +68,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Status</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="status" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for status in statuses_list %}
                     <option value="{{ status.id }}">{{ status }}</option>
                     {% endfor %}
@@ -78,7 +78,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Location</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="location" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for location in locations_list %}
                     <option value="{{ location.id }}">{{ location }}</option>
                     {% endfor %}
@@ -88,7 +88,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Cost Center</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="cost_center" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for costcenter in costcenters_list %}
                     <option value="{{ costcenter.id }}">{{ costcenter }}</option>
                     {% endfor %}
@@ -98,7 +98,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Asset User</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="user" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for user in users_list %}
                     <option value="{{ user.id }}">{{ user }}</option>
                     {% endfor %}
@@ -108,7 +108,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Asset Supplier</label>
                 <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="supplier" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for supplier in suppliers_list %}
                     <option value="{{ supplier.id }}">{{ supplier }}</option>
                     {% endfor %}

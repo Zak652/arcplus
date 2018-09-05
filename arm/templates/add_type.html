@@ -31,7 +31,7 @@ Add New Asset
             <div class="form-group">
                 <label class="col-sm-2 control-label">Type Category</label>
                 <select class="browser-default custom-select mb-4" name="type_category" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for category in categories %}
                     <option value="{{ category.id }}">{{ category }}</option>
                     {% endfor %}

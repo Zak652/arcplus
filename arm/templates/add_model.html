@@ -31,7 +31,7 @@ Add New Model
             <div class="form-group">
                 <label class="col-sm-2 control-label">Model Type</label>
                 <select class="browser-default custom-select mb-4" name="model_type" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for _type in types_list %}
                     <option value="{{ _type.id }}">{{ _type }}</option>
                     {% endfor %}

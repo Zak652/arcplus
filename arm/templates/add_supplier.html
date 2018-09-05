@@ -52,7 +52,7 @@ Add New Supplier
             <div class="form-group">
                 <label class="col-sm-2 control-label">Category</label>
                 <select class="browser-default custom-select mb-4" name="category" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for category in categories_list %}
                     <option value="{{ category.id }}">{{ category }}</option>
                     {% endfor %}
@@ -62,7 +62,7 @@ Add New Supplier
             <div class="form-group">
                 <label class="col-sm-2 control-label">Location</label>
                 <select class="browser-default custom-select mb-4" name="location" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for location in locations_list %}
                     <option value="{{ location.id }}">{{ location }}</option>
                     {% endfor %}
@@ -72,7 +72,7 @@ Add New Supplier
             <div class="form-group">
                 <label class="col-sm-2 control-label">Contact Person</label>
                 <select class="browser-default custom-select mb-4" name="contact_person" required>
-                    <option selected>Choose...</option>
+                    <option selected></option>
                     {% for contact in contacts_list %}
                     <option value="{{ contact.id }}">{{ contact }}</option>
                     {% endfor %}
