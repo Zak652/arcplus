@@ -96,12 +96,13 @@ class Asset(Base):
 
     #Return asset object as dictionary
     def as_dictionary(self):
-        asset={"Id": self.id, "Category": self.asset_category, "Type": self.asset_type, "Name": self.name, "Model": self.asset_model, 
-                "Serial No.": self.serial_no, "Barcode": self.barcode, "Notes": self.notes, "Status": self.asset_status,
-                "User": self.asset_user, "Department": self.asset_center, "Purchase Date": self.purchase_date,
-                "Purchase Price": self.purchase_price, "Captured By": self.captured_by, "Capture Date": self.capture_date,
-                "Location": self.asset_location, "Cost center": self.asset_center, "Value": self.value, "Supplier": self.asset_supplier,
-                "Attachments": self.attchments, "Modified By": self.modified_by, "Modified Date": self.modified_date
+        asset={"Id": self.id, "Barcode": self.barcode, "Type": self.asset_type, "Serial No.": self.serial_no, 
+                "Location": self.asset_location, "Status": self.asset_status, "Purchase Date": self.purchase_date, 
+                "User": self.asset_user, "Purchase Price": self.purchase_price, "Category": self.asset_category, 
+                "Name": self.name, "Model": self.asset_model, "Notes": self.notes, "Department": self.asset_center,
+                "Captured By": self.captured_by, "Capture Date": self.capture_date, "Cost center": self.asset_center, 
+                "Value": self.value, "Supplier": self.asset_supplier, "Attachments": self.attchments, 
+                "Modified By": self.modified_by, "Modified Date": self.modified_date
                 }
         return asset
 
