@@ -438,6 +438,9 @@ def verify_asset():
 		verified = models.AssetVerification(barcode = asset[0]['Barcode'],
 		asset_name = asset[0]['Name'], verified_by = current_user.username)
 
+		# Update Asset record
+		asset_verified = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
+		asset_verified.barcode = barcode
 		#Add entry to database
 		session.add(verified)
 		try:
