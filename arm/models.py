@@ -28,7 +28,7 @@ class User(Base, db.Model, UserMixin):
     roles = relationship('Role', secondary = 'user_roles')
     
     def __repr__(self):
-        return self.name
+        return self.username
 
     # Return user object as dictionary
     def as_dictionary(self):
@@ -382,14 +382,3 @@ class SupplierCategory(Base):
                             "Category_code": self.category_code, "Notes": self.notes
                             }
         return supplier_category
-
-
-# db_adapter = SQLAlchemyAdapter(db, User)
-# # Setup Flask-User and specify the User data-model
-# user_manager = UserManager(db_adapter, app)
-
-# admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-# admin.add_view(ModelView(Role, session))
-# admin.add_view(ModelView(Asset, session))
-# admin.add_view(ModelView(CostCenter, session))
-# admin.add_view(ModelView(People, session))

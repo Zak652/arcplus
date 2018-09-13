@@ -7,7 +7,6 @@ from flask_bootstrap import Bootstrap
 
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from .admin import AdminView
 
 from flask import flash
 from getpass import getpass
@@ -17,17 +16,10 @@ from . import app, decorators, models
 from .database import session
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy(app)
-
-db_adapter = SQLAlchemyAdapter(db, models.User)
-# Setup Flask-User and specify the User data-model
-user_manager = UserManager(db_adapter, app)
-
 # Start route and Authentication
 
 #Appliction requires login from the start
 @app.route("/")
-
 def index():
 	""" Application requires users to login first.
 		All initial access is redirected to login page.
@@ -35,22 +27,11 @@ def index():
     # Redirect user to login page
 	return redirect(url_for("login_get"))
 
-
-# Admin panel access requires user with admin role
-@app.route("/admin")
-@roles_required('Admin')
-def admin_panel():
-	""" Provides access to the application admin panel
-		User must have the admin role to have access
-	"""
-	return redirect("/admin/")
-
 # Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
 @app.route("/user/add", methods = ["GET"])
 @roles_required('Admin')
-
 def create_user():
 	""" Display user registration form """
 
@@ -62,7 +43,6 @@ def create_user():
 # Verify user information and register new user 
 @app.route("/user/add", methods = ["POST"])
 @roles_required('Admin')
-
 def add_user():
 
 	if request.method == 'POST':
@@ -2178,19 +2158,3 @@ def delete_supplier(supplier_code):
 
     #Return to suppliers view
 	return redirect(url_for("view_suppliers"))
-
-
-# db_adapter = SQLAlchemyAdapter(db, models.User)
-# # Setup Flask-User and specify the User data-model
-# user_manager = UserManager(db_adapter, app)
-
-admin = Admin(app, name = 'Admin', template_mode='bootstrap3')
-# admin.add_view(ModelView(models.User, session))
-admin.add_view(ModelView(models.Role, session))
-admin.add_view(ModelView(models.Asset, session))
-admin.add_view(ModelView(models.AssetCategory, session))
-admin.add_view(ModelView(models.AssetType, session))
-admin.add_view(ModelView(models.AssetModel, session))
-admin.add_view(ModelView(models.People, session))
-admin.add_view(ModelView(models.Location, session))
-admin.add_view(ModelView(models.Supplier, session))

@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from flask_babelex import Babel
 from flask_user import UserManager
-from flask_admin import Admin, BaseView, expose
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -23,7 +22,7 @@ from . import api
 from . import views
 from . import filters
 from . import login
-# from . import admin
+from . import admin
 
 from .database import Base, engine
 Base.metadata.create_all(engine)
