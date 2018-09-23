@@ -1,7 +1,7 @@
 Flask
 flask
 flask-admin
-flask-security sqlalchemy
+flask-security
 flask-login
 flask-script
 flask-migrate
