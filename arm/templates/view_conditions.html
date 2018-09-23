@@ -1,18 +1,18 @@
 {% extends "new_base.html" %}
 
 {% block title %}
-Asset Categories
+Asset Conditions
 {% endblock %}
 
 {% block content %}
 <div class="box-header with-border">
-  <h3 class="box-title">Asset Categories</h3>
+  <h3 class="box-title">Asset Conditions</h3>
 </div>
 <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
   <!-- table header -->
   <thead>
     <tr>
-      {% for key in category_list[0] %}
+      {% for key in conditions_list[0] %}
       {% if key not in ['Photo'] %}
         <th> {{ key }} </th>
       {% endif %}
@@ -22,17 +22,16 @@ Asset Categories
 
   <!-- table rows -->
 <tbody>
-{% for category in  category_list %}
+{% for condition in  conditions_list %}
   <tr>
-    {% for value in category.values() %}
-    {% if value not in [category['Photo']] %}
+    {% for value in condition.values() %}
+    {% if value not in [condition['Photo']] %}
       <td>{{ value }}</td>
     {% endif %}
     {% endfor %}
   </tr>
 {% endfor %}
 </tbody>
-
 
 </table>
 {% endblock %}

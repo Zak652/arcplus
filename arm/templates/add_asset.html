@@ -74,6 +74,16 @@ Add New Asset
                     {% endfor %}
                 </select>
             </div>
+            <!-- Asset Condition entry -->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Condition</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="condition" required>
+                    <option selected></option>
+                    {% for condition in conditions_list %}
+                    <option value="{{ condition.id }}">{{ condition }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <!-- Asset Location entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Location</label>

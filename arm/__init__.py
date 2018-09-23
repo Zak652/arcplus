@@ -1,28 +1,32 @@
 import os
-from flask import Flask
-from flask_babelex import Babel
-from flask_user import UserManager
+from flask import Flask, redirect, url_for
+from flask_security import Security, SQLAlchemySessionUserDatastore
+from .models import User, Role
+from .database import db_session, init_db, session
+from flask_mail import Mail
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-Bootstrap(app)
-
 config_path = os.environ.get("CONFIG_PATH", "arm.config.DevelopmentConfig")
 app.config.from_object(config_path)
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CSRF_ENABLED'] = True
+db = SQLAlchemy
 
-# Initialize Flask-BabelEx
-babel = Babel(app)
-babel.domain = 'flask_user'
-babel.translation_directories = 'translations'
+# Setup Flask-Security
+user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+security = Security(app, user_datastore)
+
+mail = Mail(app)
+
+Bootstrap(app)
 
 from . import api
+from . import decorators
 from . import views
 from . import filters
 from . import login
 from . import admin
 
-from .database import Base, engine
-Base.metadata.create_all(engine)
+# Load the database
+init_db()

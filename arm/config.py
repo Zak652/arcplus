@@ -1,28 +1,46 @@
 import os
 
 class DevelopmentConfig(object):
-	SQLALCHEMY_DATABASE_URI = "postgresql://zak:thinkful@localhost:5432/armapp"
+	SQLALCHEMY_DATABASE_URI = "postgresql:///arcplus"
 	DEBUG = True
-	SECRET_KEY = os.environ.get("FARMAPP_SECRET_KEY", os.urandom(12))
+	SECRET_KEY = os.environ.get("ARCPLUS_SECRET_KEY", os.urandom(12))
+
+	# Flask security
+	# SECURITY_URL_PREFIX = "/register/view"
+	SECURITY_PASSWORD_HASH = "pbkdf2_sha512"
+	SECURITY_PASSWORD_SALT = "ATGUOHAELKampalaughaerGOJAEGj"
+
+
+	SECURITY_UNAUTHORIZED_VIEW = '/user/login'
+	SECURITY_LOGIN_URL = "/user/login"
+	SECURITY_LOGOUT_URL = "/user/logout"
+
+	SECURITY_POST_LOGIN_VIEW = "/register/view"
+	SECURITY_POST_LOGOUT_VIEW = "/user/login"
+	SECURITY_CHANGE_URL = "/user/change_password"
+
+	SECURITY_POST_CHANGE_VIEW = "/user/logout"
+
+	# Flask-Security features
+	SECURITY_REGISTERABLE = False
+	SECURITY_CHANGEABLE = True
+	SECURITY_SEND_REGISTER_EMAIL = False
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+	SECURITY_TRACKABLE = True
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
+	CSRF_ENABLED = True
 
 	# Flask-Mail SMTP server settings
-	MAIL_SERVER = 'smtp.gmail.com'
-	MAIL_PORT = 465
-	MAIL_USE_SSL = True
-	MAIL_USE_TLS = False
-	MAIL_USERNAME = 'empty@arcplusapp.com'
-	MAIL_PASSWORD = 'empty'
-	MAIL_DEFAULT_SENDER = '"ARCPlus" <noreply@arcplusapp.com>'
-
-    # Flask-User settings
-	USER_APP_NAME = "ARCPlus Software"      	# Shown in and email templates and page footers
-	USER_ENABLE_EMAIL = True        			# Enable email authentication
-	USER_ENABLE_USERNAME = True    				# Enable username authentication
-	USER_EMAIL_SENDER_NAME = USER_APP_NAME
-	USER_EMAIL_SENDER_EMAIL = "noreply@arcpluapp.com"
+	# MAIL_SERVER = 'smtp.gmail.com'
+	# MAIL_PORT = 465
+	# MAIL_USE_SSL = True
+	# MAIL_USE_TLS = False
+	# MAIL_USERNAME = 'username'
+	# MAIL_PASSWORD = 'password'
 
 
 class TestingConfig(object):
-	SQLALCHEMY_DATABASE_URI = "postgresql://zak:thinkful@localhost:5432/armappstest"
+	SQLALCHEMY_DATABASE_URI = "postgresql:///arcplustest"
 	DEBUG = True
-	SECRET_KEY = os.environ.get("FARMAPP_SECRET_KEY", os.urandom(12))
+	SECRET_KEY = os.environ.get("ARCPLUS_SECRET_KEY", os.urandom(12))

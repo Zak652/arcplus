@@ -1,6 +1,6 @@
-from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_required, login_user, current_user, LoginManager, logout_user
-from flask_user import current_user, login_required, roles_required, UserManager, SQLAlchemyAdapter
+from flask import render_template, request, redirect, url_for, flash, Response
+from flask_login import login_user, current_user, LoginManager, logout_user, login_required
+from flask_security import login_required, roles_required
 from sqlalchemy.exc import SQLAlchemyError, DataError
 
 from flask_bootstrap import Bootstrap
@@ -8,29 +8,48 @@ from flask_bootstrap import Bootstrap
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 
-from flask import flash
 from getpass import getpass
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import app, decorators, models
 from .database import session
 from flask_sqlalchemy import SQLAlchemy
+from flask_security import LoginForm, url_for_security
+
+@app.context_processor
+def login_context():
+    return {
+        'url_for_security': url_for_security,
+        'login_user_form': LoginForm()
+		}
 
 # Start route and Authentication
 
 #Appliction requires login from the start
 @app.route("/")
+# @login_required
 def index():
 	""" Application requires users to login first.
 		All initial access is redirected to login page.
 	"""
-    # Redirect user to login page
 	return redirect(url_for("login_get"))
+
+@app.route("/admin/")
+@login_required
+def admin_panel():
+	""" Admin Panel requires Admin role for access
+	"""
+	if not current_user.has_role('Admin'):
+		# return False
+		return redirect(url_for('logout'))
+	return redirect('/admin/users')
+
 
 # Views for Adding New Users, Users Login and Logout
 
 # New User registration. Get user information
 @app.route("/user/add", methods = ["GET"])
+@login_required
 @roles_required('Admin')
 def create_user():
 	""" Display user registration form """
@@ -42,6 +61,7 @@ def create_user():
 
 # Verify user information and register new user 
 @app.route("/user/add", methods = ["POST"])
+@login_required
 @roles_required('Admin')
 def add_user():
 
@@ -79,25 +99,23 @@ def add_user():
 	return redirect(url_for("create_user"))
 
 # User Login Access
-@app.route("/user/login", methods=["GET"])
-
+@app.route("/user/login")
 def login_get():
 	""" Provide login form and collect login credentials """
-	return render_template("login.html")
+	return render_template("/security/login_user.html")
 
-# Verify user credentials provided on login form
-@app.route("/user/login", methods=["POST"])
+# # Verify user credentials provided on login form
+# @app.route("/user/login")
+# def login_post():
+#     email = request.form["email"]
+#     password = request.form["password"]
+#     user = session.query(models.User).filter_by(email = email).first()
+#     if not user or not check_password_hash(user.password, password):
+#         flash("Incorrect username or password", "danger")
+#         return redirect(url_for("login_get"))
 
-def login_post():
-    email = request.form["email"]
-    password = request.form["password"]
-    user = session.query(models.User).filter_by(email = email).first()
-    if not user or not check_password_hash(user.password, password):
-        flash("Incorrect username or password", "danger")
-        return redirect(url_for("login_get"))
-
-    login_user(user)
-    return redirect(url_for("view_register"))
+#     login_user(user)
+#     return redirect(url_for("view_register"))
 
 #Logout User
 @app.route("/user/logout")
@@ -109,6 +127,15 @@ def logout():
 
 # Dashboard display / user landing page
 # Display a graphical summary of the app data
+
+# User change password route
+@app.route("/user/change_password")
+@login_required
+def change_password():
+	"""
+	provide users with the a form to change their password 
+	"""
+	return render_template("security/change_password.html")
 
 # Dashboard
 @app.route("/dashboard")
@@ -127,7 +154,6 @@ def dashboard():
 # Full Register view route
 @app.route("/register/view", methods = ["GET"])
 @login_required
-
 def view_register():
 	""" 
 	Queries the database for all assets and passes them into a
@@ -181,6 +207,9 @@ def create_asset():
 	#Get asset statuses from DB
 	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
 
+	#Get asset conditions from DB
+	conditions_list = session.query(models.AssetCondition).order_by(models.AssetCondition.condition_code)
+
 	#Get locations from DB
 	locations_list = session.query(models.Location).order_by(models.Location.location_code)
 
@@ -197,7 +226,7 @@ def create_asset():
 							types_list = types_list, models_list = models_list, 
 							statuses_list = statuses_list, locations_list = locations_list, 
 							costcenters_list = costcenters_list, users_list = users_list,
-							suppliers_list = suppliers_list
+							suppliers_list = suppliers_list, conditions_list = conditions_list
 							)
 
 # Post New Asset information
@@ -223,6 +252,7 @@ def add_asset():
 		type_id = request.form['_type'],
 		model_id = request.form['_model'],
 		status_id = request.form['status'],
+		condition_id = request.form['condition'],
 		location_id = request.form['location'],
 		costcenter_id = request.form['cost_center'],
 		user_id = request.form['user'],
@@ -237,7 +267,9 @@ def add_asset():
 							category_id=category_id, type_id=type_id, model_id=model_id, status_id=status_id,
 							location_id=location_id, costcenter_id=costcenter_id, user_id=user_id,
 							purchase_price=purchase_price, purchase_date=purchase_date, supplier_id=supplier_id,
-							notes=notes, captured_by=captured_by, modified_by=modified_by)
+							notes=notes, captured_by=captured_by, modified_by=modified_by,
+							condition_id=condition_id
+							)
 
 	#Add entry to database
 	session.add(new_asset)
@@ -273,6 +305,9 @@ def edit_asset(barcode):
 	#Get asset statuses from DB
 	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
 
+	#Get asset conditions from DB
+	conditions_list = session.query(models.AssetCondition).order_by(models.AssetCondition.condition_code)
+
 	#Get locations from DB
 	locations_list = session.query(models.Location).order_by(models.Location.location_code)
 
@@ -297,8 +332,9 @@ def edit_asset(barcode):
 							purchase_price = asset.purchase_price, notes = asset.notes, 
 							categories_list = categories_list, types_list = types_list, 
 							models_list = models_list, statuses_list = statuses_list, 
-							locations_list = locations_list, costcenters_list = costcenters_list, 
-							users_list = users_list, suppliers_list = suppliers_list
+							conditions_list = conditions_list, locations_list = locations_list, 
+							costcenters_list = costcenters_list, users_list = users_list, 
+							suppliers_list = suppliers_list
 							)
 
 # POST Asset Modifications
@@ -1111,6 +1147,172 @@ def delete_asset_status(status_code):
 	return redirect(url_for("view_asset_status"))
 
 
+# Views to view Full list of Asset condition, Single Asset condition,
+# Create New condition, Modify Existing condition details, Delete Existing condition
+
+#Route to view full list of asset condition
+@app.route("/asset_condition/view", methods = ["GET"])
+@login_required
+
+def view_asset_conditions():
+	""" 
+	Queries the database for all assets condition and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+    #Get assets condition from DB
+	conditions_reg = session.query(models.AssetCondition).order_by(models.AssetCondition.id)
+
+	#Convert condition_reg to a list of dictionary items
+	conditions_list = [condition.as_dictionary() for condition in conditions_reg]
+
+    #Pass dictionary list into html render function
+	return render_template("view_conditions.html", conditions_list = conditions_list)
+
+#Single Asset condition view route
+@app.route("/asset_condition/view/<condition_code>", methods = ["GET"])
+@login_required
+
+def view_condition(condition_code):
+	""" 
+	Queries the database for all condition and passes them into a
+	list of dictionaries which is passed into the hmtl render
+	function
+	"""
+	#Search for condition
+	condition_search = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).all()
+
+	#Convert result into a list of dictionary items
+	condition = [condition.as_dictionary() for condition in condition_search]
+
+	#Pass condition info into html render function
+	return render_template("single_condition.html", condition = condition)
+
+#Create new asset condition route
+@app.route("/asset_condition/add_asset_condition", methods = ["GET"])
+@login_required
+
+def create_asset_condition():
+	"""	Provides empty form to be filled with new asset condition details	"""
+
+	return render_template("add_condition.html")
+
+@app.route("/asset_condition/add_asset_condition", methods = ["POST"])
+@login_required
+
+def add_asset_condition():
+	"""
+	Captures new asset condition information and 
+	creates an entry in the database
+	"""
+	#Capture new asset category details
+	new_asset_condition = models.AssetCondition(
+			condition_code = request.form['code'],
+			condition_name = request.form['name'],
+			notes = request.form["notes"]
+			)
+	#Add entry to database
+	session.add(new_asset_condition)
+	try:
+		session.commit()
+		flash('New asset condition added successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
+	finally:
+		session.close()
+
+	#Return to asset register
+	return redirect(url_for("create_asset_condition"))
+
+# Modify Existing Asset condition
+@app.route("/asset_condition/edit_asset_condition/<condition_code>", methods=["GET"])
+@login_required
+
+def edit_asset_condition(condition_code):
+	""" Provide form populated with asset condition information to be edited """
+
+	condition = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).all()
+	condition = condition[0]
+
+	return render_template("edit_asset_condition.html", id = condition.id,
+		condition_code = condition.condition_code, 
+		condition_name = condition.condition_name, 
+		notes = condition.notes
+    	)
+
+# POST Asset condition Modifications
+@app.route("/asset_condition/edit/asset_condition/<condition_code>", methods=['POST'])
+@login_required
+
+def update_asset_condition(condition_code):
+	"""
+	Captures updated asset condition information and 
+	posts updated information to the database
+	"""
+	condition = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).first()
+	condition.condition_code = request.form["code"]
+	condition.staus_name = request.form["name"]
+	condition.notes = request.form["notes"]
+
+	session.add(condition)
+	try:
+		session.commit()
+		flash(condition.name + ' Satus updated successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
+	finally:
+		session.close()
+
+    #Return to asset condition
+	return redirect(url_for("view_asset_condition"))
+
+# Delete asset condition
+@app.route("/asset_condition/delete_condition/<condition_code>")
+@login_required
+
+def condition_to_delete(condition_code):
+	"""
+	Identify condition to be deleted bassed on provided condition code
+	"""
+    #Query database for condition
+	condition_search = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).all()
+	condition = [result.as_dictionary() for result in condition_search]
+	condition = condition[0]
+
+    #Display the condition details for confirmation
+	return render_template("delete_condition.html", condition = condition)
+
+# Delete asset condition from database
+@app.route("/asset_condition/deleted/<condition_code>")
+@login_required
+
+def delete_asset_condition(condition_code):
+	"""
+	Search for confirmed asset condition and deletes it from the database
+	"""
+    #Search database for asset condition
+	condition = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).first()
+
+    #Delete asset condition from database
+	session.delete(condition)
+	try:
+		session.commit()
+		flash(condition.name + ' condition deleted successfully.', category='message')
+	except SQLAlchemyError as error:
+		flash('Something went wrong, please make sure your information is correct.', category='error')
+		session.rollback
+		raise error
+	finally:
+		session.close()
+
+    #Return to asset condition view
+	return redirect(url_for("view_asset_condition"))
+
+
 # Views to view Full list of Locations, Single Location details,
 # Create New Locations, Modify Existing Location details, Delete Existing Locations
 
@@ -1676,17 +1878,28 @@ def add_person():
 	creates an entry in the database
 	"""
 	#Capture new person details
-	new_person = models.People(
-			person_code = request.form['code'],
-			first_name = request.form['first_name'],
-			last_name = request.form['last_name'],
-			designation = request.form['designation'],
-			phone = request.form['phone'],
-			email = request.form['email'],
-			department_id = request.form['department'],
-			location_id = request.form['location'],
-			notes = request.form["notes"]
-			)
+	if request.method == 'POST':
+		person_code = request.form['code']
+		if session.query(models.People).filter_by(person_code=person_code).first():
+			flash("Person with that persons code already exists", "danger")
+			return redirect(url_for("create_person"))
+		email = request.form['email']
+		if session.query(models.People).filter_by(email=email).first():
+			flash("Person with that email already exists", "danger")
+			return redirect(url_for("create_person"))
+		first_name = request.form['first_name']
+		last_name = request.form['last_name']
+		designation = request.form['designation']
+		phone = request.form['phone']
+		department_id = request.form['department']
+		location_id = request.form['location']
+		notes = request.form["notes"]		
+
+	new_person = models.People(person_code = person_code, first_name = first_name,
+								last_name = last_name, designation = designation,
+								phone = phone, email = email, department_id = department_id,
+								location_id = location_id, notes = notes
+								)
 	#Add entry to database
 	session.add(new_person)
 	try:

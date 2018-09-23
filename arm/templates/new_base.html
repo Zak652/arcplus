@@ -47,7 +47,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('dashboard') }}">ARCPlus</a>
+              <a class="navbar-brand" href="{{ url_for('view_register') }}">ARCPlus</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -62,6 +62,9 @@
                     <li class="dropdown-header">Status</li>
                     <li><a href="{{ url_for('create_asset_status') }}">Add Status</a></li>
                     <li><a href="{{ url_for('view_asset_statuses') }}">View Statuses</a></li>
+                    <li class="dropdown-header">Conditions</li>
+                    <li><a href="{{ url_for('create_asset_condition') }}">Add Condition</a></li>
+                    <li><a href="{{ url_for('view_asset_conditions') }}">View Conditions</a></li>
                   </ul>
                 </li>
                 <li class="dropdown">
@@ -111,35 +114,36 @@
                     <li><a href="{{ url_for('view_supplierCategories') }}">View Categories</a></li>
                   </ul>
                 </li>
-                {% if 'Admin' in current_user.roles[0].name %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <!-- <li class="dropdown-header">.....</li> -->
+                    <li><a href="#">Verification report</a></li>
+                    <li><a href="#">Asset Movements</a></li>
+                  </ul>
+                </li>
+                {% if 'Admin' in current_user.roles %}
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                      <li class="dropdown-header">Panel</li>
                       <li><a href="/admin/">Admin Panel</a></li>
-                    <li class="dropdown-header">Users</li>
-                    <li><a href="{{ url_for('create_user') }}">Add User</a></li>
-                    <li><a href="#">Edit User</a></li>
-                    <li><a href="#">View Users</a></li>
-                    <li class="dropdown-header">Roles</li>
-                    <li><a href="#">Add Role</a></li>
-                    <li><a href="#">View Roles</a></li>
                   </ul>
                 </li>
                 {% endif %}
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <!-- <li class="active"><a href="./">Settings<span class="sr-only">(current)</span></a></li> -->
-                <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.roles[0].name }}!</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                <!-- <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome {{ current_user.name }}!<span class="caret"></span></a>
-                  <ul class="dropdown-menu"> -->
+                <li class="active"><a href="../navbar-static-top/">Welcome {{ current_user.username }}!</a></li>
+                <!-- <li><a href="{{ url_for('logout') }}">Logout</a></li> -->
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
                     <!-- <li class="dropdown-header">.....</li> -->
-                    <!-- <li><a href="../navbar-static-top/">Profile</a></li>
+                    <!-- <li><a href="../navbar-static-top/">Profile</a></li> -->
+                    <!-- <li><a href="{{ url_for('change_password') }}">Change Password</a></li> -->
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                   </ul>
-                </li> -->
+                </li>
               </ul>
             </div><!--/.nav-collapse -->
           </div><!--/.container-fluid -->
@@ -147,14 +151,14 @@
       {% endblock navbar %}
 
       <!-- Area for flashed messages -->
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <ul class=alert alert-secondary>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-          </ul>
-        {% endif %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+      {% endfor %}
+      {% endif %}
       {% endwith %}
 
       <!-- content area for graphs, search, register table and related context menus -->

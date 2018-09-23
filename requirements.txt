@@ -1,9 +1,8 @@
 Flask
 flask
 flask-admin
-Flask-User==0.6.21
+flask-security sqlalchemy
 flask-login
-Flask-BabelEx
 flask-script
 flask-migrate
 flask_table

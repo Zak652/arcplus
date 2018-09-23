@@ -2,6 +2,11 @@ import json
 from functools import wraps
 
 from flask import request, Response
+from flask_login import current_user, LoginManager
+
+login_manager = LoginManager()
+login_manager.login_view = '/user/login'
+login_manager.login_message = "You don't seem to have permission to see this content."
 
 def accept(mimetype):
     def decorator(func):
