@@ -104,18 +104,6 @@ def login_get():
 	""" Provide login form and collect login credentials """
 	return render_template("/security/login_user.html")
 
-# # Verify user credentials provided on login form
-# @app.route("/user/login")
-# def login_post():
-#     email = request.form["email"]
-#     password = request.form["password"]
-#     user = session.query(models.User).filter_by(email = email).first()
-#     if not user or not check_password_hash(user.password, password):
-#         flash("Incorrect username or password", "danger")
-#         return redirect(url_for("login_get"))
-
-#     login_user(user)
-#     return redirect(url_for("view_register"))
 
 #Logout User
 @app.route("/user/logout")
@@ -243,7 +231,7 @@ def add_asset():
 		barcode = request.form['barcode'],
 		#Check if Barcode is unique
 		if session.query(models.Asset).filter_by(barcode=barcode).first():
-			flash("Barcode already exists", "danger")
+			flash("An asset with Barcode: {} already exists".format(barcode), "danger")
 			return redirect(url_for("create_asset"))
 		asset_no = request.form['barcode'],
 		serial_no = request.form['serial_no'],
@@ -275,9 +263,9 @@ def add_asset():
 	session.add(new_asset)
 	try:
 		session.commit()
-		flash('New asset added to the register successfully.', category='message')
+		flash('New asset with Barcode: {} added to the register successfully!'.format(barcode), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -534,18 +522,27 @@ def add_asset_category():
 	creates an entry in the database
 	"""
 	#Capture new asset category details
+	if request.method == 'POST':
+		category_code = request.form['code'],
+		#Check if Category code is unique
+		if session.query(models.AssetCategory).filter_by(category_code=category_code).first():
+			flash("Category code: {} is in use by another category".format(category_code), "danger")
+			return redirect(url_for("create_asset_category"))
+
+		category_name = request.form['name']
+
 	new_asset_category = models.AssetCategory(
-			category_code = request.form['code'],
-			category_name = request.form['name'],
+			category_code = category_code,
+			category_name = category_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_category)
 	try:
 		session.commit()
-		flash('New asset category added successfully.', category='message')
+		flash('New asset category; {} added successfully!'.format(category_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'error')
 		session.rollback
 		raise error
 	finally:
@@ -702,9 +699,18 @@ def add_asset_type():
 	creates an entry in the database
 	"""
 	#Capture new asset type details
+	if request.method == 'POST':
+		type_code = request.form['code'],
+		#Check if Type code is unique
+		if session.query(models.AssetType).filter_by(type_code=type_code).first():
+			flash("Type code: {} is in use by another Asset Type".format(type_code), "danger")
+			return redirect(url_for("create_asset_type"))
+
+		type_name = request.form['name']
+
 	new_asset_type = models.AssetType(
-			type_code = request.form['code'],
-			type_name = request.form['name'],
+			type_code = type_code,
+			type_name = type_name,
 			category_id = request.form['type_category'],
 			notes = request.form["notes"]
 			)
@@ -712,9 +718,9 @@ def add_asset_type():
 	session.add(new_asset_type)
 	try:
 		session.commit()
-		flash('New asset type added successfully', category='message')
+		flash('New asset type; {} added successfully!'.format(type_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -872,9 +878,18 @@ def add_asset_model():
 	creates an entry in the database
 	"""
 	#Capture new asset model details
+	if request.method == 'POST':
+		model_code = request.form['code'],
+		#Check if Category code is unique
+		if session.query(models.AssetModel).filter_by(model_code=model_code).first():
+			flash("Model code: {} is in use by another Asset Model".format(model_code), "danger")
+			return redirect(url_for("create_asset_category"))
+
+		model_name = request.form['name']
+
 	new_asset_model = models.AssetModel(
-			model_code = request.form['code'],
-			model_name = request.form['name'],
+			model_code = model_code,
+			model_name = model_name,
 			model_type = request.form['model_type'],
 			notes = request.form["notes"]
 			)
@@ -882,9 +897,9 @@ def add_asset_model():
 	session.add(new_asset_model)
 	try:
 		session.commit()
-		flash('New asset model added successfully.', category='message')
+		flash('New asset model; {} added successfully!'.format(model_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1040,18 +1055,27 @@ def add_asset_status():
 	creates an entry in the database
 	"""
 	#Capture new asset category details
+	if request.method == 'POST':
+		status_code = request.form['code'],
+		#Check if Category code is unique
+		if session.query(models.AssetStatus).filter_by(status_code=status_code).first():
+			flash("Status code: {} is in use by another Asset Status".format(status_code), "danger")
+			return redirect(url_for("create_asset_status"))
+
+		status_name = request.form['name']
+
 	new_asset_status = models.AssetStatus(
-			status_code = request.form['code'],
-			status_name = request.form['name'],
+			status_code = status_code,
+			status_name = status_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_status)
 	try:
 		session.commit()
-		flash('New asset status added successfully.', category='message')
+		flash('New asset status; {} added successfully!'.format(status_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1206,18 +1230,27 @@ def add_asset_condition():
 	creates an entry in the database
 	"""
 	#Capture new asset category details
+	if request.method == 'POST':
+		condition_code = request.form['code'],
+		#Check if Category code is unique
+		if session.query(models.AssetCondition).filter_by(condition_code=condition_code).first():
+			flash("Condition code: {} is in use by another Asset Condition".format(condition_code), "danger")
+			return redirect(url_for("create_asset_condition"))
+
+		condition_name = request.form['name']
+
 	new_asset_condition = models.AssetCondition(
-			condition_code = request.form['code'],
-			condition_name = request.form['name'],
+			condition_code = condition_code,
+			condition_name = condition_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_asset_condition)
 	try:
 		session.commit()
-		flash('New asset condition added successfully.', category='message')
+		flash('New asset condition; {} added successfully!'.format(condition_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1372,18 +1405,27 @@ def add_location():
 	creates an entry in the database
 	"""
 	#Capture new location details
+	if request.method == 'POST':
+		location_code = request.form['code'],
+		#Check if Location code is unique
+		if session.query(models.Location).filter_by(location_code=location_code).first():
+			flash("Location code: {} is in use by another Location".format(location_code), "danger")
+			return redirect(url_for("create_location"))
+
+		location_name = request.form['name']
+
 	new_location = models.Location(
-			location_code = request.form['code'],
-			location_name = request.form['name'],
+			location_code = location_code,
+			location_name = location_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_location)
 	try:
 		session.commit()
-		flash('Location added successfully', category='message')
+		flash('New Location; {} added successfully!'.format(location_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1538,18 +1580,27 @@ def add_costcenter():
 	creates an entry in the database
 	"""
 	#Capture new cost center details
+	if request.method == 'POST':
+		center_code = request.form['code'],
+		#Check if Center code is unique
+		if session.query(models.CostCenter).filter_by(center_code=center_code).first():
+			flash("Center code: {} is in use by another CostCenter".format(category_code), "danger")
+			return redirect(url_for("create_costcenter"))
+
+		center_name = request.form['name']
+
 	new_costcenter = models.CostCenter(
-			center_code = request.form['code'],
-			center_name = request.form['name'],
+			center_code = center_code,
+			center_name = center_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_costcenter)
 	try:
 		session.commit()
-		flash('Cost Center added successfully.', category='message')
+		flash('New cost center; {} added successfully!'.format(center_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1704,18 +1755,27 @@ def add_department():
 	creates an entry in the database
 	"""
 	#Capture new departments details
+	if request.method == 'POST':
+		department_code = request.form['code'],
+		#Check if Department code is unique
+		if session.query(models.Department).filter_by(department_code=department_code).first():
+			flash("Department code: {} is in use by another Department".format(department_code), "danger")
+			return redirect(url_for("create_asset_category"))
+
+		department_name = request.form['name']
+
 	new_department = models.Department(
-			department_code = request.form['code'],
-			department_name = request.form['name'],
+			department_code = department_code,
+			department_name = department_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_department)
 	try:
 		session.commit()
-		flash('Department added successfully.', category='message')
+		flash('New department; {} added successfully!'.format(department_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -1881,11 +1941,11 @@ def add_person():
 	if request.method == 'POST':
 		person_code = request.form['code']
 		if session.query(models.People).filter_by(person_code=person_code).first():
-			flash("Person with that persons code already exists", "danger")
+			flash("Person with code: {} already exists".format(person_code), "danger")
 			return redirect(url_for("create_person"))
 		email = request.form['email']
 		if session.query(models.People).filter_by(email=email).first():
-			flash("Person with that email already exists", "danger")
+			flash("Person with email: {} already exists".format(email), "danger")
 			return redirect(url_for("create_person"))
 		first_name = request.form['first_name']
 		last_name = request.form['last_name']
@@ -1904,9 +1964,9 @@ def add_person():
 	session.add(new_person)
 	try:
 		session.commit()
-		flash('New person added successfully.', category='message')
+		flash('{} {} has been added successfully!'.format(first_name, last_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -2074,18 +2134,27 @@ def add_supplierCategory():
 	creates an entry in the database
 	"""
 	#Capture new supplier category details
+	if request.method == 'POST':
+		category_code = request.form['code'],
+		#Check if Category code is unique
+		if session.query(models.AssetCategory).filter_by(category_code=category_code).first():
+			flash("Category code: {} is in use by another Supplier Category".format(category_code), "danger")
+			return redirect(url_for("create_supplierCategory"))
+
+		category_name = request.form['name']
+
 	new_supplierCategory = models.SupplierCategory(
-			category_code = request.form['code'],
-			category_name = request.form['name'],
+			category_code = category_code,
+			category_name = category_name,
 			notes = request.form["notes"]
 			)
 	#Add entry to database
 	session.add(new_supplierCategory)
 	try:
 		session.commit()
-		flash('Supplier Category added successfully.', category='message')
+		flash('New supplier category; {} has been added successfully!'.format(category_name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
@@ -2250,9 +2319,18 @@ def add_supplier():
 	Captures new supplier information and creates an entry in the database
 	"""
 	#Capture new supplier details
+	if request.method == 'POST':
+		code = request.form['code'],
+		#Check if Supplier code is unique
+		if session.query(models.Supplier).filter_by(code=code).first():
+			flash("Supplier code: {} is in use by another Supplier".format(code), "danger")
+			return redirect(url_for("create_supplier"))
+
+		name = request.form['name']
+
 	new_supplier = models.Supplier(
-			code = request.form['code'],
-			name = request.form['name'],
+			code = code,
+			name = name,
 			phone = request.form['phone'],
 			email = request.form['email'],
 			website = request.form['website'],
@@ -2265,9 +2343,9 @@ def add_supplier():
 	session.add(new_supplier)
 	try:
 		session.commit()
-		flash('Supplier added successfully', category='message')
+		flash('New supplier; {} added successfully!'.format(name), 'success')
 	except SQLAlchemyError as error:
-		flash('Something went wrong, please make sure your information is correct.', category='error')
+		flash('Something went wrong, please make sure your information is correct.', 'danger')
 		session.rollback
 		raise error
 	finally:
