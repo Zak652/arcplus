@@ -20,5 +20,5 @@ APPLICATION FEATURE SET:
     11. Check in and check out
     12. Have pre-configured reports
     13. Create custom reports
-    14. Data search capabilities
+    14. Search function
     
