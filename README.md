@@ -1,4 +1,4 @@
-# arm-app
+# arcplus-app
 Asset Register Management Application
 
 ARCPlus Documentation
