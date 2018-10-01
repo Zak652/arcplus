@@ -256,7 +256,7 @@ def add_asset():
 							category_id=category_id, type_id=type_id, model_id=model_id, status_id=status_id,
 							location_id=location_id, costcenter_id=costcenter_id, user_id=user_id,
 							purchase_price=purchase_price, purchase_date=purchase_date, supplier_id=supplier_id,
-							notes=notes, captured_by=captured_by, modified_by=modified_by,
+							notes=notes, captured_by=captured_by, modified_by=modified_by, ref_no=ref_no,
 							condition_id=condition_id
 							)
 
