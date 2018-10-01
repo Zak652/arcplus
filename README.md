@@ -1,21 +1,24 @@
-# arm-app
+# arcplus-app
 Asset Register Management Application
 
-RM-APP Documentation
+ARCPlus Documentation
 
 PURPOSE OF THE APPLICATION:
-To help users create, maintain and verify assets related information / data.
+To help users create, maintain an asset register and track asset data modifications.
 
 APPLICATION FEATURE SET:
-    1. Create / add new assets
-    2. Modify existing assets related information
-    3. Delete assets
-    4. Verify asset information when required
-    5. View all assets
-        1. View individual asset details
-    6. Create an audit trail for each asset
-    7. Import assets information via CSV files
-    8. Display statistical graphs of register information / data
+    1. Add new assets
+    2. Modify existing asset data
+    3. Delete existing assets
+    4. Verify asset information
+    5. Audit trail for each asset
+    6. Import assets data via CSV files
+    7. Export assets data to CSV format
+    8. Display statistical graphs of register data (Dashboard
     9. Move assets between different entities
-    10. Issues assets to different entities
-    11. Export asset register to CSV format
+    10. Track asset movements
+    11. Check in and check out
+    12. Have pre-configured reports
+    13. Create custom reports
+    14. Search function
+    
