@@ -87,6 +87,7 @@ class Asset(Base):
     name = Column(String(128), nullable = False)
     purchase_price = Column(Integer, nullable = True)
     purchase_date = Column(DateTime, nullable = True)
+    ref_No = Column(String(20), nullable = True)
     value = Column(Integer, nullable = True)
     photo = Column(String, nullable = True)
     attchments = Column(String, nullable = True)
@@ -115,7 +116,7 @@ class Asset(Base):
                 "User": self.asset_user, "Purchase Price": self.purchase_price, "Category": self.asset_category, 
                 "Name": self.name, "Model": self.asset_model, "Notes": self.notes, "Department": self.asset_center,
                 "Captured By": self.captured_by, "Capture Date": self.capture_date, "Cost center": self.asset_center, 
-                "Value": self.value, "Supplier": self.asset_supplier, "Attachments": self.attchments, 
+                "Value": self.value, "Supplier": self.asset_supplier, "Attachments": self.attchments, "Ref No.": self.ref_No,
                 "Modified By": self.modified_by, "Modified Date": self.modified_date, "Last Verified": self.last_verified,
                 "Last Verified By": self.verified_by
                 }

@@ -246,6 +246,7 @@ def add_asset():
 		user_id = request.form['user'],
 		purchase_price = request.form['purchase_price'],
 		purchase_date = request.form['purchase_date'],
+		ref_no = request.form['ref_no'],
 		supplier_id = request.form['supplier'],
 		notes = request.form["notes"],
 		captured_by = current_user.username,
