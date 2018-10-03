@@ -11,7 +11,7 @@ class UserAdmin(ModelView):
     column_exclude_list = ('password',)
 
     # Don't include the standard password field when creating or editing a User (but see below)
-    form_excluded_columns = ('password',)
+    form_excluded_columns = ('password', 'login_count', 'confirmed_at', 'last_login_at', 'current_login_at', 'last_login_ip', 'current_login_ip')
 
     # Automatically display human-readable names for the current and available Roles when creating or editing a User
     column_auto_select_related = True
@@ -125,11 +125,17 @@ class DashboardView(ModelView):
         return True
 
 admin = Admin(app, name='Admin', template_mode='bootstrap3')
-admin.add_view(UserAdmin(models.User, session, name='Users', endpoint='users'))
-admin.add_view(RoleAdmin(models.Role, session, name='User Roles', endpoint='user_roles'))
-admin.add_view(PeopleAdmin(models.People, session, name='People', endpoint='people'))
-admin.add_view(AssetsAdmin(models.Asset, session, name='Assets', endpoint='assets'))
-admin.add_view(CategoriesAdmin(models.AssetCategory, session, name='Categories', endpoint='categories'))
-admin.add_view(TypesAdmin(models.AssetType, session, name='Types', endpoint='types'))
-admin.add_view(ModelsAdmin(models.AssetModel, session, name='Models', endpoint='models'))
-admin.add_view(ModelsAdmin(models.CostCenter, session, name='Cost Centers', endpoint='cost_centers'))
+admin.add_view(UserAdmin(models.User, session, category='Users & Roles', name='Users', endpoint='users'))
+admin.add_view(RoleAdmin(models.Role, session, category='Users & Roles', name='User Roles', endpoint='user_roles'))
+admin.add_view(PeopleAdmin(models.People, session, category='Tracking', name='People', endpoint='people'))
+admin.add_view(ModelsAdmin(models.Location, session, category='Tracking', name='Location', endpoint='location'))
+admin.add_view(AssetsAdmin(models.Asset, session, category='Register', name='Assets', endpoint='assets'))
+admin.add_view(CategoriesAdmin(models.AssetCategory, session, category='Properties', name='Categories', endpoint='categories'))
+admin.add_view(TypesAdmin(models.AssetType, session, category='Properties', name='Types', endpoint='types'))
+admin.add_view(ModelsAdmin(models.AssetModel, session, category='Properties', name='Models', endpoint='models'))
+admin.add_view(ModelsAdmin(models.CostCenter, session, category='Cost Centers', name='Cost Centers', endpoint='cost_centers'))
+admin.add_view(ModelsAdmin(models.Department, session, category='Cost Centers', name='Department', endpoint='department'))
+admin.add_view(ModelsAdmin(models.AssetStatus, session, category='Register', name='Status', endpoint='status'))
+admin.add_view(ModelsAdmin(models.AssetCondition, session, category='Register', name='Condition', endpoint='condition'))
+admin.add_view(ModelsAdmin(models.Supplier, session, category='Suppliers', name='Suppliers', endpoint='suppliers'))
+admin.add_view(ModelsAdmin(models.SupplierCategory, session, category='Suppliers', name='Supplier Category', endpoint='supplier_category'))
