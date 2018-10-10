@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, Response
 from flask_login import login_user, current_user, LoginManager, logout_user, login_required
 from flask_security import login_required, roles_required
 from sqlalchemy.exc import SQLAlchemyError, DataError
+import datetime
 
 from flask_bootstrap import Bootstrap
 
@@ -244,9 +245,22 @@ def add_asset():
 		location_id = request.form['location'],
 		costcenter_id = request.form['cost_center'],
 		user_id = request.form['user'],
-		purchase_price = request.form['purchase_price'],
-		purchase_date = request.form['purchase_date'],
-		ref_No = request.form['ref_no'],
+
+		#Check if purchase price is not blank
+		purchase_price = None,
+		if len(request.form['purchase_price']) != 0:
+			purchase_price = request.form['purchase_price']
+			
+		#Check if purchase date is not blank
+		purchase_date = None,
+		if len(request.form['purchase_date']) != 0:
+			purchase_date = request.form['purchase_date']
+			
+		#Check if ref_No is not blank
+		ref_No = None,
+		if len(request.form['ref_no']) !=0:
+			ref_No = request.form['ref_no']
+			
 		supplier_id = request.form['supplier'],
 		notes = request.form["notes"],
 		captured_by = current_user.username,

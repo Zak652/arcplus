@@ -111,14 +111,29 @@ class Asset(Base):
 
     #Return asset object as dictionary
     def as_dictionary(self):
+        #Format purchase date
+        date_of_purchase = self.purchase_date
+        if date_of_purchase != None:
+            date_of_purchase = datetime.datetime.strftime(self.purchase_date, '%d-%m-%Y')
+        
+        #Format purchase price
+        price_of_purchase = self.purchase_price
+        if price_of_purchase != None:
+            price_of_purchase = "UGX {:,}".format(self.purchase_price)
+        
+        #Format value price
+        value_of_asset = self.value
+        if value_of_asset != None:
+            value_of_asset = "UGX {:,}".format(self.value)
+        
         asset={"ID": self.id, "Barcode": self.barcode, "Type": self.asset_type, "Serial No.": self.serial_no, 
-                "Location": self.asset_location, "Status": self.asset_status, "Purchase Date": self.purchase_date, 
-                "User": self.asset_user, "Purchase Price": self.purchase_price, "Category": self.asset_category, 
+                "Location": self.asset_location, "Status": self.asset_status, "Purchase Date": date_of_purchase, 
+                "User": self.asset_user, "Purchase Price": price_of_purchase, "Category": self.asset_category, 
                 "Name": self.name, "Model": self.asset_model, "Notes": self.notes, "Department": self.asset_center,
-                "Captured By": self.captured_by, "Capture Date": self.capture_date, "Cost center": self.asset_center, 
-                "Value": self.value, "Supplier": self.asset_supplier, "Attachments": self.attchments, "Ref No.": self.ref_No,
-                "Modified By": self.modified_by, "Modified Date": self.modified_date, "Last Verified": self.last_verified,
-                "Last Verified By": self.verified_by
+                "Captured By": self.captured_by, "Capture Date": datetime.datetime.strftime(self.capture_date, '%d-%m-%Y'),
+                "Cost center": self.asset_center, "Value": value_of_asset, "Supplier": self.asset_supplier, "Attachments": self.attchments,
+                "Ref No.": self.ref_No, "Modified By": self.modified_by, "Modified Date": datetime.datetime.strftime(self.modified_date, '%d-%m-%Y %H:%M:%S'),
+                "Last Verified": self.last_verified, "Last Verified By": self.verified_by
                 }
         return asset
 
