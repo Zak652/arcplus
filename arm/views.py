@@ -246,7 +246,7 @@ def add_asset():
 		user_id = request.form['user'],
 		purchase_price = request.form['purchase_price'],
 		purchase_date = request.form['purchase_date'],
-		ref_no = request.form['ref_no'],
+		ref_No = request.form['ref_no'],
 		supplier_id = request.form['supplier'],
 		notes = request.form["notes"],
 		captured_by = current_user.username,
@@ -256,7 +256,7 @@ def add_asset():
 							category_id=category_id, type_id=type_id, model_id=model_id, status_id=status_id,
 							location_id=location_id, costcenter_id=costcenter_id, user_id=user_id,
 							purchase_price=purchase_price, purchase_date=purchase_date, supplier_id=supplier_id,
-							notes=notes, captured_by=captured_by, modified_by=modified_by, ref_no=ref_no,
+							notes=notes, captured_by=captured_by, modified_by=modified_by, ref_No=ref_No,
 							condition_id=condition_id
 							)
 
