@@ -362,7 +362,8 @@ class People(Base):
     supplier_contact = relationship ("Supplier", backref = "supplier_contact")
 
     def __repr__(self):
-        return self.first_name
+        names = self.first_name + " " + self.last_name
+        return names
 
     # Return people as dictionary
     def as_dictionary(self):
