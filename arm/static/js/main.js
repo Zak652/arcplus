@@ -2,8 +2,6 @@
 (function ($) {
     "use strict";
 
-        
-    
 
 })(jQuery);
 

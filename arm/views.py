@@ -60,7 +60,7 @@ def create_user():
 
 	return render_template("add_user.html", roles_list = roles_list)
 
-# Verify user information and register new user 
+# Verify user information and register new user
 @app.route("/user/add", methods = ["POST"])
 @login_required
 @roles_required('Admin')
@@ -84,7 +84,7 @@ def add_user():
 	# Add users to DB
 	new_user = models.User(username=username, email = email,
 							password = generate_password_hash(password))
-	
+
 	session.add(new_user)
 	new_user.roles = [role]
 	try:
@@ -122,7 +122,7 @@ def logout():
 @login_required
 def change_password():
 	"""
-	provide users with the a form to change their password 
+	provide users with the a form to change their password
 	"""
 	return render_template("security/change_password.html")
 
@@ -144,7 +144,7 @@ def dashboard():
 @app.route("/register/view", methods = ["GET"])
 @login_required
 def view_register():
-	""" 
+	"""
 	Queries the database for all assets and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -163,7 +163,7 @@ def view_register():
 @login_required
 
 def view_single_asset(barcode):
-	""" 
+	"""
 	Queries the database for all assets and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -211,9 +211,9 @@ def create_asset():
 	#Get suppliers from DB
 	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
 
-	return render_template("add_asset.html", categories_list = categories_list, 
-							types_list = types_list, models_list = models_list, 
-							statuses_list = statuses_list, locations_list = locations_list, 
+	return render_template("add_asset.html", categories_list = categories_list,
+							types_list = types_list, models_list = models_list,
+							statuses_list = statuses_list, locations_list = locations_list,
 							costcenters_list = costcenters_list, users_list = users_list,
 							suppliers_list = suppliers_list, conditions_list = conditions_list
 							)
@@ -224,7 +224,7 @@ def create_asset():
 
 def add_asset():
 	"""
-	Captures new asset information and 
+	Captures new asset information and
 	creates an entry in the database
 	"""
 	#Capture new asset details
@@ -250,17 +250,17 @@ def add_asset():
 		purchase_price = None,
 		if len(request.form['purchase_price']) != 0:
 			purchase_price = request.form['purchase_price']
-			
+
 		#Check if purchase date is not blank
 		purchase_date = None,
 		if len(request.form['purchase_date']) != 0:
 			purchase_date = request.form['purchase_date']
-			
+
 		#Check if ref_No is not blank
 		ref_No = None,
 		if len(request.form['ref_no']) !=0:
 			ref_No = request.form['ref_no']
-			
+
 		supplier_id = request.form['supplier'],
 		notes = request.form["notes"],
 		captured_by = current_user.username,
@@ -326,17 +326,17 @@ def edit_asset(barcode):
 	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
 	asset = asset[0]
 
-	return render_template("edit_asset.html", id = asset.id, barcode = asset.barcode, 
-							serial_no = asset.serial_no, name = asset.name, 
-							category = asset.category, _type = asset._type, 
-							_model = asset._model, status = asset.status, 
-							location = asset.location, cost_center = asset.cost_center, 
-							user = asset.user, supplier = asset.supplier, 
-							purchase_price = asset.purchase_price, notes = asset.notes, 
-							categories_list = categories_list, types_list = types_list, 
-							models_list = models_list, statuses_list = statuses_list, 
-							conditions_list = conditions_list, locations_list = locations_list, 
-							costcenters_list = costcenters_list, users_list = users_list, 
+	return render_template("edit_asset.html", id = asset.id, barcode = asset.barcode,
+							serial_no = asset.serial_no, name = asset.name,
+							category = asset.category, _type = asset._type,
+							_model = asset._model, status = asset.status,
+							location = asset.location, cost_center = asset.cost_center,
+							user = asset.user, supplier = asset.supplier,
+							purchase_price = asset.purchase_price, notes = asset.notes,
+							categories_list = categories_list, types_list = types_list,
+							models_list = models_list, statuses_list = statuses_list,
+							conditions_list = conditions_list, locations_list = locations_list,
+							costcenters_list = costcenters_list, users_list = users_list,
 							suppliers_list = suppliers_list
 							)
 
@@ -346,7 +346,7 @@ def edit_asset(barcode):
 
 def update_asset(barcode):
 	"""
-	Captures updated asset information and 
+	Captures updated asset information and
 	posts updated information to the database
 	"""
 	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
@@ -486,7 +486,7 @@ def verify_asset():
 @login_required
 
 def view_asset_categories():
-	""" 
+	"""
 	Queries the database for all assets categories and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -505,7 +505,7 @@ def view_asset_categories():
 @login_required
 
 def view_asset_category(category_code):
-	""" 
+	"""
 	Queries the database for all categories and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -533,7 +533,7 @@ def create_asset_category():
 
 def add_asset_category():
 	"""
-	Captures new asset category information and 
+	Captures new asset category information and
 	creates an entry in the database
 	"""
 	#Capture new asset category details
@@ -577,8 +577,8 @@ def edit_asset_category(category_code):
 	category = category[0]
 
 	return render_template("edit_category.html", id = category.id,
-		category_code = category.category_code, 
-		category_name = category.category_name, 
+		category_code = category.category_code,
+		category_name = category.category_name,
 		notes = category.notes
     	)
 
@@ -588,7 +588,7 @@ def edit_asset_category(category_code):
 
 def update_asset_category(category_code):
 	"""
-	Captures updated asset category information and 
+	Captures updated asset category information and
 	posts updated information to the database
 	"""
 	category = session.query(models.AssetCategory).filter(models.AssetCategory.category_code == category_code).first()
@@ -661,7 +661,7 @@ def delete_asset_category(category_code):
 @login_required
 
 def view_asset_types():
-	""" 
+	"""
 	Queries the database for all assets types and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -679,7 +679,7 @@ def view_asset_types():
 @app.route("/asset_types/view/<type_code>", methods = ["GET"])
 @login_required
 def view_asset_type(type_code):
-	""" 
+	"""
 	Queries the database for all asset types and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -710,7 +710,7 @@ def create_asset_type():
 
 def add_asset_type():
 	"""
-	Captures new asset type information and 
+	Captures new asset type information and
 	creates an entry in the database
 	"""
 	#Capture new asset type details
@@ -754,8 +754,8 @@ def edit_asset_type(type_code):
 	_type = types_search[0]
 
 	return render_template("edit_asset_type.html", id = _type.id,
-		type_code = _type.type_code, 
-		type_name = _type.type_name, 
+		type_code = _type.type_code,
+		type_name = _type.type_name,
 		notes = _type.notes
     	)
 
@@ -765,7 +765,7 @@ def edit_asset_type(type_code):
 
 def update_asset_type(type_code):
 	"""
-	Captures updated asset type information and 
+	Captures updated asset type information and
 	posts updated information to the database
 	"""
 	_type = session.query(models.AssetType).filter(models.AssetType.type_code == type_code).first()
@@ -839,7 +839,7 @@ def delete_asset_type(type_code):
 @login_required
 
 def view_asset_models():
-	""" 
+	"""
 	Queries the database for all assets models and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -858,7 +858,7 @@ def view_asset_models():
 @login_required
 
 def view_asset_model(model_code):
-	""" 
+	"""
 	Queries the database for all models and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -889,7 +889,7 @@ def create_asset_model():
 
 def add_asset_model():
 	"""
-	Captures new asset model information and 
+	Captures new asset model information and
 	creates an entry in the database
 	"""
 	#Capture new asset model details
@@ -934,8 +934,8 @@ def edit_asset_model(model_code):
 	model = model[0]
 
 	return render_template("edit_asset_model.html", id = model.id,
-		model_code = model.model_code, 
-		model_name = model.model_name, 
+		model_code = model.model_code,
+		model_name = model.model_name,
 		notes = model.notes
     	)
 
@@ -945,7 +945,7 @@ def edit_asset_model(model_code):
 
 def update_asset_model(model_code):
 	"""
-	Captures updated asset model information and 
+	Captures updated asset model information and
 	posts updated information to the database
 	"""
 	model = session.query(models.AssetModel).filter(models.AssetModel.model_code == model_code).first()
@@ -1019,7 +1019,7 @@ def delete_asset_model(model_code):
 @login_required
 
 def view_asset_statuses():
-	""" 
+	"""
 	Queries the database for all assets status and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1038,7 +1038,7 @@ def view_asset_statuses():
 @login_required
 
 def view_status(status_code):
-	""" 
+	"""
 	Queries the database for all status and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1066,7 +1066,7 @@ def create_asset_status():
 
 def add_asset_status():
 	"""
-	Captures new asset status information and 
+	Captures new asset status information and
 	creates an entry in the database
 	"""
 	#Capture new asset category details
@@ -1110,8 +1110,8 @@ def edit_asset_status(status_code):
 	status = status[0]
 
 	return render_template("edit_asset_status.html", id = status.id,
-		status_code = status.status_code, 
-		status_name = status.status_name, 
+		status_code = status.status_code,
+		status_name = status.status_name,
 		notes = status.notes
     	)
 
@@ -1121,7 +1121,7 @@ def edit_asset_status(status_code):
 
 def update_asset_status(status_code):
 	"""
-	Captures updated asset status information and 
+	Captures updated asset status information and
 	posts updated information to the database
 	"""
 	status = session.query(models.AssetStatus).filter(models.AssetStatus.status_code == status_code).first()
@@ -1194,7 +1194,7 @@ def delete_asset_status(status_code):
 @login_required
 
 def view_asset_conditions():
-	""" 
+	"""
 	Queries the database for all assets condition and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1213,7 +1213,7 @@ def view_asset_conditions():
 @login_required
 
 def view_condition(condition_code):
-	""" 
+	"""
 	Queries the database for all condition and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1241,7 +1241,7 @@ def create_asset_condition():
 
 def add_asset_condition():
 	"""
-	Captures new asset condition information and 
+	Captures new asset condition information and
 	creates an entry in the database
 	"""
 	#Capture new asset category details
@@ -1285,8 +1285,8 @@ def edit_asset_condition(condition_code):
 	condition = condition[0]
 
 	return render_template("edit_asset_condition.html", id = condition.id,
-		condition_code = condition.condition_code, 
-		condition_name = condition.condition_name, 
+		condition_code = condition.condition_code,
+		condition_name = condition.condition_name,
 		notes = condition.notes
     	)
 
@@ -1296,7 +1296,7 @@ def edit_asset_condition(condition_code):
 
 def update_asset_condition(condition_code):
 	"""
-	Captures updated asset condition information and 
+	Captures updated asset condition information and
 	posts updated information to the database
 	"""
 	condition = session.query(models.AssetCondition).filter(models.AssetCondition.condition_code == condition_code).first()
@@ -1369,7 +1369,7 @@ def delete_asset_condition(condition_code):
 @login_required
 
 def view_locations():
-	""" 
+	"""
 	Queries the database for all locations and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1388,7 +1388,7 @@ def view_locations():
 @login_required
 
 def view_location(location_code):
-	""" 
+	"""
 	Queries the database for all locations and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1416,7 +1416,7 @@ def create_location():
 
 def add_location():
 	"""
-	Captures new location information and 
+	Captures new location information and
 	creates an entry in the database
 	"""
 	#Capture new location details
@@ -1460,7 +1460,7 @@ def edit_location(location_code):
 	location = location[0]
 
 	return render_template("edit_location.html", id = location.id,
-		location_code = location.location_code, 
+		location_code = location.location_code,
 		location_name = location.location_name,
 		notes = location.notes
     	)
@@ -1471,7 +1471,7 @@ def edit_location(location_code):
 
 def update_location(location_code):
 	"""
-	Captures updated location information and 
+	Captures updated location information and
 	posts updated information to the database
 	"""
 	location = session.query(models.Location).filter(models.Location.location_code == location_code).first()
@@ -1544,7 +1544,7 @@ def delete_location(location_code):
 @login_required
 
 def view_costcenters():
-	""" 
+	"""
 	Queries the database for all cost centers and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1563,7 +1563,7 @@ def view_costcenters():
 @login_required
 
 def view_costcenter(center_code):
-	""" 
+	"""
 	Queries the database for all cost centers and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1591,7 +1591,7 @@ def create_costcenter():
 
 def add_costcenter():
 	"""
-	Captures new cost center information and 
+	Captures new cost center information and
 	creates an entry in the database
 	"""
 	#Capture new cost center details
@@ -1635,7 +1635,7 @@ def edit_costcenter(center_code):
 	costcenter = costcenter[0]
 
 	return render_template("edit_costcenter.html", id = costcenter.id,
-		center_code = costcenter.center_code, 
+		center_code = costcenter.center_code,
 		center_name = costcenter.center_name,
 		notes = costcenter.notes
     	)
@@ -1646,7 +1646,7 @@ def edit_costcenter(center_code):
 
 def update_costcenter(center_code):
 	"""
-	Captures updated cost center information and 
+	Captures updated cost center information and
 	posts updated information to the database
 	"""
 	costcenter = session.query(models.CostCenter).filter(models.CostCenter.center_code == center_code).first()
@@ -1719,7 +1719,7 @@ def delete_costcenter(center_code):
 @login_required
 
 def view_departments():
-	""" 
+	"""
 	Queries the database for all departments and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1738,7 +1738,7 @@ def view_departments():
 @login_required
 
 def view_department(department_code):
-	""" 
+	"""
 	Queries the database for all departments and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1766,7 +1766,7 @@ def create_department():
 
 def add_department():
 	"""
-	Captures new departments information and 
+	Captures new departments information and
 	creates an entry in the database
 	"""
 	#Capture new departments details
@@ -1810,7 +1810,7 @@ def edit_department(department_code):
 	department = department[0]
 
 	return render_template("edit_departments.html", id = department.id,
-		department_code = department.department_code, 
+		department_code = department.department_code,
 		department_name = department.department_name,
 		notes = department.notes
     	)
@@ -1821,7 +1821,7 @@ def edit_department(department_code):
 
 def update_department(department_code):
 	"""
-	Captures updated department information and 
+	Captures updated department information and
 	posts updated information to the database
 	"""
 	department = session.query(models.Department).filter(models.Department.department_code == department_code).first()
@@ -1881,7 +1881,7 @@ def delete_department(department_code):
 		raise error
 	finally:
 		session.close()
-		
+
     #Return to departments view
 	return redirect(url_for("view_departments"))
 
@@ -1894,7 +1894,7 @@ def delete_department(department_code):
 @login_required
 
 def view_people():
-	""" 
+	"""
 	Queries the database for all people and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1913,7 +1913,7 @@ def view_people():
 @login_required
 
 def view_person(person_code):
-	""" 
+	"""
 	Queries the database for all people and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -1936,11 +1936,11 @@ def create_person():
 
 	#Get departments from DB
 	departments_list = session.query(models.Department).order_by(models.Department.department_code)
-	
+
 	#Get locations from DB
 	locations_list = session.query(models.Location).order_by(models.Location.location_code)
 
-	return render_template("add_person.html", departments_list = departments_list, 
+	return render_template("add_person.html", departments_list = departments_list,
 							locations_list = locations_list
 							)
 
@@ -1949,7 +1949,7 @@ def create_person():
 
 def add_person():
 	"""
-	Captures new person information and 
+	Captures new person information and
 	creates an entry in the database
 	"""
 	#Capture new person details
@@ -1968,7 +1968,7 @@ def add_person():
 		phone = request.form['phone']
 		department_id = request.form['department']
 		location_id = request.form['location']
-		notes = request.form["notes"]		
+		notes = request.form["notes"]
 
 	new_person = models.People(person_code = person_code, first_name = first_name,
 								last_name = last_name, designation = designation,
@@ -2001,7 +2001,7 @@ def edit_person(person_code):
 	person = person[0]
 
 	return render_template("edit_person.html", id = person.id,
-		person_code = person.person_code, 
+		person_code = person.person_code,
 		first_name = person.first_name,
 		last_name = person.last_name,
 		designation = person.designation,
@@ -2018,7 +2018,7 @@ def edit_person(person_code):
 
 def update_person(person_code):
 	"""
-	Captures updated person information and 
+	Captures updated person information and
 	posts updated information to the database
 	"""
 	person = session.query(models.People).filter(models.People.person_code == person_code).first()
@@ -2090,7 +2090,7 @@ def delete_person(person_code):
 
 
 # Views to view Full list of Supplier Categories, Single Supplier Category details,
-# Create New Supplier Category, Modify Existing Supplier Category details, 
+# Create New Supplier Category, Modify Existing Supplier Category details,
 # Delete Existing Supplier Category
 
 #Route to view full list of Supplier Category
@@ -2098,7 +2098,7 @@ def delete_person(person_code):
 @login_required
 
 def view_supplierCategories():
-	""" 
+	"""
 	Queries the database for all supplier categories and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -2117,7 +2117,7 @@ def view_supplierCategories():
 @login_required
 
 def view_supplierCategory(category_code):
-	""" 
+	"""
 	Queries the database for all supplier category and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -2145,7 +2145,7 @@ def create_supplierCategory():
 
 def add_supplierCategory():
 	"""
-	Captures new supplier category information and 
+	Captures new supplier category information and
 	creates an entry in the database
 	"""
 	#Capture new supplier category details
@@ -2189,7 +2189,7 @@ def edit_supplierCategory(category_code):
 	supplierCategory = supplierCategory[0]
 
 	return render_template("edit_supplier_category.html", id = supplierCategory.id,
-		category_code = supplierCategory.category_code, 
+		category_code = supplierCategory.category_code,
 		category_name = supplierCategory.category_name,
 		notes = supplierCategory.notes
     	)
@@ -2200,7 +2200,7 @@ def edit_supplierCategory(category_code):
 
 def update_supplierCategory(category_code):
 	"""
-	Captures updated supplier category information and 
+	Captures updated supplier category information and
 	posts updated information to the database
 	"""
 	supplierCategory = session.query(models.SupplierCategory).filter(models.SupplierCategory.category_code == category_code).first()
@@ -2273,7 +2273,7 @@ def delete_supplierCategory(category_code):
 @login_required
 
 def view_suppliers():
-	""" 
+	"""
 	Queries the database for all suppliers and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -2292,7 +2292,7 @@ def view_suppliers():
 @login_required
 
 def view_supplier(supplier_code):
-	""" 
+	"""
 	Queries the database for all supplier and passes them into a
 	list of dictionaries which is passed into the hmtl render
 	function
@@ -2315,7 +2315,7 @@ def create_supplier():
 
 	#Get supplier category from DB
 	categories_list = session.query(models.SupplierCategory).order_by(models.SupplierCategory.category_code)
-	
+
 	#Get locations from DB
 	locations_list = session.query(models.Location).order_by(models.Location.location_code)
 
@@ -2380,7 +2380,7 @@ def edit_supplier(supplier_code):
 	supplier = supplier[0]
 
 	return render_template("edit_supplier.html", id = supplier.id,
-		supplier_code = supplier.supplier_code, 
+		supplier_code = supplier.supplier_code,
 		supplier_name = supplier.supplier_name,
 		phone = supplier.phone,
 		email = supplier.email,
