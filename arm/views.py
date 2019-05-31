@@ -1,8 +1,9 @@
-from flask import render_template, request, redirect, url_for, flash, Response
+from flask import render_template, request, redirect, url_for, flash, Response, jsonify
 from flask_login import login_user, current_user, LoginManager, logout_user, login_required
 from flask_security import login_required, roles_required
 from sqlalchemy.exc import SQLAlchemyError, DataError
 import datetime
+import json
 
 from flask_bootstrap import Bootstrap
 
@@ -177,7 +178,45 @@ def view_single_asset(barcode):
 	#Pass asset info into html render function
 	return render_template("single_asset.html", asset = asset)
 
-# Create new asset route
+# Create new asset json route
+@app.route("/register/add_assets_dropdowns")
+
+def create_asset_dropdowns():
+
+	#Get asset categories from DB
+	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
+	#Create list of json categories
+	# categories_list_json = json.dumps(categories_list)
+	categories_list_json = []
+	#convert each of the categories to json and add it to the json categories list
+	for category in categories_list:
+		category_json = jsonify(category)
+		categories_list_json.append(category_json)
+
+	#Get asset types from DB
+	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
+	#Create list of json _types
+	# types_list_json = json.dumps(types_list)
+	types_list_json = []
+	#convert each of the _types to json and add it to the json _types list
+	for _type in types_list:
+		_type_json = jsonify(_type)
+		types_list_json.append(_type_json)
+
+	#Get asset models from DB
+	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
+	#Create list of json models
+	# models_list_json = json.dumps(models_list)
+	models_list_json = []
+	#convert each of the models to json and add it to the json models list
+	for model in models_list:
+		model_json = jsonify(model)
+		models_list_json.append(model_json)
+
+	return (categories_list_json, types_list_json, models_list_json)
+
+# Create new asset template and json routes
+@app.route("/register/add_asset")
 @app.route("/register/add_asset", methods = ["GET"])
 @login_required
 
@@ -186,12 +225,31 @@ def create_asset():
 
 	#Get asset categories from DB
 	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
+	#Create list of json categories
+	# categories_list_json = json.dumps(categories_list)
+	categories_list_json = []
+	#convert each of the categories to json and add it to the json categories list
+	for category in categories_list:
+		category_json = jsonify(category)
+		categories_list_json.append(category_json)
 
 	#Get asset types from DB
 	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
+	#Create list of json _types
+	types_list_json = []
+	#convert each of the _types to json and add it to the json _types list
+	for _type in types_list:
+		_type_json = jsonify(_type)
+		types_list_json.append(_type_json)
 
 	#Get asset models from DB
 	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
+	#Create list of json models
+	models_list_json = []
+	#convert each of the models to json and add it to the json models list
+	for model in models_list:
+		model_json = jsonify(model)
+		models_list_json.append(model_json)
 
 	#Get asset statuses from DB
 	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
@@ -210,6 +268,9 @@ def create_asset():
 
 	#Get suppliers from DB
 	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
+
+	if request.path == "/register/add_asset":
+		return (categories_list_json, types_list_json, models_list_json)
 
 	return render_template("add_asset.html", categories_list = categories_list,
 							types_list = types_list, models_list = models_list,
@@ -1598,8 +1659,8 @@ def add_costcenter():
 	if request.method == 'POST':
 		center_code = request.form['code'],
 		#Check if Center code is unique
-		if session.query(models.CostCenter).filter_by(center_code=center_code).first():
-			flash("Center code: {} is in use by another CostCenter".format(category_code), "danger")
+		if session.query(models.CostCenter).filter_by(center_code = center_code).first():
+			flash("Center code: {} is in use by another CostCenter".format(center_code), "danger")
 			return redirect(url_for("create_costcenter"))
 
 		center_name = request.form['name']

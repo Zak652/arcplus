@@ -160,4 +160,30 @@ Add New Asset
         </div>
     </form>
 </div>
+
 {% endblock %}
+
+{% block script %}
+
+<script>
+    var category_select = document.getElementsByName("category");
+    var type_select = document.getElementsByName("_type");
+    var model_select = document.getElementsByName("_model");
+
+    category_select.onchange = function () {
+        category = category_select.value;
+
+        fetch('/register/add_assets_dropdowns').then(function(response){
+            response.json().then(function(data){
+                var optionHTML = '';
+
+                for (var _type of data.types_list_json) {
+                    optionHTML += <option value = "' + _type.id + '">' + _type.name + '</option>;
+                }
+                type_select.innerHTML = optionHTML;
+            })
+        });
+    }
+</script>
+
+{% endblock script %}
