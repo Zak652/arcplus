@@ -187,36 +187,43 @@ def create_asset_dropdowns():
 	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
 	#Create list of json categories
 	# categories_list_json = json.dumps(categories_list)
-	categories_list_json = []
-	#convert each of the categories to json and add it to the json categories list
-	for category in categories_list:
-		category_json = jsonify(category)
-		categories_list_json.append(category_json)
+	# categories_list_json = []
+	# #convert each of the categories to json and add it to the json categories list
+	# for category in categories_list:
+	# 	category_json = jsonify(category)
+	# 	categories_list_json.append(category_json)
 
 	#Get asset types from DB
 	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
+	types_list_dict = [_type.as_dictionary() for _type in types_list]
+	print ("This is the list of dictionaries ", types_list_dict)
+	print ("This is the type of object ", type(types_list_dict))
 	#Create list of json _types
-	# types_list_json = json.dumps(types_list)
+	# types_list_json = json.dumps(types_list_dict)
 	types_list_json = []
 	#convert each of the _types to json and add it to the json _types list
 	for _type in types_list:
-		_type_json = jsonify(_type)
-		types_list_json.append(_type_json)
+		type_dict = dict(_type.as_dictionary())
+		print("type of object is ", type(type_dict))
+		print("this is the object ", type_dict)
+
+		json_type = json.dumps(type_dict)
+		types_list_json.append(json_type)
 
 	#Get asset models from DB
 	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
 	#Create list of json models
 	# models_list_json = json.dumps(models_list)
-	models_list_json = []
-	#convert each of the models to json and add it to the json models list
-	for model in models_list:
-		model_json = jsonify(model)
-		models_list_json.append(model_json)
+	# models_list_json = []
+	# #convert each of the models to json and add it to the json models list
+	# for model in models_list:
+	# 	model_json = jsonify(model)
+	# 	models_list_json.append(model_json)
 
-	return (categories_list_json, types_list_json, models_list_json)
+	return types_list_json
 
 # Create new asset template and json routes
-@app.route("/register/add_asset")
+# @app.route("/register/add_asset")
 @app.route("/register/add_asset", methods = ["GET"])
 @login_required
 
@@ -227,29 +234,29 @@ def create_asset():
 	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
 	#Create list of json categories
 	# categories_list_json = json.dumps(categories_list)
-	categories_list_json = []
-	#convert each of the categories to json and add it to the json categories list
-	for category in categories_list:
-		category_json = jsonify(category)
-		categories_list_json.append(category_json)
+	# categories_list_json = []
+	# #convert each of the categories to json and add it to the json categories list
+	# for category in categories_list:
+	# 	category_json = jsonify(category)
+	# 	categories_list_json.append(category_json)
 
 	#Get asset types from DB
 	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
 	#Create list of json _types
-	types_list_json = []
-	#convert each of the _types to json and add it to the json _types list
-	for _type in types_list:
-		_type_json = jsonify(_type)
-		types_list_json.append(_type_json)
+	# types_list_json = []
+	# #convert each of the _types to json and add it to the json _types list
+	# for _type in types_list:
+	# 	_type_json = jsonify(_type)
+	# 	types_list_json.append(_type_json)
 
 	#Get asset models from DB
 	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
 	#Create list of json models
-	models_list_json = []
-	#convert each of the models to json and add it to the json models list
-	for model in models_list:
-		model_json = jsonify(model)
-		models_list_json.append(model_json)
+	# models_list_json = []
+	# #convert each of the models to json and add it to the json models list
+	# for model in models_list:
+	# 	model_json = jsonify(model)
+	# 	models_list_json.append(model_json)
 
 	#Get asset statuses from DB
 	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
@@ -269,8 +276,8 @@ def create_asset():
 	#Get suppliers from DB
 	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
 
-	if request.path == "/register/add_asset":
-		return (categories_list_json, types_list_json, models_list_json)
+	# if request.path == "/register/add_asset":
+	# 	return (categories_list_json, types_list_json, models_list_json)
 
 	return render_template("add_asset.html", categories_list = categories_list,
 							types_list = types_list, models_list = models_list,
@@ -518,11 +525,29 @@ def verify_asset():
 		verified = models.AssetVerification(barcode = asset[0]['Barcode'],
 		asset_name = asset[0]['Name'], verified_by = current_user.username)
 
-		# Update Asset record
+		# Update asset record
+		print(asset[0])
 		asset_verified = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
-		asset_verified.barcode = barcode
+		asset_verified.barcode = asset[0]['Barcode']
+		asset_verification.serial_no = asset[0]["Serial No."]
+		asset_verified.name = asset[0]["Name"]
+		asset_verified.category = asset[0]["Category"]
+		asset_verified._type = asset[0]["Type"]
+		asset_verified._model = asset[0]["Model"]
+		asset_verified.status = asset[0]["Status"]
+		asset_verified.location = asset[0]["Location"]
+		asset_verified.cost_center = asset[0]["Cost center"]
+		asset_verified.user = asset[0]["User"]
+		asset_verified.supplier = asset[0]["Supplier"]
+		asset_verified.notes = asset[0]["Notes"]
+		asset_verified.last_verified = datetime.datetime.utcnow()
+		asset_verified.verified_by = current_user.username
+
+		# Update Asset record
+		# asset_verified = session.query(models.Asset).filter(models.Asset.barcode == barcode).first()
+		# asset_verified.barcode = barcode
 		#Add entry to database
-		session.add(verified)
+		session.add(verified, asset_verified)
 		try:
 			session.commit()
 			flash('Barcode: '+ asset[0]['Barcode'] +' verified.', category='message')
