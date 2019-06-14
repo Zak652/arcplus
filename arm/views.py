@@ -540,7 +540,7 @@ def verify_asset():
 		asset_verified.user = asset[0]["User"]
 		asset_verified.supplier = asset[0]["Supplier"]
 		asset_verified.notes = asset[0]["Notes"]
-		asset_verified.last_verified = datetime.datetime.utcnow()
+		asset_verified.last_verified = datetime.datetime.now()
 		asset_verified.verified_by = current_user.username
 
 		# Update Asset record
