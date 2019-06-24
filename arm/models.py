@@ -133,7 +133,7 @@ class Asset(Base):
                 "User": self.asset_user, "Purchase Price": price_of_purchase, "Category": self.asset_category, 
                 "Name": self.name, "Model": self.asset_model, "Notes": self.notes, "Department": self.asset_center,
                 "Captured By": self.captured_by, "Capture Date": datetime.datetime.strftime(self.capture_date, '%d-%m-%Y %H:%M:%S'),
-                "Cost center": self.asset_center, "Value": value_of_asset, "Supplier": self.asset_supplier, "Attachments": self.attchments,
+                "Cost center": self.asset_center, "Net Book Value": value_of_asset, "Supplier": self.asset_supplier, "Attachments": self.attchments,
                 "Ref No.": self.ref_No, "Modified By": self.modified_by, "Modified Date": datetime.datetime.strftime(self.modified_date, '%d-%m-%Y %H:%M:%S'),
                 "Last Verified": self.last_verified, "Last Verified By": self.verified_by
                 }
