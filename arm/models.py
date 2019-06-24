@@ -15,6 +15,8 @@ import datetime
 
 from . database import Base
 
+from flask import json, jsonify
+
 # User Role relationship model
 class RolesUsers(Base):
     __tablename__ = 'roles_users'
@@ -83,7 +85,7 @@ class Asset(Base):
     asset_no = Column(String(20), nullable = False, unique = True)
     serial_no = Column(String, nullable = True)
     capture_date = Column(DateTime, default = datetime.datetime.now)
-    modified_date = Column(DateTime, default = datetime.datetime.now, onupdate = datetime.datetime.utcnow)
+    modified_date = Column(DateTime, default = datetime.datetime.now, onupdate = datetime.datetime.now)
     name = Column(String(128), nullable = False)
     purchase_price = Column(Integer, nullable = True)
     purchase_date = Column(DateTime, nullable = True)

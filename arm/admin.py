@@ -7,6 +7,9 @@ from flask_security import current_user,utils
 from wtforms.fields import PasswordField
 
 class UserAdmin(ModelView):
+    #Remove user delete option
+    can_delete = False
+    
     # Don't display the password on the list of Users
     column_exclude_list = ('password',)
 
