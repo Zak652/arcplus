@@ -20,3 +20,5 @@ jsonschema
 nose
 psycopg2
 mistune
+flask-marshmallow
+marshmallow-sqlalchemy

@@ -18,6 +18,8 @@ from .database import session
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import LoginForm, url_for_security
 
+from marshmallow import Schema, pprint
+
 @app.context_processor
 def login_context():
     return {
@@ -178,49 +180,35 @@ def view_single_asset(barcode):
 	#Pass asset info into html render function
 	return render_template("single_asset.html", asset = asset)
 
-# Create new asset json route
-@app.route("/register/add_assets_dropdowns")
+# Create new asset types json route
+@app.route("/register/add_asset_types_dropdown/<category_id>")
 
-def create_asset_dropdowns():
+def types_dropdowns(category_id):
 
-	#Get asset categories from DB
-	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
-	#Create list of json categories
-	# categories_list_json = json.dumps(categories_list)
-	# categories_list_json = []
-	# #convert each of the categories to json and add it to the json categories list
-	# for category in categories_list:
-	# 	category_json = jsonify(category)
-	# 	categories_list_json.append(category_json)
+	#Get asset types from DB based on selected category id
+	type_list = session.query(models.AssetType).filter(models.AssetType.category_id == category_id).all()
+	print(type_list)
 
-	#Get asset types from DB
-	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
-	types_list_dict = [_type.as_dictionary() for _type in types_list]
-	print ("This is the list of dictionaries ", types_list_dict)
-	print ("This is the type of object ", type(types_list_dict))
-	#Create list of json _types
-	# types_list_json = json.dumps(types_list_dict)
-	types_list_json = []
-	#convert each of the _types to json and add it to the json _types list
-	for _type in types_list:
-		type_dict = dict(_type.as_dictionary())
-		print("type of object is ", type(type_dict))
-		print("this is the object ", type_dict)
+	types_schema = models.AssetTypeSchema(many = True)
+	types_output = types_schema.dump(type_list).data
+	pprint(types_output)
 
-		json_type = json.dumps(type_dict)
-		types_list_json.append(json_type)
+	return jsonify({'asset_types' : types_output})
 
-	#Get asset models from DB
-	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
-	#Create list of json models
-	# models_list_json = json.dumps(models_list)
-	# models_list_json = []
-	# #convert each of the models to json and add it to the json models list
-	# for model in models_list:
-	# 	model_json = jsonify(model)
-	# 	models_list_json.append(model_json)
+# Create new asset models json route
+@app.route("/register/add_asset_models_dropdown/<model_type>")
 
-	return types_list_json
+def models_dropdowns(model_type):
+
+	#Get asset models from DB based on selected type id
+	model_list = session.query(models.AssetModel).filter(models.AssetModel.model_type == model_type).all()
+	print(model_list)
+
+	models_schema = models.AssetModelSchema(many = True)
+	models_output = models_schema.dump(model_list).data
+	pprint(models_output)
+
+	return jsonify({'asset_models' : models_output})
 
 # Create new asset template and json routes
 # @app.route("/register/add_asset")

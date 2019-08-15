@@ -10,8 +10,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, ForeignKey
 
-import datetime
+from marshmallow import Schema
+from marshmallow_sqlalchemy import TableSchema
 
+import datetime
 
 from . database import Base
 
@@ -45,6 +47,12 @@ class Role(Base, RoleMixin):
         roles = {"ID": self.id, "Name": self.name, "Description": self.description}
         return roles
 
+
+#Roles Schema
+class UserRolesSchema(Schema):
+    class Meta:
+        model = Role
+
 # User object model
 class User(Base, UserMixin):
     __tablename__ = 'user'
@@ -74,6 +82,12 @@ class User(Base, UserMixin):
                 "Login Count": self.login_count, "Active": self.active, "Confirmed At": self.confirmed_at
                 }
         return users
+
+#User Schema
+class UserSchema(Schema):
+    class Meta:
+        model = User
+
 
 # Asset object model
 class Asset(Base):
@@ -138,6 +152,11 @@ class Asset(Base):
                 "Last Verified": self.last_verified, "Last Verified By": self.verified_by
                 }
         return asset
+
+#Asset Schema
+class AssetSchema(Schema):
+    class Meta:
+        model = Asset
 
 
 # Asset Verification
@@ -210,6 +229,11 @@ class AssetCategory(Base):
                     }
         return category
 
+#Asset Category Schema
+class AssetCategorySchema(TableSchema):
+    class Meta:
+        table = AssetCategory.__table__
+
 # Asset Type object model
 class AssetType(Base):
     __tablename__ = 'asset_types'
@@ -233,6 +257,11 @@ class AssetType(Base):
                 }
         return _type
 
+#Asset Type Schema
+class AssetTypeSchema(TableSchema):
+    class Meta:
+        table = AssetType.__table__
+
 # Asset Model object model
 class AssetModel(Base):
     __tablename__ = 'asset_models'
@@ -254,6 +283,11 @@ class AssetModel(Base):
                 "Model Assets": self.asset_model, "Notes": self.notes
                 }
         return _model
+
+#Asset Model Schema
+class AssetModelSchema(TableSchema):
+    class Meta:
+        table = AssetModel.__table__
 
 # Asset Status object model
 class AssetStatus(Base):
@@ -429,6 +463,11 @@ class Supplier(Base):
                         }
         return supplier
 
+#Supplier Schema
+class SupplierSchema(Schema):
+    class Meta:
+        model = Supplier
+
 # Supplier category model
 class SupplierCategory(Base):
     __tablename__ = 'supplier_categories'
@@ -449,3 +488,8 @@ class SupplierCategory(Base):
                             "Category Suppliers": self.supplier_category, "Notes": self.notes
                             }
         return supplier_category
+
+#Supplier Category Schema
+class UserRolesSchema(Schema):
+    class Meta:
+        model = SupplierCategory
