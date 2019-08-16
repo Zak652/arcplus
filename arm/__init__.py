@@ -6,12 +6,14 @@ from .database import db_session, init_db, session
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 config_path = os.environ.get("CONFIG_PATH", "arm.config.DevelopmentConfig")
 app.config.from_object(config_path)
 
 db = SQLAlchemy
+ma = Marshmallow(app)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
