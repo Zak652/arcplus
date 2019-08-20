@@ -187,7 +187,6 @@ def types_dropdowns(category_id):
 
 	#Get asset types from DB based on selected category id
 	type_list = session.query(models.AssetType).filter(models.AssetType.category_id == category_id).all()
-	print(type_list)
 
 	types_schema = models.AssetTypeSchema(many = True)
 	types_output = types_schema.dump(type_list).data
@@ -202,7 +201,6 @@ def models_dropdowns(model_type):
 
 	#Get asset models from DB based on selected type id
 	model_list = session.query(models.AssetModel).filter(models.AssetModel.model_type == model_type).all()
-	print(model_list)
 
 	models_schema = models.AssetModelSchema(many = True)
 	models_output = models_schema.dump(model_list).data
@@ -220,31 +218,12 @@ def create_asset():
 
 	#Get asset categories from DB
 	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
-	#Create list of json categories
-	# categories_list_json = json.dumps(categories_list)
-	# categories_list_json = []
-	# #convert each of the categories to json and add it to the json categories list
-	# for category in categories_list:
-	# 	category_json = jsonify(category)
-	# 	categories_list_json.append(category_json)
 
-	#Get asset types from DB
-	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
-	#Create list of json _types
-	# types_list_json = []
-	# #convert each of the _types to json and add it to the json _types list
-	# for _type in types_list:
-	# 	_type_json = jsonify(_type)
-	# 	types_list_json.append(_type_json)
+	#Get asset types from DB (already handled by the types route above)
+	# types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
 
-	#Get asset models from DB
-	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
-	#Create list of json models
-	# models_list_json = []
-	# #convert each of the models to json and add it to the json models list
-	# for model in models_list:
-	# 	model_json = jsonify(model)
-	# 	models_list_json.append(model_json)
+	#Get asset models from DB (already handled by the models route above)
+	# models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
 
 	#Get asset statuses from DB
 	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
@@ -264,11 +243,7 @@ def create_asset():
 	#Get suppliers from DB
 	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
 
-	# if request.path == "/register/add_asset":
-	# 	return (categories_list_json, types_list_json, models_list_json)
-
 	return render_template("add_asset.html", categories_list = categories_list,
-							types_list = types_list, models_list = models_list,
 							statuses_list = statuses_list, locations_list = locations_list,
 							costcenters_list = costcenters_list, users_list = users_list,
 							suppliers_list = suppliers_list, conditions_list = conditions_list
@@ -351,49 +326,22 @@ def add_asset():
 
 def edit_asset(barcode):
 	""" Provide form populated with asset information to be edited """
+	print (barcode)
 
-	#Get asset categories from DB
-	categories_list = session.query(models.AssetCategory).order_by(models.AssetCategory.category_code)
-
-	#Get asset types from DB
-	types_list = session.query(models.AssetType).order_by(models.AssetType.type_code)
-
-	#Get asset models from DB
-	models_list = session.query(models.AssetModel).order_by(models.AssetModel.model_code)
-
-	#Get asset statuses from DB
-	statuses_list = session.query(models.AssetStatus).order_by(models.AssetStatus.status_code)
-
-	#Get asset conditions from DB
-	conditions_list = session.query(models.AssetCondition).order_by(models.AssetCondition.condition_code)
-
-	#Get locations from DB
-	locations_list = session.query(models.Location).order_by(models.Location.location_code)
-
-	#Get cost centers from DB
-	costcenters_list = session.query(models.CostCenter).order_by(models.CostCenter.center_code)
-
+	get_asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
+	asset = get_asset[0]
+	
 	#Get Users from DB
-	users_list = session.query(models.People).order_by(models.People.barcode)
-
-	#Get suppliers from DB
-	suppliers_list = session.query(models.Supplier).order_by(models.Supplier.code)
-
-	asset = session.query(models.Asset).filter(models.Asset.barcode == barcode).all()
-	asset = asset[0]
+	users_list = session.query(models.People).order_by(models.People.person_code)
 
 	return render_template("edit_asset.html", id = asset.id, barcode = asset.barcode,
 							serial_no = asset.serial_no, name = asset.name,
-							category = asset.category, _type = asset._type,
-							_model = asset._model, status = asset.status,
-							location = asset.location, cost_center = asset.cost_center,
-							user = asset.user, supplier = asset.supplier,
+							category = asset.asset_category, _type = asset.asset_type,
+							_model = asset.asset_model, status = asset.asset_status,
+							location = asset.asset_location, cost_center = asset.asset_center,
+							user = asset.asset_user, supplier = asset.asset_supplier,
 							purchase_price = asset.purchase_price, notes = asset.notes,
-							categories_list = categories_list, types_list = types_list,
-							models_list = models_list, statuses_list = statuses_list,
-							conditions_list = conditions_list, locations_list = locations_list,
-							costcenters_list = costcenters_list, users_list = users_list,
-							suppliers_list = suppliers_list
+							categories_list = asset.asset_category, user_list = users_list
 							)
 
 # POST Asset Modifications

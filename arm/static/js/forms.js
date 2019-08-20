@@ -1,36 +1,5 @@
 //Asset capture form dropdown cascading
 
-// $(function () {
-// 	var typesdropdown = {
-// 		category: document.getElementsByName("category"),
-// 		assettypes: document.getElementsByName("_type")
-// 	};
-// 	// function to call XHR and update typesdropdown
-// 	function updateassettypes() {
-// 		var category = typesdropdown.category.val();
-// 		typesdropdown.assettypes.attr('disabled', 'disabled');
-// 		console.log(category);
-// 		if (category.length) {
-// 			typesdropdown.assettypes.empty();
-// 			$.getJSON("{{ url_for('/register/add_asset') }}", { category: category }, function (data) {
-// 				console.log(data);
-// 				data.forEach(function (item) {
-// 					typesdropdown.assettypes.append($('<option>', {
-// 						value: item.id,
-// 						text: item.name
-// 					}));
-// 				});
-// 				typesdropdown.assettypes.removeAttr('disabled');
-// 			});
-// 		}
-// 	}
-// 	// event listener to assettype dropdown change
-// 	typesdropdown.category.on('change', function () {
-// 		updateassettypes();
-// 	});
-// });
-
-
 var category_select = document.getElementsByName('category')[0];
 var type_select = document.getElementsByName('_type')[0];
 var model_select = document.getElementsByName('_model')[0];
