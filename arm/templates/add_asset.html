@@ -11,13 +11,14 @@ Add New Asset
         <h3 class="box-title">Add New Asset</h3>
     </div>
     <!-- Form Starts here -->
-    <form class="form-horizontal" role="form" method="POST">
-        <div class="box-body">
+    <form class="form-horizontal" role="form" method="POST" name="addasset">
+        <div class="box-body" id="box-body">
             <!-- Barcode entry -->
             <div class="form-group">
                 <label class="col-sm-2 control-label">Barcode</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="barcode" required>
+                    <button class="btn btn-primary" onclick="getBarcode();">Scan Barcode</button>
                 </div>
             </div>
             <!-- Serial No. entry -->
@@ -25,6 +26,7 @@ Add New Asset
                 <label class="col-sm-2 control-label">Serial No:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control form-control-sm" name="serial_no" required>
+                    <button class="btn btn-primary" onclick="getSerialNo();">Scan serial_no</button>
                 </div>
             </div>
             <!--Asset Name entry  -->
