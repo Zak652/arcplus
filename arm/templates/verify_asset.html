@@ -6,8 +6,17 @@ Asset Verification
 
 {% block content %}
 <p>Scan barcode</p>
-<form class="form-inline my-2 my-lg-0" method="POST">
-    <input class="form-control mr-sm-2" type="search" placeholder="Barcode" aria-label="Search" name="barcode">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Verify</button>
+<form class="form-horizontal" role="form" method="POST" name="addasset">
+    <div class="box-body" id="box-body">
+        <!-- Barcode entry -->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Barcode</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" name="barcode" required>
+                <button class="btn btn-primary" onclick="getBarcode();">Scan Barcode</button>
+                <button class="btn btn-primary" type="submit">Verify</button>
+            </div>
+        </div>
+    </div>
 </form>
 {% endblock %}
