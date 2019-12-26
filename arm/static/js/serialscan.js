@@ -21,7 +21,7 @@ function onbarcode(event){
 				changingHash = true;
 				window.location.hash = event.oldURL.split("\#")[1] || ""
 				changingHash = false;
-				processBarcode(hash);
+				processSerialNo(hash);
 			}
 
 			break;
@@ -30,7 +30,7 @@ function onbarcode(event){
 			window.focus();
 			if(event.key == "barcode"){
 				window.removeEventListener("storage", onbarcode, false);
-				processBarcode(event.newValue);
+				processSerialNo(event.newValue);
 			}
 			break;
 		}
